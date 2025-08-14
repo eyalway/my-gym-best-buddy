@@ -89,30 +89,44 @@ export const useExercises = () => {
   };
 
   const reorderExercise = (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => {
+    console.log('Reordering exercise:', id, direction, workoutType);
+    
     setExercises(prev => {
-      // Get all exercises of the specific workout type
-      const workoutExercises = prev.filter(ex => ex.workoutType === workoutType);
-      const exerciseIndex = workoutExercises.findIndex(ex => ex.id === id);
+      console.log('Previous exercises:', prev.length);
       
-      if (exerciseIndex === -1) return prev;
+      // Separate exercises by workout type
+      const currentWorkoutExercises = prev.filter(ex => ex.workoutType === workoutType);
+      const otherExercises = prev.filter(ex => ex.workoutType !== workoutType);
+      
+      console.log('Current workout exercises:', currentWorkoutExercises.length);
+      
+      // Find the exercise to move
+      const exerciseIndex = currentWorkoutExercises.findIndex(ex => ex.id === id);
+      
+      if (exerciseIndex === -1) {
+        console.log('Exercise not found');
+        return prev;
+      }
       
       const targetIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
       
-      if (targetIndex < 0 || targetIndex >= workoutExercises.length) return prev;
+      if (targetIndex < 0 || targetIndex >= currentWorkoutExercises.length) {
+        console.log('Target index out of bounds:', targetIndex);
+        return prev;
+      }
       
-      // Create new array with swapped exercises
-      const newWorkoutExercises = [...workoutExercises];
-      [newWorkoutExercises[exerciseIndex], newWorkoutExercises[targetIndex]] = 
-      [newWorkoutExercises[targetIndex], newWorkoutExercises[exerciseIndex]];
+      // Reorder the exercises for this workout
+      const reorderedWorkoutExercises = [...currentWorkoutExercises];
+      const [movedExercise] = reorderedWorkoutExercises.splice(exerciseIndex, 1);
+      reorderedWorkoutExercises.splice(targetIndex, 0, movedExercise);
       
-      // Update the main exercises array
-      return prev.map(exercise => {
-        if (exercise.workoutType === workoutType) {
-          const newIndex = newWorkoutExercises.findIndex(ex => ex.id === exercise.id);
-          return newWorkoutExercises[newIndex];
-        }
-        return exercise;
-      });
+      console.log('Reordered successfully');
+      
+      // Combine with other exercises and return
+      const result = [...otherExercises, ...reorderedWorkoutExercises];
+      console.log('Final result:', result.length);
+      
+      return result;
     });
   };
 
