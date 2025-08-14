@@ -28,6 +28,8 @@ export const EditExerciseDialog = ({
   const [formData, setFormData] = useState({
     name: '',
     targetMuscle: '',
+    machineNumber: '',
+    seatHeight: '',
     sets: '',
     reps: '',
     weight: '',
@@ -39,6 +41,8 @@ export const EditExerciseDialog = ({
       setFormData({
         name: exercise.name,
         targetMuscle: exercise.targetMuscle,
+        machineNumber: exercise.machineNumber || '',
+        seatHeight: exercise.seatHeight || '',
         sets: exercise.sets || '',
         reps: exercise.reps || '',
         weight: exercise.weight || '',
@@ -54,6 +58,8 @@ export const EditExerciseDialog = ({
     onUpdateExercise(exercise.id, {
       name: formData.name,
       targetMuscle: formData.targetMuscle,
+      machineNumber: formData.machineNumber,
+      seatHeight: formData.seatHeight,
       sets: formData.sets,
       reps: formData.reps,
       weight: formData.weight,
@@ -115,6 +121,28 @@ export const EditExerciseDialog = ({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="machineNumber">מספר מכשיר</Label>
+              <Input
+                id="machineNumber"
+                value={formData.machineNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, machineNumber: e.target.value }))}
+                placeholder="1"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="seatHeight">גובה כיסא</Label>
+              <Input
+                id="seatHeight"
+                value={formData.seatHeight}
+                onChange={(e) => setFormData(prev => ({ ...prev, seatHeight: e.target.value }))}
+                placeholder="5"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">

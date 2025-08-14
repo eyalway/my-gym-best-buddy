@@ -7,6 +7,8 @@ interface ExerciseItemProps {
   id: string;
   name: string;
   targetMuscle: string;
+  machineNumber?: string;
+  seatHeight?: string;
   sets?: string;
   reps?: string;
   weight?: string;
@@ -19,6 +21,8 @@ export const ExerciseItem = ({
   id,
   name, 
   targetMuscle, 
+  machineNumber,
+  seatHeight,
   sets, 
   reps, 
   weight,
@@ -37,11 +41,17 @@ export const ExerciseItem = ({
             </Badge>
           </div>
           <div className="flex items-center gap-3">
-            {(sets || reps || weight) && (
-              <div className="text-right text-sm text-muted-foreground">
-                {sets && <div>{sets} סטים</div>}
-                {reps && <div>{reps} חזרות</div>}
-                {weight && <div>{weight} ק"ג</div>}
+            {(machineNumber || seatHeight || sets || reps || weight) && (
+              <div className="text-right text-sm text-muted-foreground space-y-1">
+                <div className="flex gap-4">
+                  {machineNumber && <span>מכשיר: {machineNumber}</span>}
+                  {seatHeight && <span>כיסא: {seatHeight}</span>}
+                </div>
+                <div className="flex gap-4">
+                  {sets && <span>{sets} סטים</span>}
+                  {reps && <span>{reps} חזרות</span>}
+                  {weight && <span>{weight} ק"ג</span>}
+                </div>
               </div>
             )}
             {showActions && (

@@ -23,6 +23,8 @@ export const AddExerciseDialog = ({ workoutType, onAddExercise }: AddExerciseDia
   const [formData, setFormData] = useState({
     name: '',
     targetMuscle: '',
+    machineNumber: '',
+    seatHeight: '',
     sets: '',
     reps: '',
     weight: ''
@@ -41,6 +43,8 @@ export const AddExerciseDialog = ({ workoutType, onAddExercise }: AddExerciseDia
     setFormData({
       name: '',
       targetMuscle: '',
+      machineNumber: '',
+      seatHeight: '',
       sets: '',
       reps: '',
       weight: ''
@@ -88,6 +92,28 @@ export const AddExerciseDialog = ({ workoutType, onAddExercise }: AddExerciseDia
                 ))}
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="machineNumber">מספר מכשיר</Label>
+              <Input
+                id="machineNumber"
+                value={formData.machineNumber}
+                onChange={(e) => setFormData(prev => ({ ...prev, machineNumber: e.target.value }))}
+                placeholder="1"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="seatHeight">גובה כיסא</Label>
+              <Input
+                id="seatHeight"
+                value={formData.seatHeight}
+                onChange={(e) => setFormData(prev => ({ ...prev, seatHeight: e.target.value }))}
+                placeholder="5"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
