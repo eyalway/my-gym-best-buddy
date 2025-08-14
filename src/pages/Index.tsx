@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
+import { AddExerciseDialog } from "@/components/AddExerciseDialog";
+import { EditExerciseDialog } from "@/components/EditExerciseDialog";
+import { useExercises, Exercise } from "@/hooks/useExercises";
 import { 
   Dumbbell, 
   Flame, 
@@ -11,12 +14,24 @@ import {
   TrendingUp, 
   Calendar,
   Play,
-  Trophy
+  Trophy,
+  Settings
 } from "lucide-react";
 import fitnessHero from "@/assets/fitness-hero.jpg";
 
 const Index = () => {
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
+  const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
+  const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
+  const [isManagingExercises, setIsManagingExercises] = useState(false);
+
+  // Use the exercises hook
+  const { 
+    addExercise, 
+    updateExercise, 
+    deleteExercise, 
+    getExercisesByWorkout 
+  } = useExercises();
 
   const todayStats = [
     { title: "קלוריות נשרפו", value: "245", subtitle: "היום", icon: Flame, gradient: true },
@@ -30,7 +45,7 @@ const Index = () => {
       title: "אימון A: חזה, כתפיים, יד אחורית ובטן",
       duration: "60 דקות",
       calories: "350 קלוריות",
-      exercises: 12,
+      exercises: getExercisesByWorkout('A').length,
       difficulty: "בינוני" as const,
       muscleGroups: ["חזה", "כתפיים", "יד אחורית", "בטן"]
     },
@@ -38,7 +53,7 @@ const Index = () => {
       title: "אימון B: גב, יד קידמית ובטן",
       duration: "55 דקות", 
       calories: "320 קלוריות",
-      exercises: 10,
+      exercises: getExercisesByWorkout('B').length,
       difficulty: "בינוני" as const,
       muscleGroups: ["גב", "יד קידמית", "בטן"]
     },
@@ -46,51 +61,31 @@ const Index = () => {
       title: "אימון C: רגליים, זרועות ובטן",
       duration: "70 דקות",
       calories: "450 קלוריות", 
-      exercises: 14,
+      exercises: getExercisesByWorkout('C').length,
       difficulty: "קשה" as const,
       muscleGroups: ["רגליים", "יד קידמית", "יד אחורית", "בטן"]
     },
   ];
 
-  const exercisesByWorkout = {
-    "A": [
-      { name: "Bench Press", targetMuscle: "חזה", sets: "4", reps: "8-12", weight: "70" },
-      { name: "Incline Dumbbell Press", targetMuscle: "חזה", sets: "3", reps: "10-12", weight: "25" },
-      { name: "Shoulder Press", targetMuscle: "כתפיים", sets: "4", reps: "8-10", weight: "45" },
-      { name: "Lateral Raises", targetMuscle: "כתפיים", sets: "3", reps: "12-15", weight: "12" },
-      { name: "Tricep Dips", targetMuscle: "יד אחורית", sets: "3", reps: "10-12" },
-      { name: "Overhead Tricep Extension", targetMuscle: "יד אחורית", sets: "3", reps: "10-12", weight: "20" },
-      { name: "Plank", targetMuscle: "בטן", sets: "3", reps: "30-60 שניות" },
-      { name: "Russian Twists", targetMuscle: "בטן", sets: "3", reps: "20-30" },
-    ],
-    "B": [
-      { name: "Pull-ups", targetMuscle: "גב", sets: "4", reps: "6-10" },
-      { name: "Barbell Rows", targetMuscle: "גב", sets: "4", reps: "8-10", weight: "60" },
-      { name: "Lat Pulldowns", targetMuscle: "גב", sets: "3", reps: "10-12", weight: "50" },
-      { name: "Bicep Curls", targetMuscle: "יד קידמית", sets: "4", reps: "10-12", weight: "15" },
-      { name: "Hammer Curls", targetMuscle: "יד קידמית", sets: "3", reps: "10-12", weight: "12" },
-      { name: "Cable Curls", targetMuscle: "יד קידמית", sets: "3", reps: "12-15", weight: "25" },
-      { name: "Dead Bug", targetMuscle: "בטן", sets: "3", reps: "10 לכל צד" },
-      { name: "Mountain Climbers", targetMuscle: "בטן", sets: "3", reps: "20-30" },
-    ],
-    "C": [
-      { name: "Squats", targetMuscle: "רגליים", sets: "4", reps: "10-15", weight: "80" },
-      { name: "Romanian Deadlift", targetMuscle: "רגליים", sets: "4", reps: "8-10", weight: "70" },
-      { name: "Walking Lunges", targetMuscle: "רגליים", sets: "3", reps: "12 לכל רגל" },
-      { name: "Calf Raises", targetMuscle: "רגליים", sets: "4", reps: "15-20", weight: "40" },
-      { name: "Bicep Curls", targetMuscle: "יד קידמית", sets: "3", reps: "10-12", weight: "15" },
-      { name: "Close-Grip Push-ups", targetMuscle: "יד אחורית", sets: "3", reps: "8-12" },
-      { name: "Leg Raises", targetMuscle: "בטן", sets: "3", reps: "12-15" },
-      { name: "Bicycle Crunches", targetMuscle: "בטן", sets: "3", reps: "20 לכל צד" },
-    ]
-  };
-
-  const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
-
   const handleStartWorkout = (workoutTitle: string) => {
     setCurrentWorkout(workoutTitle);
     // כאן תהיה לוגיקה להתחלת אימון
   };
+
+  const handleEditExercise = (id: string) => {
+    const exercise = getExercisesByWorkout(selectedWorkout).find(ex => ex.id === id);
+    if (exercise) {
+      setEditingExercise(exercise);
+    }
+  };
+
+  const handleDeleteExercise = (id: string) => {
+    if (window.confirm('האם אתה בטוח שברצונך למחוק את התרגיל הזה?')) {
+      deleteExercise(id);
+    }
+  };
+
+  const currentExercises = getExercisesByWorkout(selectedWorkout);
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,43 +140,93 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Exercise Selector and List */}
+        {/* Exercise Management Section */}
         <section>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Target className="w-6 h-6 text-fitness-primary" />
-              תרגילי אימון {selectedWorkout}
+              ניהול תרגילי אימון {selectedWorkout}
             </h2>
-            <div className="flex gap-2">
-              <Button 
-                variant={selectedWorkout === "A" ? "default" : "outline"} 
-                onClick={() => setSelectedWorkout("A")}
+            <div className="flex items-center gap-3">
+              <Button
+                variant={isManagingExercises ? "default" : "outline"}
+                onClick={() => setIsManagingExercises(!isManagingExercises)}
                 size="sm"
+                className="gap-2"
               >
-                אימון A
+                <Settings className="w-4 h-4" />
+                {isManagingExercises ? "סיום עריכה" : "נהל תרגילים"}
               </Button>
-              <Button 
-                variant={selectedWorkout === "B" ? "default" : "outline"} 
-                onClick={() => setSelectedWorkout("B")}
-                size="sm"
-              >
-                אימון B
-              </Button>
-              <Button 
-                variant={selectedWorkout === "C" ? "default" : "outline"} 
-                onClick={() => setSelectedWorkout("C")}
-                size="sm"
-              >
-                אימון C
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant={selectedWorkout === "A" ? "default" : "outline"} 
+                  onClick={() => setSelectedWorkout("A")}
+                  size="sm"
+                >
+                  אימון A
+                </Button>
+                <Button 
+                  variant={selectedWorkout === "B" ? "default" : "outline"} 
+                  onClick={() => setSelectedWorkout("B")}
+                  size="sm"
+                >
+                  אימון B
+                </Button>
+                <Button 
+                  variant={selectedWorkout === "C" ? "default" : "outline"} 
+                  onClick={() => setSelectedWorkout("C")}
+                  size="sm"
+                >
+                  אימון C
+                </Button>
+              </div>
             </div>
           </div>
+
+          {isManagingExercises && (
+            <div className="mb-4">
+              <AddExerciseDialog 
+                workoutType={selectedWorkout}
+                onAddExercise={addExercise}
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {exercisesByWorkout[selectedWorkout].map((exercise, index) => (
-              <ExerciseItem key={index} {...exercise} />
+            {currentExercises.map((exercise) => (
+              <ExerciseItem 
+                key={exercise.id} 
+                id={exercise.id}
+                name={exercise.name}
+                targetMuscle={exercise.targetMuscle}
+                sets={exercise.sets}
+                reps={exercise.reps}
+                weight={exercise.weight}
+                showActions={isManagingExercises}
+                onEdit={handleEditExercise}
+                onDelete={handleDeleteExercise}
+              />
             ))}
           </div>
+
+          {currentExercises.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>אין עדיין תרגילים לאימון זה</p>
+              {isManagingExercises && (
+                <p className="text-sm mt-2">לחץ "הוסף תרגיל" כדי להתחיל</p>
+              )}
+            </div>
+          )}
         </section>
+
+        {/* Edit Exercise Dialog */}
+        <EditExerciseDialog
+          exercise={editingExercise}
+          open={!!editingExercise}
+          onOpenChange={(open) => !open && setEditingExercise(null)}
+          onUpdateExercise={updateExercise}
+        />
 
         {/* Quick Actions */}
         <section className="bg-gradient-to-r from-card/30 to-card/50 backdrop-blur-sm rounded-lg p-6 border border-border/30">
