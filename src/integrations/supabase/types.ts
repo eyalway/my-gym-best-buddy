@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      workout_exercises: {
+        Row: {
+          completed: boolean
+          created_at: string
+          exercise_name: string
+          exercise_order: number
+          id: string
+          machine_number: string | null
+          reps: string | null
+          seat_height: string | null
+          sets: string | null
+          target_muscle: string
+          updated_at: string
+          weight: string | null
+          workout_id: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          exercise_name: string
+          exercise_order: number
+          id?: string
+          machine_number?: string | null
+          reps?: string | null
+          seat_height?: string | null
+          sets?: string | null
+          target_muscle: string
+          updated_at?: string
+          weight?: string | null
+          workout_id: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          exercise_name?: string
+          exercise_order?: number
+          id?: string
+          machine_number?: string | null
+          reps?: string | null
+          seat_height?: string | null
+          sets?: string | null
+          target_muscle?: string
+          updated_at?: string
+          weight?: string | null
+          workout_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercises_workout_id_fkey"
+            columns: ["workout_id"]
+            isOneToOne: false
+            referencedRelation: "workouts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workouts: {
+        Row: {
+          completed: boolean
+          created_at: string
+          end_time: string | null
+          id: string
+          start_time: string
+          updated_at: string
+          user_id: string | null
+          workout_title: string
+          workout_type: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          updated_at?: string
+          user_id?: string | null
+          workout_title: string
+          workout_type: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          updated_at?: string
+          user_id?: string | null
+          workout_title?: string
+          workout_type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
