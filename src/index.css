@@ -118,5 +118,38 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    direction: rtl;
+  }
+
+  /* RTL support for better text alignment */
+  [dir="rtl"] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .text-left {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .text-right {
+    text-align: left;
+  }
+  
+  /* Fix flex direction for RTL */
+  [dir="rtl"] .flex-row-reverse {
+    flex-direction: row;
+  }
+  
+  [dir="rtl"] .flex-row {
+    flex-direction: row-reverse;
+  }
+
+  /* Ensure icons and buttons work well in RTL */
+  [dir="rtl"] .lucide {
+    transform: scaleX(-1);
+  }
+
+  /* Don't flip certain icons that should stay the same */
+  [dir="rtl"] .lucide.no-flip {
+    transform: none;
   }
 }
