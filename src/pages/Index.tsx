@@ -259,11 +259,7 @@ const Index = () => {
         <section className="bg-gradient-to-r from-card/30 to-card/50 backdrop-blur-sm rounded-lg p-6 border border-border/30">
           <h3 className="text-xl font-bold mb-4">פעולות מהירות</h3>
           <div className="flex flex-wrap gap-3">
-            <Button 
-              variant="outline" 
-              className="gap-2"
-              onClick={() => navigate('/timer')}
-            >
+            <Button variant="outline" className="gap-2">
               <Clock className="w-4 h-4" />
               טיימר אימון
             </Button>
