@@ -7,6 +7,7 @@ import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { UserButton } from "@/components/UserButton";
 import { useExercises, Exercise } from "@/hooks/useExercises";
+import { useWorkoutStats } from "@/hooks/useWorkoutStats";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const { stats, loading: statsLoading } = useWorkoutStats();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -41,11 +43,34 @@ const Index = () => {
     reorderExercise 
   } = useExercises();
 
+  // Generate dynamic stats based on real data
   const todayStats = [
-    { title: "קלוריות נשרפו", value: "245", subtitle: "היום", icon: Flame, gradient: true },
-    { title: "זמן אימון", value: "42", subtitle: "דקות", icon: Clock },
-    { title: "אימונים השבוע", value: "3", subtitle: "מתוך 5", icon: Calendar },
-    { title: "שיא אישי", value: "85", subtitle: "ק״ג בסקוואט", icon: Trophy, gradient: true },
+    { 
+      title: "קלוריות נשרפו", 
+      value: statsLoading ? "..." : stats.caloriesBurned.toString(), 
+      subtitle: "היום", 
+      icon: Flame, 
+      gradient: true 
+    },
+    { 
+      title: "זמן אימון", 
+      value: statsLoading ? "..." : stats.workoutTimeToday.toString(), 
+      subtitle: "דקות", 
+      icon: Clock 
+    },
+    { 
+      title: "אימונים השבוע", 
+      value: statsLoading ? "..." : stats.workoutsThisWeek.toString(), 
+      subtitle: "השבוע", 
+      icon: Calendar 
+    },
+    { 
+      title: "שיא אישי", 
+      value: statsLoading ? "..." : (stats.personalBest ? stats.personalBest.weight.toString() : "0"), 
+      subtitle: stats.personalBest ? `ק״ג ב${stats.personalBest.exercise}` : "אין נתונים", 
+      icon: Trophy, 
+      gradient: true 
+    },
   ];
 
   const workoutPlans = [
