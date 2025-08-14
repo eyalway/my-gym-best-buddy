@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useExercises } from "@/hooks/useExercises";
+import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar } from "lucide-react";
 import { format } from "date-fns";
@@ -17,6 +18,7 @@ const WorkoutSession = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { getExercisesByWorkout, updateExercise } = useExercises();
+  const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, updateExerciseWeight } = useWorkoutSession();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
   
@@ -47,7 +49,19 @@ const WorkoutSession = () => {
     }
   }, [workoutType, exercises.length, navigate, getExercisesByWorkout]);
 
-  const handleNextExercise = () => {
+  // Start workout session when component mounts
+  useEffect(() => {
+    if (workoutType && exercises.length > 0 && !currentWorkoutId) {
+      const workoutTitles = {
+        A: "אימון A: חזה, כתפיים, יד אחורית ובטן",
+        B: "אימון B: גב, יד קידמית ובטן", 
+        C: "אימון C: רגליים, זרועות ובטן"
+      };
+      startWorkout(workoutType, workoutTitles[workoutType], exercises);
+    }
+  }, [workoutType, exercises, currentWorkoutId, startWorkout]);
+
+  const handleNextExercise = async () => {
     setCompletedExercises(prev => new Set([...prev, currentExerciseIndex]));
     setIsEditingWeight(false); // Reset weight editing state
     
@@ -58,11 +72,16 @@ const WorkoutSession = () => {
         description: `עוברים לתרגיל הבא`,
       });
     } else {
-      // Workout completed
-      toast({
-        title: "כל הכבוד! 🎉",
-        description: "סיימת את האימון בהצלחה!",
-      });
+      // Workout completed - save to database
+      if (currentWorkoutId) {
+        const finalCompletedExercises = new Set([...completedExercises, currentExerciseIndex]);
+        await completeWorkout(currentWorkoutId, finalCompletedExercises);
+      } else {
+        toast({
+          title: "כל הכבוד! 🎉",
+          description: "סיימת את האימון בהצלחה!",
+        });
+      }
       navigate('/');
     }
   };
@@ -84,12 +103,19 @@ const WorkoutSession = () => {
     setIsEditingWeight(true);
   };
 
-  const handleWeightSave = () => {
+  const handleWeightSave = async () => {
     if (tempWeight && currentExercise) {
+      // Update local exercises
       updateExercise(currentExercise.id, {
         ...currentExercise,
         weight: tempWeight
       });
+      
+      // Update in database if workout session exists
+      if (currentWorkoutId) {
+        await updateExerciseWeight(currentWorkoutId, currentExerciseIndex, tempWeight);
+      }
+      
       setIsEditingWeight(false);
       toast({
         title: "משקל עודכן! ✅",
@@ -103,11 +129,16 @@ const WorkoutSession = () => {
     setTempWeight('');
   };
 
-  const handleEndWorkout = () => {
+  const handleEndWorkout = async () => {
+    // Save partial workout if session exists
+    if (currentWorkoutId && completedExercises.size > 0) {
+      await completeWorkout(currentWorkoutId, completedExercises);
+    }
+    
     navigate('/');
     toast({
       title: "האימון הופסק",
-      description: "תמיד אפשר לחזור ולהמשיך!",
+      description: completedExercises.size > 0 ? "התקדמות האימון נשמרה!" : "תמיד אפשר לחזור ולהמשיך!",
     });
   };
 
