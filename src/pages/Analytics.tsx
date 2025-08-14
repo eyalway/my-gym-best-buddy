@@ -154,7 +154,7 @@ const Analytics = () => {
         .eq('workouts.completed', true)
         .gte('workouts.start_time', startDate.toISOString())
         .not('weight', 'is', null)
-        .order('workouts.start_time', { ascending: true });
+        .order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching exercise progress:', error);
