@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface Exercise {
   id: string;
@@ -45,43 +47,250 @@ const DEFAULT_EXERCISES: Exercise[] = [
 ];
 
 export const useExercises = () => {
+  const { user } = useAuth();
   const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Load exercises from localStorage on mount
+  // Load exercises from database on mount
   useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    
+    loadExercises();
+  }, [user]);
+
+  const loadExercises = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // First try to load from database
+      const { data: dbExercises, error } = await supabase
+        .from('exercise_templates')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('workout_type, exercise_order');
+
+      if (error) {
+        console.error('Error loading exercises from database:', error);
+        // Fallback to localStorage for migration
+        await migrateFromLocalStorage();
+        return;
+      }
+
+      if (dbExercises && dbExercises.length > 0) {
+        // Convert database format to Exercise format
+        const convertedExercises: Exercise[] = dbExercises.map(ex => ({
+          id: ex.id,
+          name: ex.exercise_name,
+          targetMuscle: ex.target_muscle,
+          machineNumber: ex.machine_number || '',
+          seatHeight: ex.seat_height || '',
+          sets: ex.sets || '',
+          reps: ex.reps || '',
+          weight: ex.weight || '',
+          workoutType: ex.workout_type as 'A' | 'B' | 'C'
+        }));
+        
+        setExercises(convertedExercises);
+        console.log('Loaded exercises from database:', convertedExercises.length);
+      } else {
+        // No exercises in database, try to migrate from localStorage
+        await migrateFromLocalStorage();
+      }
+    } catch (error) {
+      console.error('Error in loadExercises:', error);
+      await migrateFromLocalStorage();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const migrateFromLocalStorage = async () => {
+    console.log('Attempting to migrate from localStorage...');
     const savedExercises = localStorage.getItem('fitness-exercises');
-    if (savedExercises) {
-      setExercises(JSON.parse(savedExercises));
-    } else {
-      setExercises(DEFAULT_EXERCISES);
+    
+    if (savedExercises && user) {
+      try {
+        const localExercises: Exercise[] = JSON.parse(savedExercises);
+        console.log('Found exercises in localStorage:', localExercises.length);
+        
+        // Save to database
+        for (const exercise of localExercises) {
+          await supabase
+            .from('exercise_templates')
+            .insert({
+              user_id: user.id,
+              exercise_name: exercise.name,
+              target_muscle: exercise.targetMuscle,
+              machine_number: exercise.machineNumber || null,
+              seat_height: exercise.seatHeight || null,
+              sets: exercise.sets || null,
+              reps: exercise.reps || null,
+              weight: exercise.weight || null,
+              workout_type: exercise.workoutType,
+              exercise_order: parseInt(exercise.id) || 0
+            });
+        }
+        
+        console.log('Migration to database completed');
+        
+        // Clear localStorage after successful migration
+        localStorage.removeItem('fitness-exercises');
+        
+        // Reload from database
+        await loadExercises();
+        return;
+      } catch (error) {
+        console.error('Error migrating from localStorage:', error);
+      }
     }
-  }, []);
-
-  // Save exercises to localStorage whenever exercises change
-  useEffect(() => {
-    if (exercises.length > 0) {
-      localStorage.setItem('fitness-exercises', JSON.stringify(exercises));
+    
+    // If no localStorage data, use default exercises
+    console.log('Using default exercises');
+    setExercises(DEFAULT_EXERCISES);
+    
+    // Save default exercises to database for this user
+    if (user) {
+      await saveDefaultExercisesToDb();
     }
-  }, [exercises]);
-
-  const addExercise = (exercise: Omit<Exercise, 'id'>) => {
-    const newExercise: Exercise = {
-      ...exercise,
-      id: Date.now().toString(),
-    };
-    setExercises(prev => [...prev, newExercise]);
   };
 
-  const updateExercise = (id: string, updatedExercise: Omit<Exercise, 'id'>) => {
-    setExercises(prev =>
-      prev.map(exercise =>
-        exercise.id === id ? { ...updatedExercise, id } : exercise
-      )
-    );
+  const saveDefaultExercisesToDb = async () => {
+    if (!user) return;
+    
+    try {
+      for (let i = 0; i < DEFAULT_EXERCISES.length; i++) {
+        const exercise = DEFAULT_EXERCISES[i];
+        await supabase
+          .from('exercise_templates')
+          .insert({
+            user_id: user.id,
+            exercise_name: exercise.name,
+            target_muscle: exercise.targetMuscle,
+            machine_number: exercise.machineNumber || null,
+            seat_height: exercise.seatHeight || null,
+            sets: exercise.sets || null,
+            reps: exercise.reps || null,
+            weight: exercise.weight || null,
+            workout_type: exercise.workoutType,
+            exercise_order: i
+          });
+      }
+      console.log('Default exercises saved to database');
+    } catch (error) {
+      console.error('Error saving default exercises to database:', error);
+    }
   };
 
-  const deleteExercise = (id: string) => {
-    setExercises(prev => prev.filter(exercise => exercise.id !== id));
+  const addExercise = async (exercise: Omit<Exercise, 'id'>) => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('exercise_templates')
+        .insert({
+          user_id: user.id,
+          exercise_name: exercise.name,
+          target_muscle: exercise.targetMuscle,
+          machine_number: exercise.machineNumber || null,
+          seat_height: exercise.seatHeight || null,
+          sets: exercise.sets || null,
+          reps: exercise.reps || null,
+          weight: exercise.weight || null,
+          workout_type: exercise.workoutType,
+          exercise_order: exercises.filter(ex => ex.workoutType === exercise.workoutType).length
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error adding exercise:', error);
+        return;
+      }
+
+      if (data) {
+        const newExercise: Exercise = {
+          id: data.id,
+          name: data.exercise_name,
+          targetMuscle: data.target_muscle,
+          machineNumber: data.machine_number || '',
+          seatHeight: data.seat_height || '',
+          sets: data.sets || '',
+          reps: data.reps || '',
+          weight: data.weight || '',
+          workoutType: data.workout_type as 'A' | 'B' | 'C'
+        };
+        
+        setExercises(prev => [...prev, newExercise]);
+        console.log('Exercise added successfully');
+      }
+    } catch (error) {
+      console.error('Error in addExercise:', error);
+    }
+  };
+
+  const updateExercise = async (id: string, updatedExercise: Omit<Exercise, 'id'>) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('exercise_templates')
+        .update({
+          exercise_name: updatedExercise.name,
+          target_muscle: updatedExercise.targetMuscle,
+          machine_number: updatedExercise.machineNumber || null,
+          seat_height: updatedExercise.seatHeight || null,
+          sets: updatedExercise.sets || null,
+          reps: updatedExercise.reps || null,
+          weight: updatedExercise.weight || null,
+          workout_type: updatedExercise.workoutType
+        })
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating exercise:', error);
+        return;
+      }
+
+      setExercises(prev =>
+        prev.map(exercise =>
+          exercise.id === id ? { ...updatedExercise, id } : exercise
+        )
+      );
+      console.log('Exercise updated successfully');
+    } catch (error) {
+      console.error('Error in updateExercise:', error);
+    }
+  };
+
+  const deleteExercise = async (id: string) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase
+        .from('exercise_templates')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error deleting exercise:', error);
+        return;
+      }
+
+      setExercises(prev => prev.filter(exercise => exercise.id !== id));
+      console.log('Exercise deleted successfully');
+    } catch (error) {
+      console.error('Error in deleteExercise:', error);
+    }
   };
 
   const getExercisesByWorkout = (workoutType: 'A' | 'B' | 'C') => {
@@ -91,50 +300,57 @@ export const useExercises = () => {
     return filtered;
   };
 
-  const reorderExercise = (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => {
+  const reorderExercise = async (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => {
+    if (!user) return;
+    
     console.log('Reordering exercise:', id, direction, workoutType);
     
-    setExercises(prev => {
-      console.log('Previous exercises:', prev.length);
+    const currentWorkoutExercises = exercises.filter(ex => ex.workoutType === workoutType);
+    const exerciseIndex = currentWorkoutExercises.findIndex(ex => ex.id === id);
+    
+    if (exerciseIndex === -1) {
+      console.log('Exercise not found');
+      return;
+    }
+    
+    const targetIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
+    
+    if (targetIndex < 0 || targetIndex >= currentWorkoutExercises.length) {
+      console.log('Target index out of bounds:', targetIndex);
+      return;
+    }
+    
+    // Update database with new orders
+    try {
+      const reorderedExercises = [...currentWorkoutExercises];
+      const [movedExercise] = reorderedExercises.splice(exerciseIndex, 1);
+      reorderedExercises.splice(targetIndex, 0, movedExercise);
       
-      // Separate exercises by workout type
-      const currentWorkoutExercises = prev.filter(ex => ex.workoutType === workoutType);
-      const otherExercises = prev.filter(ex => ex.workoutType !== workoutType);
-      
-      console.log('Current workout exercises:', currentWorkoutExercises.length);
-      
-      // Find the exercise to move
-      const exerciseIndex = currentWorkoutExercises.findIndex(ex => ex.id === id);
-      
-      if (exerciseIndex === -1) {
-        console.log('Exercise not found');
-        return prev;
+      // Update exercise orders in database
+      for (let i = 0; i < reorderedExercises.length; i++) {
+        const exercise = reorderedExercises[i];
+        await supabase
+          .from('exercise_templates')
+          .update({ exercise_order: i })
+          .eq('id', exercise.id)
+          .eq('user_id', user.id);
       }
       
-      const targetIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
-      
-      if (targetIndex < 0 || targetIndex >= currentWorkoutExercises.length) {
-        console.log('Target index out of bounds:', targetIndex);
-        return prev;
-      }
-      
-      // Reorder the exercises for this workout
-      const reorderedWorkoutExercises = [...currentWorkoutExercises];
-      const [movedExercise] = reorderedWorkoutExercises.splice(exerciseIndex, 1);
-      reorderedWorkoutExercises.splice(targetIndex, 0, movedExercise);
+      // Update local state
+      setExercises(prev => {
+        const otherExercises = prev.filter(ex => ex.workoutType !== workoutType);
+        return [...otherExercises, ...reorderedExercises];
+      });
       
       console.log('Reordered successfully');
-      
-      // Combine with other exercises and return
-      const result = [...otherExercises, ...reorderedWorkoutExercises];
-      console.log('Final result:', result.length);
-      
-      return result;
-    });
+    } catch (error) {
+      console.error('Error reordering exercises:', error);
+    }
   };
 
   return {
     exercises,
+    loading,
     addExercise,
     updateExercise,
     deleteExercise,

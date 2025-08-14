@@ -18,7 +18,7 @@ const WorkoutSession = () => {
   const { workoutType } = useParams<{ workoutType: 'A' | 'B' | 'C' }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getExercisesByWorkout, updateExercise } = useExercises();
+  const { getExercisesByWorkout, updateExercise, loading: exercisesLoading } = useExercises();
   const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, updateExerciseWeight } = useWorkoutSession();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
@@ -36,11 +36,11 @@ const WorkoutSession = () => {
   const [isRestRunning, setIsRestRunning] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
-  const exercises = workoutType ? getExercisesByWorkout(workoutType) : [];
+  const exercises = workoutType && !exercisesLoading ? getExercisesByWorkout(workoutType) : [];
   const currentExercise = exercises[currentExerciseIndex];
   const progress = exercises.length > 0 ? ((currentExerciseIndex + 1) / exercises.length) * 100 : 0;
 
-  console.log('Exercises found:', exercises.length);
+  console.log('Exercises found:', exercises.length, 'Loading:', exercisesLoading);
 
   // Audio and vibration functions
   const playBeep = useCallback((frequency = 800, duration = 200) => {

@@ -40,7 +40,8 @@ const Index = () => {
     updateExercise, 
     deleteExercise, 
     getExercisesByWorkout,
-    reorderExercise 
+    reorderExercise,
+    loading: exercisesLoading 
   } = useExercises();
 
   // Generate dynamic stats based on real data
@@ -78,7 +79,7 @@ const Index = () => {
       title: "אימון A: חזה, כתפיים, יד אחורית ובטן",
       duration: "60 דקות",
       calories: "350 קלוריות",
-      exercises: getExercisesByWorkout('A').length,
+      exercises: exercisesLoading ? 0 : getExercisesByWorkout('A').length,
       difficulty: "בינוני" as const,
       muscleGroups: ["חזה", "כתפיים", "יד אחורית", "בטן"]
     },
@@ -86,7 +87,7 @@ const Index = () => {
       title: "אימון B: גב, יד קידמית ובטן",
       duration: "55 דקות", 
       calories: "320 קלוריות",
-      exercises: getExercisesByWorkout('B').length,
+      exercises: exercisesLoading ? 0 : getExercisesByWorkout('B').length,
       difficulty: "בינוני" as const,
       muscleGroups: ["גב", "יד קידמית", "בטן"]
     },
@@ -94,7 +95,7 @@ const Index = () => {
       title: "אימון C: רגליים, זרועות ובטן",
       duration: "70 דקות",
       calories: "450 קלוריות", 
-      exercises: getExercisesByWorkout('C').length,
+      exercises: exercisesLoading ? 0 : getExercisesByWorkout('C').length,
       difficulty: "קשה" as const,
       muscleGroups: ["רגליים", "יד קידמית", "יד אחורית", "בטן"]
     },
