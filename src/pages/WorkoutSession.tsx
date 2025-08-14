@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useExercises } from "@/hooks/useExercises";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3 } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar } from "lucide-react";
+import { format } from "date-fns";
+import { he } from "date-fns/locale";
 
 const WorkoutSession = () => {
   const { workoutType } = useParams<{ workoutType: 'A' | 'B' | 'C' }>();
@@ -142,6 +144,19 @@ const WorkoutSession = () => {
     C: "אימון C: רגליים, זרועות ובטן"
   };
 
+  const today = new Date();
+  const dayNames = {
+    0: 'ראשון',
+    1: 'שני', 
+    2: 'שלישי',
+    3: 'רביעי',
+    4: 'חמישי',
+    5: 'שישי',
+    6: 'שבת'
+  };
+  const currentDay = dayNames[today.getDay() as keyof typeof dayNames];
+  const currentDate = format(today, 'dd/MM/yyyy');
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4">
       <div className="max-w-2xl mx-auto space-y-6">
@@ -155,6 +170,12 @@ const WorkoutSession = () => {
             <Badge variant="secondary" className="text-lg px-4 py-2">
               תרגיל {currentExerciseIndex + 1} מתוך {exercises.length}
             </Badge>
+          </div>
+          
+          {/* Date and Day */}
+          <div className="flex items-center justify-center gap-2 text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            <span>{currentDay}, {currentDate}</span>
           </div>
           
           <h1 className="text-2xl font-bold text-foreground">
