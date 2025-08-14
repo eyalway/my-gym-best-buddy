@@ -30,7 +30,8 @@ const Index = () => {
     addExercise, 
     updateExercise, 
     deleteExercise, 
-    getExercisesByWorkout 
+    getExercisesByWorkout,
+    reorderExercise 
   } = useExercises();
 
   const todayStats = [
@@ -193,7 +194,7 @@ const Index = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {currentExercises.map((exercise) => (
+            {currentExercises.map((exercise, index) => (
               <ExerciseItem 
                     key={exercise.id}
                     id={exercise.id}
@@ -207,6 +208,9 @@ const Index = () => {
                 showActions={isManagingExercises}
                 onEdit={handleEditExercise}
                 onDelete={handleDeleteExercise}
+                onReorder={reorderExercise}
+                isFirst={index === 0}
+                isLast={index === currentExercises.length - 1}
               />
             ))}
           </div>

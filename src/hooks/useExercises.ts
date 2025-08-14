@@ -88,11 +88,30 @@ export const useExercises = () => {
     return exercises.filter(exercise => exercise.workoutType === workoutType);
   };
 
+  const reorderExercise = (id: string, direction: 'up' | 'down') => {
+    setExercises(prev => {
+      const exerciseIndex = prev.findIndex(ex => ex.id === id);
+      if (exerciseIndex === -1) return prev;
+      
+      const newExercises = [...prev];
+      const targetIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
+      
+      if (targetIndex < 0 || targetIndex >= newExercises.length) return prev;
+      
+      // Swap exercises
+      [newExercises[exerciseIndex], newExercises[targetIndex]] = 
+      [newExercises[targetIndex], newExercises[exerciseIndex]];
+      
+      return newExercises;
+    });
+  };
+
   return {
     exercises,
     addExercise,
     updateExercise,
     deleteExercise,
     getExercisesByWorkout,
+    reorderExercise,
   };
 };

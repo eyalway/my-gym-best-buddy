@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, ChevronUp, ChevronDown } from "lucide-react";
 
 interface ExerciseItemProps {
   id: string;
@@ -14,7 +14,10 @@ interface ExerciseItemProps {
   weight?: string;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  onReorder?: (id: string, direction: 'up' | 'down') => void;
   showActions?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 export const ExerciseItem = ({ 
@@ -28,7 +31,10 @@ export const ExerciseItem = ({
   weight,
   onEdit,
   onDelete,
-  showActions = false
+  onReorder,
+  showActions = false,
+  isFirst = false,
+  isLast = false
 }: ExerciseItemProps) => {
   return (
     <Card className="bg-card/30 backdrop-blur-sm border-border/30 hover:bg-card/50 transition-all duration-200">
@@ -56,6 +62,26 @@ export const ExerciseItem = ({
             )}
             {showActions && (
               <div className="flex gap-1">
+                <div className="flex flex-col gap-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onReorder?.(id, 'up')}
+                    disabled={isFirst}
+                    className="h-6 w-6 p-0 hover:bg-fitness-accent/20 hover:text-fitness-accent disabled:opacity-30"
+                  >
+                    <ChevronUp className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onReorder?.(id, 'down')}
+                    disabled={isLast}
+                    className="h-6 w-6 p-0 hover:bg-fitness-accent/20 hover:text-fitness-accent disabled:opacity-30"
+                  >
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                </div>
                 <Button
                   variant="ghost"
                   size="sm"
