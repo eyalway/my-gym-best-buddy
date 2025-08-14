@@ -21,7 +21,7 @@ import {
 interface DayPlan {
   day: string;
   dayHebrew: string;
-  workoutType: 'A' | 'B' | 'C' | 'rest' | '';
+  workoutType: 'A' | 'B' | 'C' | 'rest' | 'none';
   preferredTime: string;
   status: 'planned' | 'completed' | 'missed';
 }
@@ -32,13 +32,13 @@ const WeeklyPlanner = () => {
   const navigate = useNavigate();
   
   const [weeklyPlan, setWeeklyPlan] = useState<DayPlan[]>([
-    { day: 'sunday', dayHebrew: 'ראשון', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'monday', dayHebrew: 'שני', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'tuesday', dayHebrew: 'שלישי', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'wednesday', dayHebrew: 'רביעי', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'thursday', dayHebrew: 'חמישי', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'friday', dayHebrew: 'שישי', workoutType: '', preferredTime: '', status: 'planned' },
-    { day: 'saturday', dayHebrew: 'שבת', workoutType: '', preferredTime: '', status: 'planned' },
+    { day: 'sunday', dayHebrew: 'ראשון', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'monday', dayHebrew: 'שני', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'tuesday', dayHebrew: 'שלישי', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'wednesday', dayHebrew: 'רביעי', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'thursday', dayHebrew: 'חמישי', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'friday', dayHebrew: 'שישי', workoutType: 'none', preferredTime: 'none', status: 'planned' },
+    { day: 'saturday', dayHebrew: 'שבת', workoutType: 'none', preferredTime: 'none', status: 'planned' },
   ]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +56,7 @@ const WeeklyPlanner = () => {
   }, [user?.id]);
 
   const workoutTypes = [
-    { value: '', label: 'לא נבחר' },
+    { value: 'none', label: 'לא נבחר' },
     { value: 'A', label: 'אימון A - חזה, כתפיים, יד אחורית ובטן' },
     { value: 'B', label: 'אימון B - גב, יד קידמית ובטן' },
     { value: 'C', label: 'אימון C - רגליים, זרועות ובטן' },
@@ -64,7 +64,7 @@ const WeeklyPlanner = () => {
   ];
 
   const timeSlots = [
-    { value: '', label: 'לא נבחר' },
+    { value: 'none', label: 'לא נבחר' },
     { value: 'morning', label: 'בוקר (6:00-10:00)' },
     { value: 'afternoon', label: 'צהריים (10:00-16:00)' },
     { value: 'evening', label: 'ערב (16:00-20:00)' },
@@ -97,12 +97,12 @@ const WeeklyPlanner = () => {
   };
 
   const resetPlan = () => {
-    const emptyPlan = weeklyPlan.map(day => ({
-      ...day,
-      workoutType: '' as const,
-      preferredTime: '',
-      status: 'planned' as const
-    }));
+                    const emptyPlan = weeklyPlan.map(day => ({
+                      ...day,
+                      workoutType: 'none' as const,
+                      preferredTime: 'none',
+                      status: 'planned' as const
+                    }));
     setWeeklyPlan(emptyPlan);
     toast({
       title: 'התוכנית אופסה',
@@ -135,7 +135,7 @@ const WeeklyPlanner = () => {
     return timeSlot ? timeSlot.label : 'לא נבחר';
   };
 
-  const workoutDays = weeklyPlan.filter(day => day.workoutType && day.workoutType !== 'rest');
+  const workoutDays = weeklyPlan.filter(day => day.workoutType && day.workoutType !== 'rest' && day.workoutType !== 'none');
   const restDays = weeklyPlan.filter(day => day.workoutType === 'rest');
 
   return (
@@ -182,7 +182,7 @@ const WeeklyPlanner = () => {
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center justify-between">
                       {day.dayHebrew}
-                      {(day.workoutType === 'A' || day.workoutType === 'B' || day.workoutType === 'C') && (
+                      {day.workoutType && day.workoutType !== 'none' && (
                         <Badge className={getWorkoutTypeColor(day.workoutType)}>
                           {getWorkoutTypeLabel(day.workoutType)}
                         </Badge>
@@ -342,7 +342,7 @@ const WeeklyPlanner = () => {
                       // Set preferred times to evening for all workout days
                       const updatedPlan = weeklyPlan.map(day => ({
                         ...day,
-                        preferredTime: day.workoutType && day.workoutType !== 'rest' ? 'evening' : day.preferredTime
+                        preferredTime: day.workoutType && day.workoutType !== 'rest' && day.workoutType !== 'none' ? 'evening' : day.preferredTime
                       }));
                       setWeeklyPlan(updatedPlan);
                       toast({
@@ -372,7 +372,7 @@ const WeeklyPlanner = () => {
                           {getWorkoutTypeLabel(day.workoutType)}
                         </Badge>
                       </div>
-                      {day.preferredTime && (day.workoutType === 'A' || day.workoutType === 'B' || day.workoutType === 'C') && (
+                      {day.preferredTime && day.preferredTime !== 'none' && (day.workoutType === 'A' || day.workoutType === 'B' || day.workoutType === 'C') && (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Clock className="h-4 w-4" />
                           {getTimeLabel(day.preferredTime)}
