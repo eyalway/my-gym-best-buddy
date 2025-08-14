@@ -39,6 +39,12 @@ const Auth = () => {
             description: 'אימייל או סיסמה שגויים',
             variant: 'destructive',
           });
+        } else if (error.message.includes('Email not confirmed')) {
+          toast({
+            title: 'אימות אימייל נדרש',
+            description: 'בדוק את הגמייל שלך ולחץ על קישור האימות לפני ההתחברות',
+            variant: 'destructive',
+          });
         } else {
           toast({
             title: 'שגיאה בהתחברות',
@@ -103,10 +109,10 @@ const Auth = () => {
         }
       } else {
         toast({
-          title: 'נרשמת בהצלחה! 🎉',
-          description: 'ברוך הבא למערכת הכושר!',
+          title: 'נרשמת בהצלחה! 📧',
+          description: 'נשלח לך מייל אימות. לחץ על הקישור במייל כדי להשלים את הרישום.',
         });
-        navigate('/');
+        // Don't navigate automatically - user needs to confirm email first
       }
     } catch (error) {
       toast({
@@ -142,6 +148,9 @@ const Auth = () => {
               </TabsList>
               
               <TabsContent value="signin" className="space-y-4">
+                <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                  💡 <strong>הערה:</strong> אם נרשמת זה עתה, בדוק את הגמייל שלך ולחץ על קישור האימות לפני ההתחברות.
+                </div>
                 <form onSubmit={handleSignIn} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">אימייל</Label>
