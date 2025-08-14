@@ -5,7 +5,9 @@ import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
+import { UserButton } from "@/components/UserButton";
 import { useExercises, Exercise } from "@/hooks/useExercises";
+import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -24,6 +26,7 @@ import fitnessHero from "@/assets/fitness-hero.jpg";
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -96,6 +99,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Dumbbell className="h-6 w-6 text-fitness-primary" />
+            <span className="font-bold text-lg">מערכת כושר</span>
+          </div>
+          <UserButton />
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div 
         className="relative h-64 bg-cover bg-center bg-no-repeat"
@@ -104,7 +118,7 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90" />
         <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
-            אימון היום שלך
+            {profile?.full_name ? `שלום ${profile.full_name}!` : 'אימון היום שלך'}
           </h1>
           <p className="text-lg text-muted-foreground mb-6 max-w-md">
             בואו נבנה את הכוח והסיבולת שלך יחד

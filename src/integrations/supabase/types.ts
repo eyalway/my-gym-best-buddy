@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          fitness_goals: string | null
+          full_name: string | null
+          id: string
+          preferred_workout_time: string | null
+          updated_at: string
+          user_id: string
+          weight_goal: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          fitness_goals?: string | null
+          full_name?: string | null
+          id?: string
+          preferred_workout_time?: string | null
+          updated_at?: string
+          user_id: string
+          weight_goal?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          fitness_goals?: string | null
+          full_name?: string | null
+          id?: string
+          preferred_workout_time?: string | null
+          updated_at?: string
+          user_id?: string
+          weight_goal?: number | null
+        }
+        Relationships: []
+      }
       workout_exercises: {
         Row: {
           completed: boolean
