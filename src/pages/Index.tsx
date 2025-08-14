@@ -20,7 +20,8 @@ import {
   Calendar,
   Play,
   Trophy,
-  Settings
+  Settings,
+  Sparkles
 } from "lucide-react";
 import fitnessHero from "@/assets/fitness-hero.jpg";
 
@@ -33,6 +34,43 @@ const Index = () => {
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [isManagingExercises, setIsManagingExercises] = useState(false);
+
+  // Default exercises to add for new users
+  const DEFAULT_EXERCISES = [
+    // Workout A - חזה, כתפיים, יד אחורית ובטן
+    { name: 'פרפרית בישיבה', targetMuscle: 'חזה', machineNumber: '1', seatHeight: '5', sets: '4', reps: '8-12', weight: '70', workoutType: 'A' as const },
+    { name: 'לחיצת חזה במכונה', targetMuscle: 'חזה', machineNumber: '2', seatHeight: '4', sets: '3', reps: '10-12', weight: '60', workoutType: 'A' as const },
+    { name: 'לחיצת חזה משופע', targetMuscle: 'חזה', machineNumber: '3', seatHeight: '6', sets: '4', reps: '8-10', weight: '45', workoutType: 'A' as const },
+    { name: 'לחיצת כתפיים במכונה', targetMuscle: 'כתפיים', machineNumber: '4', seatHeight: '5', sets: '4', reps: '10-12', weight: '40', workoutType: 'A' as const },
+    { name: 'הרמת כתפיים צדדית', targetMuscle: 'כתפיים', machineNumber: '5', seatHeight: '4', sets: '3', reps: '12-15', weight: '12', workoutType: 'A' as const },
+    { name: 'הרמת כתפיים אחורית', targetMuscle: 'כתפיים', machineNumber: '6', seatHeight: '4', sets: '3', reps: '12-15', weight: '10', workoutType: 'A' as const },
+    { name: 'דחיפת טריצפס במכונה', targetMuscle: 'יד אחורית', machineNumber: '7', seatHeight: '5', sets: '4', reps: '10-12', weight: '35', workoutType: 'A' as const },
+    { name: 'הרחקת זרועות עליונה', targetMuscle: 'יד אחורית', machineNumber: '8', seatHeight: '4', sets: '3', reps: '10-12', weight: '25', workoutType: 'A' as const },
+    { name: 'דיפס על מכונה', targetMuscle: 'יד אחורית', machineNumber: '9', seatHeight: '5', sets: '3', reps: '8-12', weight: '20', workoutType: 'A' as const },
+    { name: 'קראנץ\'ים על מכונה', targetMuscle: 'בטן', machineNumber: '10', seatHeight: '4', sets: '4', reps: '15-20', weight: '30', workoutType: 'A' as const },
+    { name: 'פלאנק', targetMuscle: 'בטן', sets: '3', reps: '30-60 שניות', workoutType: 'A' as const },
+    { name: 'רוסיאן טוויסט', targetMuscle: 'בטן', sets: '3', reps: '20-30', workoutType: 'A' as const },
+
+    // Workout B - גב, יד קידמית ובטן
+    { name: 'Pull-ups', targetMuscle: 'גב', sets: '4', reps: '6-10', workoutType: 'B' as const },
+    { name: 'Barbell Rows', targetMuscle: 'גב', machineNumber: '6', seatHeight: '5', sets: '4', reps: '8-10', weight: '60', workoutType: 'B' as const },
+    { name: 'Lat Pulldowns', targetMuscle: 'גב', machineNumber: '7', seatHeight: '6', sets: '3', reps: '10-12', weight: '50', workoutType: 'B' as const },
+    { name: 'Bicep Curls', targetMuscle: 'יד קידמית', machineNumber: '8', seatHeight: '4', sets: '4', reps: '10-12', weight: '15', workoutType: 'B' as const },
+    { name: 'Hammer Curls', targetMuscle: 'יד קידמית', sets: '3', reps: '10-12', weight: '12', workoutType: 'B' as const },
+    { name: 'Cable Curls', targetMuscle: 'יד קידמית', machineNumber: '9', seatHeight: '5', sets: '3', reps: '12-15', weight: '25', workoutType: 'B' as const },
+    { name: 'Dead Bug', targetMuscle: 'בטן', sets: '3', reps: '10 לכל צד', workoutType: 'B' as const },
+    { name: 'Mountain Climbers', targetMuscle: 'בטן', sets: '3', reps: '20-30', workoutType: 'B' as const },
+
+    // Workout C - רגליים, זרועות ובטן
+    { name: 'Squats', targetMuscle: 'רגליים', machineNumber: '10', seatHeight: '7', sets: '4', reps: '10-15', weight: '80', workoutType: 'C' as const },
+    { name: 'Romanian Deadlift', targetMuscle: 'רגליים', sets: '4', reps: '8-10', weight: '70', workoutType: 'C' as const },
+    { name: 'Walking Lunges', targetMuscle: 'רגליים', sets: '3', reps: '12 לכל רגל', workoutType: 'C' as const },
+    { name: 'Calf Raises', targetMuscle: 'רגליים', machineNumber: '11', seatHeight: '6', sets: '4', reps: '15-20', weight: '40', workoutType: 'C' as const },
+    { name: 'Bicep Curls', targetMuscle: 'יד קידמית', machineNumber: '8', seatHeight: '4', sets: '3', reps: '10-12', weight: '15', workoutType: 'C' as const },
+    { name: 'Close-Grip Push-ups', targetMuscle: 'יד אחורית', sets: '3', reps: '8-12', workoutType: 'C' as const },
+    { name: 'Leg Raises', targetMuscle: 'בטן', sets: '3', reps: '12-15', workoutType: 'C' as const },
+    { name: 'Bicycle Crunches', targetMuscle: 'בטן', sets: '3', reps: '20 לכל צד', workoutType: 'C' as const },
+  ];
 
   // Use the exercises hook
   const { 
@@ -118,6 +156,24 @@ const Index = () => {
   const handleDeleteExercise = (id: string) => {
     if (window.confirm('האם אתה בטוח שברצונך למחוק את התרגיל הזה?')) {
       deleteExercise(id);
+    }
+  };
+
+  const handleAddDefaultExercises = async () => {
+    try {
+      for (const exercise of DEFAULT_EXERCISES) {
+        await addExercise(exercise);
+      }
+      toast({
+        title: "הוספו בהצלחה!",
+        description: "תרגילי דיפולט נוספו לכל האימונים",
+      });
+    } catch (error) {
+      toast({
+        title: "שגיאה",
+        description: "לא ניתן להוסיף את התרגילים",
+        variant: "destructive",
+      });
     }
   };
 
@@ -263,12 +319,36 @@ const Index = () => {
           </div>
 
           {currentExercises.length === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>אין עדיין תרגילים לאימון זה</p>
-              {isManagingExercises && (
-                <p className="text-sm mt-2">לחץ "הוסף תרגיל" כדי להתחיל</p>
-              )}
+            <div className="text-center py-12 text-muted-foreground">
+              <Target className="w-16 h-16 mx-auto mb-6 opacity-50" />
+              <h3 className="text-xl font-semibold mb-4 text-foreground">אין עדיין תרגילים לאימון {selectedWorkout}</h3>
+              <div className="space-y-4 max-w-md mx-auto">
+                <p className="text-sm">
+                  בכדי להוסיף תרגילים, בחר באחת מהאפשרויות הבאות:
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                  <Button 
+                    variant="outline" 
+                    className="gap-2 w-full sm:w-auto"
+                    onClick={() => setIsManagingExercises(true)}
+                  >
+                    <Settings className="w-4 h-4" />
+                    נהל תרגילים ידנית
+                  </Button>
+                  <span className="text-xs text-muted-foreground">או</span>
+                  <Button 
+                    variant="default" 
+                    className="gap-2 w-full sm:w-auto"
+                    onClick={handleAddDefaultExercises}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    הוסף תרגילי דיפולט
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  תרגילי הדיפולט יוסיפו מגוון תרגילים מוכנים לכל האימונים
+                </p>
+              </div>
             </div>
           )}
         </section>
