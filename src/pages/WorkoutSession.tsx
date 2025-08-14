@@ -27,12 +27,19 @@ const WorkoutSession = () => {
 
   useEffect(() => {
     console.log('useEffect - workoutType:', workoutType, 'exercises.length:', exercises.length);
-    if (!workoutType || exercises.length === 0) {
-      console.log('Redirecting back to home - no workoutType or no exercises');
+    // Wait for exercises to load - don't redirect immediately if no exercises yet
+    if (!workoutType) {
+      console.log('Redirecting back to home - no workoutType');
       navigate('/');
       return;
     }
-  }, [workoutType, exercises.length, navigate]);
+    // Only redirect if we have no exercises AND exercises have been loaded (length > 0 means loaded)
+    if (exercises.length > 0 && getExercisesByWorkout(workoutType).length === 0) {
+      console.log('Redirecting back to home - no exercises for this workout type');
+      navigate('/');
+      return;
+    }
+  }, [workoutType, exercises.length, navigate, getExercisesByWorkout]);
 
   const handleNextExercise = () => {
     setCompletedExercises(prev => new Set([...prev, currentExerciseIndex]));
@@ -71,6 +78,29 @@ const WorkoutSession = () => {
       description: "תמיד אפשר לחזור ולהמשיך!",
     });
   };
+
+  if (!currentExercise && exercises.length > 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">אין תרגילים באימון זה</h2>
+          <Button onClick={() => navigate('/')}>חזרה לבית</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while exercises are being loaded
+  if (exercises.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-fitness-primary mx-auto mb-4"></div>
+          <p>טוען תרגילים...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentExercise) {
     return null;
