@@ -51,18 +51,35 @@ interface WorkoutData {
   }>;
 }
 
+interface ExerciseProgress {
+  exercise_name: string;
+  weight: number;
+  date: string;
+  workout_type: string;
+}
+
 const Analytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
+  const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([]);
+  const [availableExercises, setAvailableExercises] = useState<string[]>([]);
+  const [selectedExercise, setSelectedExercise] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('30');
 
   useEffect(() => {
     if (user) {
       fetchWorkoutData();
+      fetchExerciseProgress();
     }
   }, [user, selectedPeriod]);
+
+  useEffect(() => {
+    if (selectedExercise && user) {
+      fetchExerciseProgress();
+    }
+  }, [selectedExercise, user, selectedPeriod]);
 
   const fetchWorkoutData = async () => {
     if (!user) return;
@@ -112,6 +129,65 @@ const Analytics = () => {
     }
   };
 
+  const fetchExerciseProgress = async () => {
+    if (!user) return;
+    
+    try {
+      const daysAgo = parseInt(selectedPeriod);
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - daysAgo);
+
+      const { data: exerciseData, error } = await supabase
+        .from('workout_exercises')
+        .select(`
+          exercise_name,
+          weight,
+          created_at,
+          workouts!inner (
+            user_id,
+            start_time,
+            workout_type,
+            completed
+          )
+        `)
+        .eq('workouts.user_id', user.id)
+        .eq('workouts.completed', true)
+        .gte('workouts.start_time', startDate.toISOString())
+        .not('weight', 'is', null)
+        .order('workouts.start_time', { ascending: true });
+
+      if (error) {
+        console.error('Error fetching exercise progress:', error);
+        return;
+      }
+
+      if (exerciseData) {
+        // Get unique exercise names
+        const exercises = [...new Set(exerciseData.map(item => item.exercise_name))];
+        setAvailableExercises(exercises);
+        
+        // Set default selected exercise if none selected
+        if (!selectedExercise && exercises.length > 0) {
+          setSelectedExercise(exercises[0]);
+        }
+
+        // Transform data for charts
+        const progressData: ExerciseProgress[] = exerciseData
+          .filter(item => item.weight && parseFloat(item.weight) > 0)
+          .map(item => ({
+            exercise_name: item.exercise_name,
+            weight: parseFloat(item.weight!),
+            date: item.workouts.start_time,
+            workout_type: item.workouts.workout_type
+          }));
+
+        setExerciseProgress(progressData);
+      }
+    } catch (error) {
+      console.error('Error fetching exercise progress:', error);
+    }
+  };
+
   // Calculate stats
   const completedWorkouts = workouts.filter(w => w.completed);
   const totalWorkouts = workouts.length;
@@ -154,6 +230,16 @@ const Analytics = () => {
     type: `אימון ${type}`,
     count: completedWorkouts.filter(w => w.workout_type === type).length
   }));
+
+  // Exercise progress data for selected exercise
+  const selectedExerciseData = exerciseProgress
+    .filter(item => item.exercise_name === selectedExercise)
+    .map((item, index) => ({
+      name: `אימון ${index + 1}`,
+      date: new Date(item.date).toLocaleDateString('he-IL'),
+      weight: item.weight,
+      workout_type: item.workout_type
+    }));
 
   const stats = [
     { 
@@ -236,8 +322,9 @@ const Analytics = () => {
 
         {/* Charts and Data */}
         <Tabs defaultValue="progress" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="progress">התקדמות</TabsTrigger>
+            <TabsTrigger value="exercises">תרגילים</TabsTrigger>
             <TabsTrigger value="workouts">סוגי אימונים</TabsTrigger>
             <TabsTrigger value="history">היסטוריה</TabsTrigger>
           </TabsList>
@@ -293,6 +380,107 @@ const Analytics = () => {
                       <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
                       <p>אין עדיין נתוני אימונים להצגה</p>
                       <p className="text-sm mt-2">התחל אימון כדי לראות את ההתקדמות שלך</p>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="exercises" className="space-y-6">
+            <Card className="bg-card/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-fitness-primary" />
+                  התקדמות משקלים בתרגילים
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {availableExercises.length > 0 ? (
+                  <>
+                    <div className="flex items-center gap-4">
+                      <label className="text-sm font-medium">בחר תרגיל:</label>
+                      <Select value={selectedExercise} onValueChange={setSelectedExercise}>
+                        <SelectTrigger className="w-64">
+                          <SelectValue placeholder="בחר תרגיל" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableExercises.map((exercise) => (
+                            <SelectItem key={exercise} value={exercise}>
+                              {exercise}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    {selectedExerciseData.length > 0 ? (
+                      <ChartContainer config={{
+                        weight: {
+                          label: "משקל (ק״ג)",
+                          color: "hsl(var(--fitness-primary))",
+                        }
+                      }} className="h-[300px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={selectedExerciseData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="date" 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              angle={-45}
+                              textAnchor="end"
+                              height={60}
+                            />
+                            <YAxis 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              label={{ value: 'משקל (ק״ג)', angle: -90, position: 'insideLeft' }}
+                            />
+                            <ChartTooltip 
+                              content={({ active, payload, label }) => {
+                                if (active && payload && payload.length > 0) {
+                                  return (
+                                    <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
+                                      <p className="font-medium">{`תאריך: ${label}`}</p>
+                                      <p className="text-fitness-primary">
+                                        {`משקל: ${payload[0].value} ק״ג`}
+                                      </p>
+                                    </div>
+                                  );
+                                }
+                                return null;
+                              }}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="weight" 
+                              stroke="hsl(var(--fitness-primary))" 
+                              strokeWidth={3}
+                              dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 2, r: 6 }}
+                              activeDot={{ r: 8 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    ) : (
+                      <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                        <div className="text-center">
+                          <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                          <p>אין נתוני משקלים עבור התרגיל הנבחר</p>
+                          <p className="text-sm mt-2">התחל לתעד משקלים באימונים</p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                    <div className="text-center">
+                      <Dumbbell className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>אין עדיין תרגילים עם נתוני משקלים</p>
+                      <p className="text-sm mt-2">התחל אימון ותעד משקלים כדי לראות התקדמות</p>
                     </div>
                   </div>
                 )}
