@@ -6,6 +6,7 @@ import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { useExercises, Exercise } from "@/hooks/useExercises";
+import { useToast } from "@/hooks/use-toast";
 import { 
   Dumbbell, 
   Flame, 
@@ -20,6 +21,7 @@ import {
 import fitnessHero from "@/assets/fitness-hero.jpg";
 
 const Index = () => {
+  const { toast } = useToast();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -70,7 +72,11 @@ const Index = () => {
 
   const handleStartWorkout = (workoutTitle: string) => {
     setCurrentWorkout(workoutTitle);
-    // כאן תהיה לוגיקה להתחלת אימון
+    toast({
+      title: "אימון התחיל! 💪",
+      description: `התחלת: ${workoutTitle}`,
+    });
+    console.log("Starting workout:", workoutTitle);
   };
 
   const handleEditExercise = (id: string) => {
