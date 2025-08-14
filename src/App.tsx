@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
 import WeeklyPlanner from "./pages/WeeklyPlanner";
+import TimerPage from "./pages/TimerPage";
 import WorkoutSession from "./pages/WorkoutSession";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,11 @@ const App = () => (
           <Route path="/weekly-planner" element={
             <AuthGuard>
               <WeeklyPlanner />
+            </AuthGuard>
+          } />
+          <Route path="/timer" element={
+            <AuthGuard>
+              <TimerPage />
             </AuthGuard>
           } />
           <Route path="/" element={
