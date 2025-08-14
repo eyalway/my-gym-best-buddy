@@ -7,6 +7,7 @@ import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { useExercises, Exercise } from "@/hooks/useExercises";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { 
   Dumbbell, 
   Flame, 
@@ -22,6 +23,7 @@ import fitnessHero from "@/assets/fitness-hero.jpg";
 
 const Index = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -70,13 +72,9 @@ const Index = () => {
     },
   ];
 
-  const handleStartWorkout = (workoutTitle: string) => {
+  const handleStartWorkout = (workoutTitle: string, workoutType: 'A' | 'B' | 'C') => {
     setCurrentWorkout(workoutTitle);
-    toast({
-      title: "אימון התחיל! 💪",
-      description: `התחלת: ${workoutTitle}`,
-    });
-    console.log("Starting workout:", workoutTitle);
+    navigate(`/workout/${workoutType}`);
   };
 
   const handleEditExercise = (id: string) => {
@@ -137,13 +135,16 @@ const Index = () => {
             תוכניות אימון מומלצות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workoutPlans.map((workout, index) => (
-              <WorkoutCard 
-                key={index} 
-                {...workout}
-                onStart={() => handleStartWorkout(workout.title)}
-              />
-            ))}
+            {workoutPlans.map((workout, index) => {
+              const workoutType = index === 0 ? 'A' : index === 1 ? 'B' : 'C';
+              return (
+                <WorkoutCard 
+                  key={index} 
+                  {...workout}
+                  onStart={() => handleStartWorkout(workout.title, workoutType)}
+                />
+              );
+            })}
           </div>
         </section>
 
