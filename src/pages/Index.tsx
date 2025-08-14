@@ -27,35 +27,65 @@ const Index = () => {
 
   const workoutPlans = [
     {
-      title: "אימון חזה וזרועות",
-      duration: "45 דקות",
-      calories: "300 קלוריות",
-      exercises: 8,
+      title: "אימון A: חזה, כתפיים, יד אחורית ובטן",
+      duration: "60 דקות",
+      calories: "350 קלוריות",
+      exercises: 12,
       difficulty: "בינוני" as const,
+      muscleGroups: ["חזה", "כתפיים", "יד אחורית", "בטן"]
     },
     {
-      title: "אימון רגליים אינטנסיבי",
-      duration: "50 דקות", 
-      calories: "400 קלוריות",
-      exercises: 6,
+      title: "אימון B: גב, יד קידמית ובטן",
+      duration: "55 דקות", 
+      calories: "320 קלוריות",
+      exercises: 10,
+      difficulty: "בינוני" as const,
+      muscleGroups: ["גב", "יד קידמית", "בטן"]
+    },
+    {
+      title: "אימון C: רגליים, זרועות ובטן",
+      duration: "70 דקות",
+      calories: "450 קלוריות", 
+      exercises: 14,
       difficulty: "קשה" as const,
-    },
-    {
-      title: "אימון קרדיו קל",
-      duration: "30 דקות",
-      calories: "200 קלוריות", 
-      exercises: 5,
-      difficulty: "קל" as const,
+      muscleGroups: ["רגליים", "יד קידמית", "יד אחורית", "בטן"]
     },
   ];
 
-  const popularExercises = [
-    { name: "Bench Press", targetMuscle: "חזה", sets: "4", reps: "8-12", weight: "70" },
-    { name: "Squats", targetMuscle: "רגליים", sets: "4", reps: "10-15", weight: "80" },
-    { name: "Deadlift", targetMuscle: "גב", sets: "3", reps: "5-8", weight: "90" },
-    { name: "Pull-ups", targetMuscle: "גב", sets: "3", reps: "8-12" },
-    { name: "Overhead Press", targetMuscle: "כתפיים", sets: "4", reps: "8-10", weight: "45" },
-  ];
+  const exercisesByWorkout = {
+    "A": [
+      { name: "Bench Press", targetMuscle: "חזה", sets: "4", reps: "8-12", weight: "70" },
+      { name: "Incline Dumbbell Press", targetMuscle: "חזה", sets: "3", reps: "10-12", weight: "25" },
+      { name: "Shoulder Press", targetMuscle: "כתפיים", sets: "4", reps: "8-10", weight: "45" },
+      { name: "Lateral Raises", targetMuscle: "כתפיים", sets: "3", reps: "12-15", weight: "12" },
+      { name: "Tricep Dips", targetMuscle: "יד אחורית", sets: "3", reps: "10-12" },
+      { name: "Overhead Tricep Extension", targetMuscle: "יד אחורית", sets: "3", reps: "10-12", weight: "20" },
+      { name: "Plank", targetMuscle: "בטן", sets: "3", reps: "30-60 שניות" },
+      { name: "Russian Twists", targetMuscle: "בטן", sets: "3", reps: "20-30" },
+    ],
+    "B": [
+      { name: "Pull-ups", targetMuscle: "גב", sets: "4", reps: "6-10" },
+      { name: "Barbell Rows", targetMuscle: "גב", sets: "4", reps: "8-10", weight: "60" },
+      { name: "Lat Pulldowns", targetMuscle: "גב", sets: "3", reps: "10-12", weight: "50" },
+      { name: "Bicep Curls", targetMuscle: "יד קידמית", sets: "4", reps: "10-12", weight: "15" },
+      { name: "Hammer Curls", targetMuscle: "יד קידמית", sets: "3", reps: "10-12", weight: "12" },
+      { name: "Cable Curls", targetMuscle: "יד קידמית", sets: "3", reps: "12-15", weight: "25" },
+      { name: "Dead Bug", targetMuscle: "בטן", sets: "3", reps: "10 לכל צד" },
+      { name: "Mountain Climbers", targetMuscle: "בטן", sets: "3", reps: "20-30" },
+    ],
+    "C": [
+      { name: "Squats", targetMuscle: "רגליים", sets: "4", reps: "10-15", weight: "80" },
+      { name: "Romanian Deadlift", targetMuscle: "רגליים", sets: "4", reps: "8-10", weight: "70" },
+      { name: "Walking Lunges", targetMuscle: "רגליים", sets: "3", reps: "12 לכל רגל" },
+      { name: "Calf Raises", targetMuscle: "רגליים", sets: "4", reps: "15-20", weight: "40" },
+      { name: "Bicep Curls", targetMuscle: "יד קידמית", sets: "3", reps: "10-12", weight: "15" },
+      { name: "Close-Grip Push-ups", targetMuscle: "יד אחורית", sets: "3", reps: "8-12" },
+      { name: "Leg Raises", targetMuscle: "בטן", sets: "3", reps: "12-15" },
+      { name: "Bicycle Crunches", targetMuscle: "בטן", sets: "3", reps: "20 לכל צד" },
+    ]
+  };
+
+  const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
 
   const handleStartWorkout = (workoutTitle: string) => {
     setCurrentWorkout(workoutTitle);
@@ -115,14 +145,39 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Popular Exercises */}
+        {/* Exercise Selector and List */}
         <section>
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
-            <Target className="w-6 h-6 text-fitness-primary" />
-            תרגילים פופולאריים
-          </h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold flex items-center gap-2">
+              <Target className="w-6 h-6 text-fitness-primary" />
+              תרגילי אימון {selectedWorkout}
+            </h2>
+            <div className="flex gap-2">
+              <Button 
+                variant={selectedWorkout === "A" ? "default" : "outline"} 
+                onClick={() => setSelectedWorkout("A")}
+                size="sm"
+              >
+                אימון A
+              </Button>
+              <Button 
+                variant={selectedWorkout === "B" ? "default" : "outline"} 
+                onClick={() => setSelectedWorkout("B")}
+                size="sm"
+              >
+                אימון B
+              </Button>
+              <Button 
+                variant={selectedWorkout === "C" ? "default" : "outline"} 
+                onClick={() => setSelectedWorkout("C")}
+                size="sm"
+              >
+                אימון C
+              </Button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {popularExercises.map((exercise, index) => (
+            {exercisesByWorkout[selectedWorkout].map((exercise, index) => (
               <ExerciseItem key={index} {...exercise} />
             ))}
           </div>
