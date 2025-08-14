@@ -54,7 +54,10 @@ export const WorkoutCard = ({
         <Button 
           variant="workout" 
           className="w-full"
-          onClick={onStart}
+          onClick={() => {
+            console.log('Workout button clicked:', title);
+            onStart();
+          }}
         >
           התחל אימון
         </Button>

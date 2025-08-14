@@ -73,7 +73,9 @@ const Index = () => {
   ];
 
   const handleStartWorkout = (workoutTitle: string, workoutType: 'A' | 'B' | 'C') => {
+    console.log('handleStartWorkout called with:', workoutTitle, workoutType);
     setCurrentWorkout(workoutTitle);
+    console.log('About to navigate to:', `/workout/${workoutType}`);
     navigate(`/workout/${workoutType}`);
   };
 
