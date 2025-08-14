@@ -14,54 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      exercise_templates: {
-        Row: {
-          created_at: string
-          exercise_name: string
-          exercise_order: number
-          id: string
-          machine_number: string | null
-          reps: string | null
-          seat_height: string | null
-          sets: string | null
-          target_muscle: string
-          updated_at: string
-          user_id: string
-          weight: string | null
-          workout_type: string
-        }
-        Insert: {
-          created_at?: string
-          exercise_name: string
-          exercise_order?: number
-          id?: string
-          machine_number?: string | null
-          reps?: string | null
-          seat_height?: string | null
-          sets?: string | null
-          target_muscle: string
-          updated_at?: string
-          user_id: string
-          weight?: string | null
-          workout_type: string
-        }
-        Update: {
-          created_at?: string
-          exercise_name?: string
-          exercise_order?: number
-          id?: string
-          machine_number?: string | null
-          reps?: string | null
-          seat_height?: string | null
-          sets?: string | null
-          target_muscle?: string
-          updated_at?: string
-          user_id?: string
-          weight?: string | null
-          workout_type?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           avatar_url: string | null
