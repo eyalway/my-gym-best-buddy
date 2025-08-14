@@ -6,7 +6,7 @@ import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { UserButton } from "@/components/UserButton";
-import { useExercises, Exercise } from "@/hooks/useExercises";
+import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
 import { useWorkoutStats } from "@/hooks/useWorkoutStats";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -40,8 +40,9 @@ const Index = () => {
     updateExercise, 
     deleteExercise, 
     getExercisesByWorkout,
-    reorderExercise 
-  } = useExercises();
+    reorderExercise,
+    loading 
+  } = useSupabaseExercises();
 
   // Generate dynamic stats based on real data
   const todayStats = [
