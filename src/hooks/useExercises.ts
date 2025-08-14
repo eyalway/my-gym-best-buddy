@@ -85,7 +85,10 @@ export const useExercises = () => {
   };
 
   const getExercisesByWorkout = (workoutType: 'A' | 'B' | 'C') => {
-    return exercises.filter(exercise => exercise.workoutType === workoutType);
+    const filtered = exercises.filter(exercise => exercise.workoutType === workoutType);
+    console.log(`getExercisesByWorkout for ${workoutType}:`, filtered.length, 'exercises found');
+    console.log('All exercises:', exercises.length);
+    return filtered;
   };
 
   const reorderExercise = (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => {
