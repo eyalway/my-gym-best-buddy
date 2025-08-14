@@ -328,7 +328,7 @@ const Index = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
                   <Button 
-                    variant="outline" 
+                    variant="default" 
                     className="gap-2 w-full sm:w-auto"
                     onClick={() => setIsManagingExercises(true)}
                   >
