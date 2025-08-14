@@ -18,6 +18,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        workout: "bg-gradient-to-r from-fitness-primary to-fitness-secondary text-white hover:shadow-lg hover:shadow-fitness-primary/25 transition-all duration-300",
+        hero: "bg-gradient-to-r from-fitness-accent to-fitness-primary text-white hover:scale-105 transition-all duration-300 shadow-lg",
       },
       size: {
         default: "h-10 px-4 py-2",
