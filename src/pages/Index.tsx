@@ -205,6 +205,7 @@ const Index = () => {
                     sets={exercise.sets}
                     reps={exercise.reps}
                     weight={exercise.weight}
+                workoutType={selectedWorkout}
                 showActions={isManagingExercises}
                 onEdit={handleEditExercise}
                 onDelete={handleDeleteExercise}

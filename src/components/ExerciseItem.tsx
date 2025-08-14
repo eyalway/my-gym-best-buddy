@@ -14,7 +14,7 @@ interface ExerciseItemProps {
   weight?: string;
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
-  onReorder?: (id: string, direction: 'up' | 'down') => void;
+  onReorder?: (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => void;
   showActions?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
@@ -34,8 +34,9 @@ export const ExerciseItem = ({
   onReorder,
   showActions = false,
   isFirst = false,
-  isLast = false
-}: ExerciseItemProps) => {
+  isLast = false,
+  workoutType
+}: ExerciseItemProps & { workoutType: 'A' | 'B' | 'C' }) => {
   return (
     <Card className="bg-card/30 backdrop-blur-sm border-border/30 hover:bg-card/50 transition-all duration-200">
       <CardContent className="p-4">
@@ -66,7 +67,7 @@ export const ExerciseItem = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onReorder?.(id, 'up')}
+                    onClick={() => onReorder?.(id, 'up', workoutType)}
                     disabled={isFirst}
                     className="h-6 w-6 p-0 hover:bg-fitness-accent/20 hover:text-fitness-accent disabled:opacity-30"
                   >
@@ -75,7 +76,7 @@ export const ExerciseItem = ({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => onReorder?.(id, 'down')}
+                    onClick={() => onReorder?.(id, 'down', workoutType)}
                     disabled={isLast}
                     className="h-6 w-6 p-0 hover:bg-fitness-accent/20 hover:text-fitness-accent disabled:opacity-30"
                   >

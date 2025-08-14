@@ -88,21 +88,31 @@ export const useExercises = () => {
     return exercises.filter(exercise => exercise.workoutType === workoutType);
   };
 
-  const reorderExercise = (id: string, direction: 'up' | 'down') => {
+  const reorderExercise = (id: string, direction: 'up' | 'down', workoutType: 'A' | 'B' | 'C') => {
     setExercises(prev => {
-      const exerciseIndex = prev.findIndex(ex => ex.id === id);
+      // Get all exercises of the specific workout type
+      const workoutExercises = prev.filter(ex => ex.workoutType === workoutType);
+      const exerciseIndex = workoutExercises.findIndex(ex => ex.id === id);
+      
       if (exerciseIndex === -1) return prev;
       
-      const newExercises = [...prev];
       const targetIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
       
-      if (targetIndex < 0 || targetIndex >= newExercises.length) return prev;
+      if (targetIndex < 0 || targetIndex >= workoutExercises.length) return prev;
       
-      // Swap exercises
-      [newExercises[exerciseIndex], newExercises[targetIndex]] = 
-      [newExercises[targetIndex], newExercises[exerciseIndex]];
+      // Create new array with swapped exercises
+      const newWorkoutExercises = [...workoutExercises];
+      [newWorkoutExercises[exerciseIndex], newWorkoutExercises[targetIndex]] = 
+      [newWorkoutExercises[targetIndex], newWorkoutExercises[exerciseIndex]];
       
-      return newExercises;
+      // Update the main exercises array
+      return prev.map(exercise => {
+        if (exercise.workoutType === workoutType) {
+          const newIndex = newWorkoutExercises.findIndex(ex => ex.id === exercise.id);
+          return newWorkoutExercises[newIndex];
+        }
+        return exercise;
+      });
     });
   };
 
