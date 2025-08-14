@@ -75,6 +75,11 @@ const Index = () => {
     },
   ];
 
+  const handleQuickWorkout = () => {
+    // Start the most popular workout (Workout A) immediately
+    handleStartWorkout("אימון מהיר - אימון A", 'A');
+  };
+
   const handleStartWorkout = (workoutTitle: string, workoutType: 'A' | 'B' | 'C') => {
     console.log('handleStartWorkout called with:', workoutTitle, workoutType);
     setCurrentWorkout(workoutTitle);
@@ -123,7 +128,7 @@ const Index = () => {
           <p className="text-lg text-muted-foreground mb-6 max-w-md">
             בואו נבנה את הכוח והסיבולת שלך יחד
           </p>
-          <Button variant="hero" size="lg" className="gap-2">
+          <Button variant="hero" size="lg" className="gap-2" onClick={handleQuickWorkout}>
             <Play className="w-5 h-5" />
             התחל אימון מהיר
           </Button>
