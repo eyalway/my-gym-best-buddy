@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useExercises } from "@/hooks/useExercises";
 import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -26,12 +27,93 @@ const WorkoutSession = () => {
   const [completedExercises, setCompletedExercises] = useState<Set<number>>(new Set());
   const [isEditingWeight, setIsEditingWeight] = useState(false);
   const [tempWeight, setTempWeight] = useState('');
+  
+  // Timer states
+  const [workoutTime, setWorkoutTime] = useState(0);
+  const [restTime, setRestTime] = useState(0);
+  const [restDuration, setRestDuration] = useState(60);
+  const [isWorkoutRunning, setIsWorkoutRunning] = useState(false);
+  const [isRestRunning, setIsRestRunning] = useState(false);
+  const [isSoundEnabled, setIsSoundEnabled] = useState(true);
 
   const exercises = workoutType ? getExercisesByWorkout(workoutType) : [];
   const currentExercise = exercises[currentExerciseIndex];
   const progress = exercises.length > 0 ? ((currentExerciseIndex + 1) / exercises.length) * 100 : 0;
 
   console.log('Exercises found:', exercises.length);
+
+  // Audio and vibration functions
+  const playBeep = useCallback((frequency = 800, duration = 200) => {
+    if (!isSoundEnabled) return;
+    
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioContext.destination);
+      
+      oscillator.frequency.value = frequency;
+      oscillator.type = 'sine';
+      
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+      
+      oscillator.start(audioContext.currentTime);
+      oscillator.stop(audioContext.currentTime + duration / 1000);
+    } catch (error) {
+      console.log('Audio not supported:', error);
+    }
+  }, [isSoundEnabled]);
+
+  const vibrate = useCallback((pattern: number[] = [200]) => {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(pattern);
+    }
+  }, []);
+
+  // Format time display
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Timer effects
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isWorkoutRunning) {
+        setWorkoutTime(prev => prev + 1);
+      }
+      
+      if (isRestRunning && restTime > 0) {
+        setRestTime(prev => prev - 1);
+      } else if (isRestRunning && restTime === 0) {
+        setIsRestRunning(false);
+        playBeep(1000, 500);
+        vibrate([500, 200, 500]);
+        toast({
+          title: 'זמן המנוחה נגמר! 🔔',
+          description: 'זמן להמשיך באימון',
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isWorkoutRunning, isRestRunning, restTime, playBeep, vibrate, toast]);
+
+  // Start workout timer when workout begins
+  useEffect(() => {
+    if (currentWorkoutId && exercises.length > 0 && !isWorkoutRunning) {
+      setIsWorkoutRunning(true);
+      playBeep(500, 300);
+      toast({
+        title: 'האימון התחיל! 🔥',
+        description: 'הטיימר רץ - בהצלחה!',
+      });
+    }
+  }, [currentWorkoutId, exercises.length, isWorkoutRunning, playBeep, toast]);
 
   useEffect(() => {
     console.log('useEffect - workoutType:', workoutType, 'exercises.length:', exercises.length);
@@ -73,13 +155,14 @@ const WorkoutSession = () => {
       });
     } else {
       // Workout completed - save to database
+      setIsWorkoutRunning(false);
       if (currentWorkoutId) {
         const finalCompletedExercises = new Set([...completedExercises, currentExerciseIndex]);
         await completeWorkout(currentWorkoutId, finalCompletedExercises);
       } else {
         toast({
           title: "כל הכבוד! 🎉",
-          description: "סיימת את האימון בהצלחה!",
+          description: `סיימת את האימון תוך ${formatTime(workoutTime)}!`,
         });
       }
       navigate('/');
@@ -130,6 +213,9 @@ const WorkoutSession = () => {
   };
 
   const handleEndWorkout = async () => {
+    setIsWorkoutRunning(false);
+    setIsRestRunning(false);
+    
     // Save partial workout if session exists
     if (currentWorkoutId && completedExercises.size > 0) {
       await completeWorkout(currentWorkoutId, completedExercises);
@@ -138,8 +224,30 @@ const WorkoutSession = () => {
     navigate('/');
     toast({
       title: "האימון הופסק",
-      description: completedExercises.size > 0 ? "התקדמות האימון נשמרה!" : "תמיד אפשר לחזור ולהמשיך!",
+      description: completedExercises.size > 0 
+        ? `התקדמות נשמרה! זמן אימון: ${formatTime(workoutTime)}` 
+        : "תמיד אפשר לחזור ולהמשיך!",
     });
+  };
+
+  // Timer functions
+  const startRestTimer = () => {
+    setRestTime(restDuration);
+    setIsRestRunning(true);
+    playBeep(600, 200);
+    toast({
+      title: 'מנוחה התחילה',
+      description: `${restDuration} שניות מנוחה`,
+    });
+  };
+
+  const toggleRestTimer = () => {
+    setIsRestRunning(!isRestRunning);
+  };
+
+  const resetRestTimer = () => {
+    setIsRestRunning(false);
+    setRestTime(restDuration);
   };
 
   if (!currentExercise && exercises.length > 0) {
@@ -202,6 +310,89 @@ const WorkoutSession = () => {
               תרגיל {currentExerciseIndex + 1} מתוך {exercises.length}
             </Badge>
           </div>
+
+          {/* Integrated Timer Bar */}
+          <Card className="bg-gradient-to-r from-fitness-primary/10 to-fitness-secondary/10 border-fitness-primary/20">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                {/* Workout Timer */}
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <Timer className="h-5 w-5 text-fitness-primary" />
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-fitness-primary">
+                        {formatTime(workoutTime)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">זמן אימון</div>
+                    </div>
+                  </div>
+                  
+                  {/* Rest Timer */}
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-px bg-border mx-2" />
+                    <div className="text-center">
+                      <div className={`text-lg font-bold ${
+                        restTime <= 10 && isRestRunning 
+                          ? 'text-red-500 animate-pulse' 
+                          : 'text-orange-500'
+                      }`}>
+                        {formatTime(restTime)}
+                      </div>
+                      <div className="text-xs text-muted-foreground">מנוחה</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Timer Controls */}
+                <div className="flex items-center gap-2">
+                  <Select value={restDuration.toString()} onValueChange={(value) => setRestDuration(parseInt(value))}>
+                    <SelectTrigger className="w-20 h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="30">30ש</SelectItem>
+                      <SelectItem value="45">45ש</SelectItem>
+                      <SelectItem value="60">60ש</SelectItem>
+                      <SelectItem value="90">90ש</SelectItem>
+                      <SelectItem value="120">2ד</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  
+                  <div className="flex gap-1">
+                    {!isRestRunning ? (
+                      <Button size="sm" onClick={startRestTimer} className="h-8 px-2">
+                        <Play className="w-3 h-3" />
+                      </Button>
+                    ) : (
+                      <Button size="sm" variant="outline" onClick={toggleRestTimer} className="h-8 px-2">
+                        <Pause className="w-3 h-3" />
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" onClick={resetRestTimer} className="h-8 px-2">
+                      <RotateCcw className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => setIsSoundEnabled(!isSoundEnabled)}
+                      className="h-8 px-2"
+                    >
+                      {isSoundEnabled ? <Volume2 className="w-3 h-3" /> : <VolumeX className="w-3 h-3" />}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              {isRestRunning && restTime > 0 && (
+                <div className="mt-3">
+                  <Progress 
+                    value={((restDuration - restTime) / restDuration) * 100} 
+                    className="h-1"
+                  />
+                </div>
+              )}
+            </CardContent>
+          </Card>
           
           {/* Date and Day */}
           <div className="flex items-center justify-center gap-2 text-muted-foreground">
