@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, User, Settings } from 'lucide-react';
+import { LogOut, User, Settings, TrendingUp } from 'lucide-react';
 
 export const UserButton = () => {
   const { user, profile, signOut } = useAuth();
@@ -61,6 +61,13 @@ export const UserButton = () => {
         >
           <User className="ml-2 h-4 w-4" />
           פרופיל
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          onClick={() => navigate('/analytics')} 
+          className="cursor-pointer"
+        >
+          <TrendingUp className="ml-2 h-4 w-4" />
+          מעקב ונתונים
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer">
           <Settings className="ml-2 h-4 w-4" />

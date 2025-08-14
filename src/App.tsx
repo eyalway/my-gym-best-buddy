@@ -7,6 +7,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Analytics from "./pages/Analytics";
 import WorkoutSession from "./pages/WorkoutSession";
 import NotFound from "./pages/NotFound";
 
@@ -23,6 +24,11 @@ const App = () => (
           <Route path="/profile" element={
             <AuthGuard>
               <Profile />
+            </AuthGuard>
+          } />
+          <Route path="/analytics" element={
+            <AuthGuard>
+              <Analytics />
             </AuthGuard>
           } />
           <Route path="/" element={

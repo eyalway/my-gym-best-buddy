@@ -275,7 +275,11 @@ const Index = () => {
               <Calendar className="w-4 h-4" />
               תכנון שבועי
             </Button>
-            <Button variant="outline" className="gap-2">
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={() => navigate('/analytics')}
+            >
               <TrendingUp className="w-4 h-4" />
               דוח התקדמות
             </Button>
