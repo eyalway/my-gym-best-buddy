@@ -14,6 +14,8 @@ const WorkoutSession = () => {
   const { toast } = useToast();
   const { getExercisesByWorkout } = useExercises();
   
+  console.log('WorkoutSession loaded with workoutType:', workoutType);
+  
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [completedExercises, setCompletedExercises] = useState<Set<number>>(new Set());
 
@@ -21,8 +23,12 @@ const WorkoutSession = () => {
   const currentExercise = exercises[currentExerciseIndex];
   const progress = exercises.length > 0 ? ((currentExerciseIndex + 1) / exercises.length) * 100 : 0;
 
+  console.log('Exercises found:', exercises.length);
+
   useEffect(() => {
+    console.log('useEffect - workoutType:', workoutType, 'exercises.length:', exercises.length);
     if (!workoutType || exercises.length === 0) {
+      console.log('Redirecting back to home - no workoutType or no exercises');
       navigate('/');
       return;
     }
