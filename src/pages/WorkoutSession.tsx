@@ -4,20 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useExercises } from "@/hooks/useExercises";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, ArrowLeft, CheckCircle, Home } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3 } from "lucide-react";
 
 const WorkoutSession = () => {
   const { workoutType } = useParams<{ workoutType: 'A' | 'B' | 'C' }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getExercisesByWorkout } = useExercises();
+  const { getExercisesByWorkout, updateExercise } = useExercises();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
   
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [completedExercises, setCompletedExercises] = useState<Set<number>>(new Set());
+  const [isEditingWeight, setIsEditingWeight] = useState(false);
+  const [tempWeight, setTempWeight] = useState('');
 
   const exercises = workoutType ? getExercisesByWorkout(workoutType) : [];
   const currentExercise = exercises[currentExerciseIndex];
@@ -43,6 +47,7 @@ const WorkoutSession = () => {
 
   const handleNextExercise = () => {
     setCompletedExercises(prev => new Set([...prev, currentExerciseIndex]));
+    setIsEditingWeight(false); // Reset weight editing state
     
     if (currentExerciseIndex < exercises.length - 1) {
       setCurrentExerciseIndex(prev => prev + 1);
@@ -68,7 +73,32 @@ const WorkoutSession = () => {
         newSet.delete(currentExerciseIndex - 1);
         return newSet;
       });
+      setIsEditingWeight(false); // Reset weight editing state
     }
+  };
+
+  const handleWeightEdit = () => {
+    setTempWeight(currentExercise.weight || '');
+    setIsEditingWeight(true);
+  };
+
+  const handleWeightSave = () => {
+    if (tempWeight && currentExercise) {
+      updateExercise(currentExercise.id, {
+        ...currentExercise,
+        weight: tempWeight
+      });
+      setIsEditingWeight(false);
+      toast({
+        title: "משקל עודכן! ✅",
+        description: `המשקל החדש: ${tempWeight} ק״ג`,
+      });
+    }
+  };
+
+  const handleWeightCancel = () => {
+    setIsEditingWeight(false);
+    setTempWeight('');
   };
 
   const handleEndWorkout = () => {
@@ -148,9 +178,39 @@ const WorkoutSession = () => {
                 {currentExercise.reps} חזרות
               </Badge>
               {currentExercise.weight && (
-                <Badge variant="outline" className="px-4 py-2">
-                  {currentExercise.weight} ק״ג
-                </Badge>
+                <div className="flex items-center gap-2">
+                  {isEditingWeight ? (
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="number"
+                        value={tempWeight}
+                        onChange={(e) => setTempWeight(e.target.value)}
+                        className="w-16 h-8 text-center"
+                        placeholder="ק״ג"
+                      />
+                      <Button size="sm" onClick={handleWeightSave} className="h-8 px-2">
+                        ✓
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={handleWeightCancel} className="h-8 px-2">
+                        ✕
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <Badge variant="outline" className="px-4 py-2">
+                        {currentExercise.weight} ק״ג
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleWeightEdit}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Edit3 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           </CardHeader>
