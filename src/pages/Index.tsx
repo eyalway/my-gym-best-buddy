@@ -196,15 +196,15 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentExercises.map((exercise, index) => (
               <ExerciseItem 
-                    key={exercise.id}
-                    id={exercise.id}
-                    name={exercise.name}
-                    targetMuscle={exercise.targetMuscle}
-                    machineNumber={exercise.machineNumber}
-                    seatHeight={exercise.seatHeight}
-                    sets={exercise.sets}
-                    reps={exercise.reps}
-                    weight={exercise.weight}
+                key={exercise.id}
+                id={exercise.id}
+                name={exercise.name}
+                targetMuscle={exercise.targetMuscle}
+                machineNumber={exercise.machineNumber}
+                seatHeight={exercise.seatHeight}
+                sets={exercise.sets}
+                reps={exercise.reps}
+                weight={exercise.weight}
                 workoutType={selectedWorkout}
                 showActions={isManagingExercises}
                 onEdit={handleEditExercise}
@@ -212,6 +212,7 @@ const Index = () => {
                 onReorder={reorderExercise}
                 isFirst={index === 0}
                 isLast={index === currentExercises.length - 1}
+                exerciseNumber={index + 1}
               />
             ))}
           </div>

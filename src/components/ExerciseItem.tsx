@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ interface ExerciseItemProps {
   showActions?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  exerciseNumber?: number;
 }
 
 export const ExerciseItem = ({ 
@@ -35,17 +37,25 @@ export const ExerciseItem = ({
   showActions = false,
   isFirst = false,
   isLast = false,
-  workoutType
+  workoutType,
+  exerciseNumber
 }: ExerciseItemProps & { workoutType: 'A' | 'B' | 'C' }) => {
   return (
     <Card className="bg-card/30 backdrop-blur-sm border-border/30 hover:bg-card/50 transition-all duration-200">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <h4 className="font-medium text-foreground">{name}</h4>
-            <Badge variant="secondary" className="mt-1 text-xs">
-              {targetMuscle}
-            </Badge>
+          <div className="flex items-center gap-3 flex-1">
+            {exerciseNumber && (
+              <div className="flex-shrink-0 w-8 h-8 bg-fitness-primary/20 text-fitness-primary rounded-full flex items-center justify-center font-bold text-sm">
+                {exerciseNumber}
+              </div>
+            )}
+            <div className="flex-1">
+              <h4 className="font-medium text-foreground">{name}</h4>
+              <Badge variant="secondary" className="mt-1 text-xs">
+                {targetMuscle}
+              </Badge>
+            </div>
           </div>
           <div className="flex items-center gap-3">
             {(machineNumber || seatHeight || sets || reps || weight) && (
