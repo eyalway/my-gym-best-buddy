@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useExercises } from "@/hooks/useExercises";
+import { useSupabaseExercises } from "@/hooks/useSupabaseExercises";
 import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
@@ -18,7 +18,7 @@ const WorkoutSession = () => {
   const { workoutType } = useParams<{ workoutType: 'A' | 'B' | 'C' }>();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { getExercisesByWorkout, updateExercise } = useExercises();
+  const { getExercisesByWorkout, updateExercise } = useSupabaseExercises();
   const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, updateExerciseWeight } = useWorkoutSession();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
