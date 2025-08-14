@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
+import WeeklyPlanner from "./pages/WeeklyPlanner";
 import WorkoutSession from "./pages/WorkoutSession";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,11 @@ const App = () => (
           <Route path="/analytics" element={
             <AuthGuard>
               <Analytics />
+            </AuthGuard>
+          } />
+          <Route path="/weekly-planner" element={
+            <AuthGuard>
+              <WeeklyPlanner />
             </AuthGuard>
           } />
           <Route path="/" element={
