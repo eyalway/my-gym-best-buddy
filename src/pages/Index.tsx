@@ -33,7 +33,7 @@ const Index = () => {
 
   // Force RTL on mobile with JavaScript
   useEffect(() => {
-    const isMobile = window.innerWidth <= 768;
+    const isMobile = window.innerWidth <= 1024;
     if (isMobile) {
       // Force RTL on document
       document.documentElement.dir = 'rtl';
@@ -43,6 +43,22 @@ const Index = () => {
       
       // Add mobile RTL class
       document.body.classList.add('mobile-rtl-forced');
+      
+      // Force all flex containers to be RTL
+      const flexElements = document.querySelectorAll('.flex');
+      flexElements.forEach(el => {
+        (el as HTMLElement).style.flexDirection = 'row-reverse';
+        (el as HTMLElement).style.direction = 'rtl';
+      });
+      
+      // Force all text to right align
+      const allElements = document.querySelectorAll('*');
+      allElements.forEach(el => {
+        if (!el.classList.contains('text-center')) {
+          (el as HTMLElement).style.textAlign = 'right';
+          (el as HTMLElement).style.direction = 'rtl';
+        }
+      });
     }
   }, []);
 

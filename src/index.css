@@ -139,29 +139,35 @@ All colors MUST be HSL.
   }
 }
 
-/* JavaScript-enforced mobile RTL */
-.mobile-rtl-forced {
-  direction: rtl !important;
-}
-
-.mobile-rtl-forced * {
-  direction: rtl !important;
-  text-align: right !important;
-}
-
-.mobile-rtl-forced .flex {
-  flex-direction: row-reverse !important;
-}
-
-.mobile-rtl-forced .justify-between {
-  justify-content: space-between !important;
-}
-
-.mobile-rtl-forced .text-center,
-.mobile-rtl-forced .text-center * {
-  text-align: center !important;
-}
-
-.mobile-rtl-forced .flex-col {
-  flex-direction: column !important;
+/* Ultra aggressive mobile RTL - larger breakpoint */
+@media (max-width: 1024px) {
+  html, body, #root, #root > * {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  /* Override ALL flex containers */
+  div, section, header, main, nav, aside, article {
+    direction: rtl !important;
+  }
+  
+  [class*="flex"] {
+    flex-direction: row-reverse !important;
+    direction: rtl !important;
+  }
+  
+  [class*="justify-between"] {
+    justify-content: space-between !important;
+  }
+  
+  /* Force text alignment */
+  h1, h2, h3, h4, h5, h6, p, span, button, div {
+    text-align: right !important;
+    direction: rtl !important;
+  }
+  
+  /* Keep centered elements centered */
+  [class*="text-center"] {
+    text-align: center !important;
+  }
 }
