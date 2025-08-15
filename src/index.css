@@ -72,6 +72,11 @@ All colors MUST be HSL.
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Force RTL globally */
+  :root {
+    direction: rtl !important;
+  }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -181,10 +186,22 @@ All colors MUST be HSL.
       direction: rtl !important;
     }
     
+    /* Override any LTR styles */
+    div, section, main, header, footer, nav, article, aside {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
     /* Webkit specific for mobile browsers */
     body {
       -webkit-text-size-adjust: 100%;
       -webkit-locale: "he";
     }
+  }
+
+  /* Global RTL enforcement */
+  html, body, div, main, section, header, footer, nav, article, aside, p, h1, h2, h3, h4, h5, h6 {
+    direction: rtl !important;
+    text-align: right !important;
   }
 }
