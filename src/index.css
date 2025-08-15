@@ -56,32 +56,47 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
+
     --sidebar-foreground: 240 5.3% 26.1%;
+
     --sidebar-primary: 240 5.9% 10%;
+
     --sidebar-primary-foreground: 0 0% 98%;
+
     --sidebar-accent: 240 4.8% 95.9%;
+
     --sidebar-accent-foreground: 240 5.9% 10%;
+
     --sidebar-border: 220 13% 91%;
+
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
+
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
+
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
+
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
+
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -136,61 +151,5 @@ All colors MUST be HSL.
   /* Don't flip certain icons that should stay the same */
   [dir="rtl"] .lucide.no-flip {
     transform: none;
-  }
-}
-
-/* PURE CSS RTL FOR MOBILE - NO JAVASCRIPT NEEDED */
-/* This should work even if JS is blocked */
-
-/* Force RTL on all mobile devices */
-@media screen and (max-width: 1200px) {
-  html {
-    direction: rtl !important;
-  }
-  
-  body {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* Target specific Tailwind classes */
-  .flex {
-    flex-direction: row-reverse !important;
-  }
-  
-  .justify-between {
-    justify-content: space-between !important;
-  }
-  
-  .items-center {
-    align-items: center !important;
-  }
-  
-  /* Force text alignment on common elements */
-  h1, h2, h3, h4, h5, h6, p, span, div, button {
-    text-align: right !important;
-    direction: rtl !important;
-  }
-  
-  /* Keep centered elements centered */
-  .text-center,
-  .text-center * {
-    text-align: center !important;
-  }
-  
-  /* Override specific layout classes */
-  .max-w-7xl {
-    direction: rtl !important;
-  }
-}
-
-/* Even more aggressive for very small screens */
-@media screen and (max-width: 768px) {
-  * {
-    direction: rtl !important;
-  }
-  
-  *:not(.text-center) {
-    text-align: right !important;
   }
 }

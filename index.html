@@ -3,8 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="direction" content="rtl" />
-    <meta name="text-direction" content="rtl" />
     <title>מרכז האימונים שלי - אפליקציית כושר אישית</title>
     <meta name="description" content="אפליקציה מתקדמת לניהול אימונים אישיים, מעקב התקדמות ותכנון אימונים בחדר הכושר" />
     <meta name="author" content="Lovable" />
@@ -17,37 +15,10 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    
-    <style>
-      html, body {
-        direction: rtl !important;
-        text-align: right !important;
-      }
-      * {
-        direction: inherit !important;
-      }
-      
-      /* EMERGENCY RTL FOR MOBILE - INLINE STYLE */
-      @media (max-width: 1400px) {
-        html, body, #root {
-          direction: rtl !important;
-          text-align: right !important;
-        }
-        
-        .flex {
-          flex-direction: row-reverse !important;
-        }
-        
-        div, span, p, h1, h2, h3, h4, h5, h6 {
-          text-align: right !important;
-          direction: rtl !important;
-        }
-      }
-    </style>
   </head>
 
-  <body style="direction: rtl !important; text-align: right !important;">
-    <div id="root" style="direction: rtl !important; text-align: right !important;"></div>
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
