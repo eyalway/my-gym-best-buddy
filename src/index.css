@@ -116,9 +116,22 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    direction: rtl !important;
+  }
+
   body {
     @apply bg-background text-foreground;
-    direction: rtl;
+    direction: rtl !important;
+  }
+
+  * {
+    direction: rtl !important;
+  }
+
+  /* Force RTL for all containers */
+  div, section, main, header, footer, nav, article, aside {
+    direction: rtl !important;
   }
 
   /* RTL support for better text alignment */
