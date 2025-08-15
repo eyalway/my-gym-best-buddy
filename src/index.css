@@ -125,6 +125,25 @@ All colors MUST be HSL.
   [dir="rtl"] {
     text-align: right;
   }
+
+  /* Fix bidirectional text with mixed Hebrew/English */
+  .hebrew-text {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: plaintext;
+  }
+
+  /* For mixed content (Hebrew + English) */
+  .mixed-content {
+    direction: rtl;
+    text-align: right;
+    unicode-bidi: isolate;
+  }
+
+  /* Force RTL direction for Hebrew content */
+  p, h1, h2, h3, h4, h5, h6, span, div {
+    unicode-bidi: isolate;
+  }
   
   [dir="rtl"] .text-left {
     text-align: right;
