@@ -63,9 +63,6 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Force RTL globally */
-    direction: rtl !important;
   }
 
   .dark {
@@ -104,29 +101,82 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  html, body {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-
   body {
     @apply bg-background text-foreground;
+    direction: rtl;
   }
 
-  /* Mobile specific RTL */
-  @media (max-width: 768px) {
-    *, html, body, div, main, section, header, footer, nav, article, aside, p, h1, h2, h3, h4, h5, h6 {
-      direction: rtl !important;
-      text-align: right !important;
-    }
+  /* RTL support for better text alignment */
+  [dir="rtl"] {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .text-left {
+    text-align: right;
+  }
+  
+  [dir="rtl"] .text-right {
+    text-align: left;
+  }
+  
+  /* Fix flex direction for RTL */
+  [dir="rtl"] .flex-row-reverse {
+    flex-direction: row;
+  }
+  
+  [dir="rtl"] .flex-row {
+    flex-direction: row-reverse;
   }
 
-  /* RTL support for icons */
+  /* Ensure icons and buttons work well in RTL */
   [dir="rtl"] .lucide {
     transform: scaleX(-1);
   }
 
+  /* Don't flip certain icons that should stay the same */
   [dir="rtl"] .lucide.no-flip {
     transform: none;
+  }
+}
+
+/* Override Tailwind's text alignment utilities for RTL */
+.text-right {
+  text-align: right !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+/* Force RTL layout for mobile */
+@media screen and (max-width: 768px) {
+  .flex {
+    flex-direction: row-reverse !important;
+  }
+  
+  .flex-col {
+    flex-direction: column !important;
+  }
+  
+  .justify-between {
+    justify-content: space-between !important;
+  }
+  
+  .items-center {
+    align-items: center !important;
+  }
+  
+  /* Force text alignment */
+  h1, h2, h3, h4, h5, h6, p, span, div, button {
+    text-align: right !important;
+  }
+  
+  /* Exception for centered text */
+  .text-center, .text-center * {
+    text-align: center !important;
   }
 }
