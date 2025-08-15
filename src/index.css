@@ -139,20 +139,34 @@ All colors MUST be HSL.
   }
 }
 
-/* Ultra simple mobile RTL - flip everything */
+/* Simple and correct mobile RTL */
 @media (max-width: 768px) {
-  body {
+  html, body {
     direction: rtl !important;
-    transform: scaleX(-1) !important;
   }
   
-  /* Flip content back so text is readable */
-  body * {
-    transform: scaleX(-1) !important;
+  /* Override Tailwind's default flex direction */
+  .flex {
+    flex-direction: row-reverse !important;
   }
   
-  /* Don't double-flip icons */
-  .lucide {
-    transform: scaleX(1) !important;
+  /* Override justify-between for RTL */
+  .justify-between {
+    justify-content: space-between !important;
+    flex-direction: row-reverse !important;
+  }
+  
+  /* Override text alignment */
+  .text-left {
+    text-align: right !important;
+  }
+  
+  /* Keep center aligned items centered */
+  .justify-center {
+    justify-content: center !important;
+  }
+  
+  .text-center {
+    text-align: center !important;
   }
 }
