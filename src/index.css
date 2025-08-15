@@ -204,4 +204,30 @@ All colors MUST be HSL.
     direction: rtl !important;
     text-align: right !important;
   }
+
+  /* Override any framework styles */
+  *, *::before, *::after {
+    direction: inherit !important;
+  }
+
+  /* Specific mobile browser overrides */
+  @media screen and (max-width: 768px) {
+    html[dir="rtl"], body, #root, [data-reactroot] {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    /* Force RTL on all containers */
+    .container, .max-w-7xl, .mx-auto {
+      direction: rtl !important;
+    }
+    
+    /* Override any webkit defaults */
+    body {
+      -webkit-writing-mode: horizontal-tb !important;
+      writing-mode: horizontal-tb !important;
+      -webkit-text-orientation: mixed !important;
+      text-orientation: mixed !important;
+    }
+  }
 }

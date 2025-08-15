@@ -17,6 +17,28 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@lovable_dev" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    
+    <script>
+      // Force RTL immediately on page load
+      (function() {
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.style.direction = 'rtl';
+        document.documentElement.style.textAlign = 'right';
+        
+        // Ensure RTL is applied when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', function() {
+            document.body.setAttribute('dir', 'rtl');
+            document.body.style.direction = 'rtl';
+            document.body.style.textAlign = 'right';
+          });
+        } else {
+          document.body.setAttribute('dir', 'rtl');
+          document.body.style.direction = 'rtl';
+          document.body.style.textAlign = 'right';
+        }
+      })();
+    </script>
   </head>
 
   <body>
