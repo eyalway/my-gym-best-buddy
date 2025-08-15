@@ -180,11 +180,11 @@ const Index = () => {
   const currentExercises = getExercisesByWorkout(selectedWorkout);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-right" dir="rtl">
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-row-reverse">
+          <div className="flex items-center gap-2 flex-row-reverse">
             <Dumbbell className="h-6 w-6 text-fitness-primary" />
             <span className="font-bold text-lg">מערכת כושר</span>
           </div>
@@ -198,7 +198,7 @@ const Index = () => {
         style={{ backgroundImage: `url(${fitnessHero})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/70 to-background/90" />
-        <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4">
+        <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-4 text-right">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
             {profile?.full_name ? `שלום ${profile.full_name}!` : 'אימון היום שלך'}
           </h1>
