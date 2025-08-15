@@ -139,35 +139,50 @@ All colors MUST be HSL.
   }
 }
 
-/* Ultra aggressive mobile RTL - larger breakpoint */
-@media (max-width: 1024px) {
-  html, body, #root, #root > * {
+/* FINAL ATTEMPT - NUCLEAR OPTION FOR MOBILE RTL */
+html[dir="rtl"] {
+  direction: rtl !important;
+}
+
+/* Force everything on mobile to be RTL regardless of Tailwind */
+@media screen and (max-width: 1024px) {
+  * {
     direction: rtl !important;
     text-align: right !important;
   }
   
-  /* Override ALL flex containers */
-  div, section, header, main, nav, aside, article {
-    direction: rtl !important;
+  .text-center, .text-center * {
+    text-align: center !important;  
   }
   
-  [class*="flex"] {
+  /* Override flexbox completely */
+  .flex {
+    display: flex !important;
     flex-direction: row-reverse !important;
-    direction: rtl !important;
   }
   
-  [class*="justify-between"] {
+  .flex-col {
+    flex-direction: column !important;
+  }
+  
+  .justify-between {
     justify-content: space-between !important;
   }
   
-  /* Force text alignment */
-  h1, h2, h3, h4, h5, h6, p, span, button, div {
-    text-align: right !important;
-    direction: rtl !important;
+  .items-center {
+    align-items: center !important;
   }
   
-  /* Keep centered elements centered */
-  [class*="text-center"] {
-    text-align: center !important;
+  /* Custom utility classes for mobile RTL */  
+  .mobile-rtl-container {
+    display: flex !important;
+    flex-direction: row-reverse !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+  }
+  
+  .mobile-rtl-text {
+    text-align: right !important;
+    direction: rtl !important;
   }
 }

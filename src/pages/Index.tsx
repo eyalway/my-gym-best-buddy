@@ -31,35 +31,53 @@ const Index = () => {
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
 
-  // Force RTL on mobile with JavaScript
+  // Force RTL on mobile with JavaScript + DEBUG
   useEffect(() => {
+    console.log('=== MOBILE RTL DEBUG ===');
+    console.log('Window width:', window.innerWidth);
+    console.log('Window height:', window.innerHeight);
+    console.log('User agent:', navigator.userAgent);
+    console.log('Screen orientation:', screen.orientation?.type);
+    
     const isMobile = window.innerWidth <= 1024;
+    console.log('Is mobile detected:', isMobile);
+    
     if (isMobile) {
+      console.log('Applying mobile RTL fixes...');
+      
       // Force RTL on document
       document.documentElement.dir = 'rtl';
       document.body.dir = 'rtl';
       document.documentElement.style.direction = 'rtl';
       document.body.style.direction = 'rtl';
       
+      console.log('Document dir after setting:', document.documentElement.dir);
+      console.log('Body dir after setting:', document.body.dir);
+      
       // Add mobile RTL class
       document.body.classList.add('mobile-rtl-forced');
+      console.log('Body classes:', document.body.className);
       
       // Force all flex containers to be RTL
       const flexElements = document.querySelectorAll('.flex');
-      flexElements.forEach(el => {
+      console.log('Found flex elements:', flexElements.length);
+      flexElements.forEach((el, index) => {
         (el as HTMLElement).style.flexDirection = 'row-reverse';
         (el as HTMLElement).style.direction = 'rtl';
+        console.log(`Flex element ${index} direction set to:`, (el as HTMLElement).style.direction);
       });
       
-      // Force all text to right align
-      const allElements = document.querySelectorAll('*');
-      allElements.forEach(el => {
-        if (!el.classList.contains('text-center')) {
-          (el as HTMLElement).style.textAlign = 'right';
-          (el as HTMLElement).style.direction = 'rtl';
-        }
-      });
+      // Show visual indicator that JS ran
+      document.body.style.border = '3px solid red';
+      setTimeout(() => {
+        document.body.style.border = '';
+      }, 2000);
+      
+      console.log('Mobile RTL setup complete');
+    } else {
+      console.log('Desktop detected, no mobile RTL applied');
     }
+    console.log('=== END DEBUG ===');
   }, []);
 
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
@@ -215,7 +233,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-right" dir="rtl">
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-row-reverse">
+        <div className="max-w-7xl mx-auto px-4 py-3 mobile-rtl-container">
           <div className="flex items-center gap-2 flex-row-reverse">
             <Dumbbell className="h-6 w-6 text-fitness-primary" />
             <span className="font-bold text-lg">מערכת כושר</span>

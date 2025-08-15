@@ -100,4 +100,11 @@ export default {
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
+	future: {
+		hoverOnlyWhenSupported: true,
+	},
+	// Add RTL support
+	corePlugins: {
+		textAlign: false,
+	},
 } satisfies Config;
