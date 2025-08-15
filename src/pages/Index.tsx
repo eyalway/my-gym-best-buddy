@@ -31,66 +31,15 @@ const Index = () => {
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
 
-  // Force RTL on mobile with JavaScript + VISIBLE DEBUG
+  // Simple RTL test
   useEffect(() => {
-    const isMobile = window.innerWidth <= 1024;
+    // Simple alert to test if JS works
+    alert(`רוחב המסך: ${window.innerWidth}px - האם זה טלפון? ${window.innerWidth <= 1024 ? 'כן' : 'לא'}`);
     
-    // Show debug info on screen
-    const debugInfo = `
-      Width: ${window.innerWidth}px
-      Height: ${window.innerHeight}px
-      Mobile detected: ${isMobile}
-      User agent: ${navigator.userAgent.substring(0, 50)}...
-    `;
-    
-    // Create debug overlay
-    const debugDiv = document.createElement('div');
-    debugDiv.innerHTML = `
-      <div style="
-        position: fixed; 
-        top: 10px; 
-        right: 10px; 
-        background: red; 
-        color: white; 
-        padding: 10px; 
-        z-index: 9999; 
-        font-size: 12px;
-        border-radius: 5px;
-        max-width: 250px;
-      ">
-        <strong>DEBUG INFO:</strong><br>
-        ${debugInfo.replace(/\n/g, '<br>')}
-      </div>
-    `;
-    document.body.appendChild(debugDiv);
-    
-    // Remove debug after 5 seconds
-    setTimeout(() => {
-      document.body.removeChild(debugDiv);
-    }, 5000);
-    
-    if (isMobile) {
-      // Force RTL on document
-      document.documentElement.dir = 'rtl';
-      document.body.dir = 'rtl';
-      document.documentElement.style.direction = 'rtl';
+    // Force everything RTL on mobile
+    if (window.innerWidth <= 1024) {
       document.body.style.direction = 'rtl';
-      
-      // Add mobile RTL class
-      document.body.classList.add('mobile-rtl-forced');
-      
-      // Force all flex containers to be RTL
-      const flexElements = document.querySelectorAll('.flex');
-      flexElements.forEach(el => {
-        (el as HTMLElement).style.flexDirection = 'row-reverse';
-        (el as HTMLElement).style.direction = 'rtl';
-      });
-      
-      // Show visual indicator that JS ran
-      document.body.style.border = '3px solid red';
-      setTimeout(() => {
-        document.body.style.border = '';
-      }, 3000);
+      document.body.style.textAlign = 'right';
     }
   }, []);
 
