@@ -4,6 +4,7 @@ import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
+import { CopyExercisesDialog } from "@/components/CopyExercisesDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { UserButton } from "@/components/UserButton";
 import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
@@ -75,6 +76,7 @@ const Index = () => {
   // Use the exercises hook
   const { 
     addExercise, 
+    addMultipleExercises,
     updateExercise, 
     deleteExercise, 
     getExercisesByWorkout,
@@ -286,10 +288,15 @@ const Index = () => {
           </div>
 
           {isManagingExercises && (
-            <div className="mb-4">
+            <div className="flex gap-2 mb-4">
               <AddExerciseDialog 
                 workoutType={selectedWorkout}
                 onAddExercise={addExercise}
+              />
+              <CopyExercisesDialog
+                currentWorkoutType={selectedWorkout}
+                getExercisesByWorkout={getExercisesByWorkout}
+                onCopyExercises={addMultipleExercises}
               />
             </div>
           )}

@@ -110,6 +110,54 @@ export const useSupabaseExercises = () => {
     }
   };
 
+  const addMultipleExercises = async (exercises: Omit<Exercise, 'id'>[]) => {
+    if (!user || exercises.length === 0) return;
+
+    try {
+      // Get the current max order for the workout type
+      const workoutType = exercises[0].workoutType;
+      const { data: existingExercises } = await supabase
+        .from('exercise_templates' as any)
+        .select('exercise_order')
+        .eq('user_id', user.id)
+        .eq('workout_type', workoutType)
+        .order('exercise_order', { ascending: false })
+        .limit(1);
+
+      let nextOrder = existingExercises && existingExercises.length > 0 
+        ? (existingExercises[0] as any).exercise_order + 1 
+        : 1;
+
+      // Prepare all exercises for insertion with incremental order
+      const exercisesToInsert = exercises.map(exercise => ({
+        user_id: user.id,
+        exercise_name: exercise.name,
+        target_muscle: exercise.targetMuscle,
+        machine_number: exercise.machineNumber,
+        seat_height: exercise.seatHeight,
+        sets: exercise.sets,
+        reps: exercise.reps,
+        weight: exercise.weight,
+        workout_type: exercise.workoutType,
+        exercise_order: nextOrder++
+      }));
+
+      const { error } = await supabase
+        .from('exercise_templates' as any)
+        .insert(exercisesToInsert);
+
+      if (error) {
+        console.error('Error adding multiple exercises:', error);
+        return;
+      }
+
+      // Reload exercises to get the updated list
+      await loadExercises();
+    } catch (error) {
+      console.error('Error adding multiple exercises:', error);
+    }
+  };
+
   const updateExercise = async (id: string, updatedExercise: Omit<Exercise, 'id'>) => {
     if (!user) return;
 
@@ -209,6 +257,7 @@ export const useSupabaseExercises = () => {
     exercises,
     loading,
     addExercise,
+    addMultipleExercises,
     updateExercise,
     deleteExercise,
     getExercisesByWorkout,
