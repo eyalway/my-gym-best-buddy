@@ -121,6 +121,14 @@ All colors MUST be HSL.
     direction: rtl;
   }
 
+  html {
+    direction: rtl;
+  }
+
+  * {
+    direction: inherit;
+  }
+
   /* RTL support for better text alignment */
   [dir="rtl"] {
     text-align: right;
