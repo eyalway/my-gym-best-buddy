@@ -160,4 +160,31 @@ All colors MUST be HSL.
   [dir="rtl"] .lucide.no-flip {
     transform: none;
   }
+
+  /* Mobile RTL fixes */
+  @media (max-width: 768px) {
+    html, body {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    * {
+      direction: rtl !important;
+    }
+    
+    .container {
+      direction: rtl !important;
+    }
+    
+    /* Force RTL for all flex containers on mobile */
+    .flex {
+      direction: rtl !important;
+    }
+    
+    /* Webkit specific for mobile browsers */
+    body {
+      -webkit-text-size-adjust: 100%;
+      -webkit-locale: "he";
+    }
+  }
 }
