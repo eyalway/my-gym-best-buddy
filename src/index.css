@@ -139,34 +139,44 @@ All colors MUST be HSL.
   }
 }
 
-/* Simple and correct mobile RTL */
+/* iOS Safari specific RTL fix */
 @media (max-width: 768px) {
-  html, body {
+  /* Force RTL on everything */
+  * {
     direction: rtl !important;
-  }
-  
-  /* Override Tailwind's default flex direction */
-  .flex {
-    flex-direction: row-reverse !important;
-  }
-  
-  /* Override justify-between for RTL */
-  .justify-between {
-    justify-content: space-between !important;
-    flex-direction: row-reverse !important;
-  }
-  
-  /* Override text alignment */
-  .text-left {
     text-align: right !important;
   }
   
-  /* Keep center aligned items centered */
-  .justify-center {
-    justify-content: center !important;
+  /* Specific fixes for flex containers */
+  .flex {
+    display: flex !important;
+    flex-direction: row-reverse !important;
   }
   
-  .text-center {
+  .flex-col {
+    flex-direction: column !important;
+  }
+  
+  .justify-between {
+    justify-content: space-between !important;
+  }
+  
+  .items-center {
+    align-items: center !important;
+  }
+  
+  /* Fix for gaps in flex */
+  .gap-2 {
+    gap: 0.5rem !important;
+  }
+  
+  .gap-4 {
+    gap: 1rem !important;
+  }
+  
+  /* Center text stays centered */
+  .text-center,
+  .text-center * {
     text-align: center !important;
   }
 }
