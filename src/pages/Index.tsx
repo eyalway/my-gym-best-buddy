@@ -180,15 +180,7 @@ const Index = () => {
   const currentExercises = getExercisesByWorkout(selectedWorkout);
 
   return (
-    <div 
-      className="min-h-screen bg-background" 
-      dir="rtl" 
-      style={{ 
-        direction: 'rtl', 
-        textAlign: 'right',
-        unicodeBidi: 'bidi-override' 
-      }}
-    >
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">

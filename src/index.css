@@ -56,52 +56,35 @@ All colors MUST be HSL.
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
-  }
 
-  /* Force RTL globally */
-  :root {
+    /* Force RTL globally */
     direction: rtl !important;
   }
 
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-
     --primary: 210 40% 98%;
     --primary-foreground: 222.2 47.4% 11.2%;
-
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
@@ -121,139 +104,29 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
-    direction: rtl;
-  }
-
-  html {
-    direction: rtl;
-  }
-
-  * {
-    direction: inherit;
-  }
-
-  /* RTL support for better text alignment */
-  [dir="rtl"] {
-    text-align: right;
-  }
-  
-  [dir="rtl"] .text-left {
-    text-align: right;
-  }
-  
-  [dir="rtl"] .text-right {
-    text-align: left;
-  }
-  
-  /* Fix flex direction for RTL */
-  [dir="rtl"] .flex-row-reverse {
-    flex-direction: row;
-  }
-  
-  [dir="rtl"] .flex-row {
-    flex-direction: row-reverse;
-  }
-
-  /* Ensure icons and buttons work well in RTL */
-  [dir="rtl"] .lucide {
-    transform: scaleX(-1);
-  }
-
-  /* Don't flip certain icons that should stay the same */
-  [dir="rtl"] .lucide.no-flip {
-    transform: none;
-  }
-
-  /* Mobile RTL fixes */
-  @media (max-width: 768px) {
-    html, body {
-      direction: rtl !important;
-      text-align: right !important;
-    }
-    
-    * {
-      direction: rtl !important;
-    }
-    
-    .container {
-      direction: rtl !important;
-    }
-    
-    /* Force RTL for all flex containers on mobile */
-    .flex {
-      direction: rtl !important;
-    }
-    
-    /* Override any LTR styles */
-    div, section, main, header, footer, nav, article, aside {
-      direction: rtl !important;
-      text-align: right !important;
-    }
-    
-    /* Webkit specific for mobile browsers */
-    body {
-      -webkit-text-size-adjust: 100%;
-      -webkit-locale: "he";
-    }
-  }
-
-  /* Global RTL enforcement */
-  html, body, div, main, section, header, footer, nav, article, aside, p, h1, h2, h3, h4, h5, h6 {
+  html, body {
     direction: rtl !important;
     text-align: right !important;
   }
 
-  /* Override any framework styles */
-  *, *::before, *::after {
-    direction: inherit !important;
+  body {
+    @apply bg-background text-foreground;
   }
 
-  /* Ultra-specific mobile RTL enforcement */
-  @media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
-    html, body, #root, [data-reactroot], div, section, main, header, footer {
-      direction: rtl !important;
-      text-align: right !important;
-      unicode-bidi: bidi-override !important;
-    }
-    
-    /* Tailwind container overrides */
-    .container, .max-w-7xl, .mx-auto, .min-h-screen, .bg-background {
+  /* Mobile specific RTL */
+  @media (max-width: 768px) {
+    *, html, body, div, main, section, header, footer, nav, article, aside, p, h1, h2, h3, h4, h5, h6 {
       direction: rtl !important;
       text-align: right !important;
     }
-    
-    /* Flex containers */
-    .flex, .inline-flex {
-      direction: rtl !important;
-    }
-    
-    /* Grid containers */
-    .grid {
-      direction: rtl !important;
-    }
-    
-    /* Text elements */
-    h1, h2, h3, h4, h5, h6, p, span, div {
-      direction: rtl !important;
-      text-align: right !important;
-    }
-    
-    /* Mobile Safari specific */
-    @supports (-webkit-touch-callout: none) {
-      html, body {
-        direction: rtl !important;
-        text-align: right !important;
-        -webkit-text-size-adjust: 100% !important;
-      }
-    }
-    
-    /* Android Chrome specific */
-    @media screen and (-webkit-min-device-pixel-ratio: 1) and (orientation: portrait) {
-      * {
-        direction: rtl !important;
-      }
-    }
+  }
+
+  /* RTL support for icons */
+  [dir="rtl"] .lucide {
+    transform: scaleX(-1);
+  }
+
+  [dir="rtl"] .lucide.no-flip {
+    transform: none;
   }
 }
