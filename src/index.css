@@ -116,18 +116,9 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  html {
-    direction: ltr;
-  }
-
   body {
     @apply bg-background text-foreground;
-    direction: ltr;
-  }
-
-  /* Hebrew text alignment */
-  .hebrew-text {
-    text-align: right;
+    direction: rtl;
   }
 
   /* RTL support for better text alignment */

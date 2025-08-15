@@ -4,7 +4,6 @@ import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
-import { CopyExercisesDialog } from "@/components/CopyExercisesDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
 import { UserButton } from "@/components/UserButton";
 import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
@@ -76,7 +75,6 @@ const Index = () => {
   // Use the exercises hook
   const { 
     addExercise, 
-    addMultipleExercises,
     updateExercise, 
     deleteExercise, 
     getExercisesByWorkout,
@@ -188,7 +186,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Dumbbell className="h-6 w-6 text-fitness-primary" />
-            <span className="font-bold text-lg hebrew-text">מערכת כושר</span>
+            <span className="font-bold text-lg">מערכת כושר</span>
           </div>
           <UserButton />
         </div>
@@ -215,7 +213,7 @@ const Index = () => {
         <section>
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <TrendingUp className="w-6 h-6 text-fitness-primary" />
-            <span className="hebrew-text">הסטטיסטיקות שלך היום</span>
+            הסטטיסטיקות שלך היום
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {todayStats.map((stat, index) => (
@@ -228,7 +226,7 @@ const Index = () => {
         <section>
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <Dumbbell className="w-6 h-6 text-fitness-primary" />
-            <span className="hebrew-text">תוכניות אימון מומלצות</span>
+            תוכניות אימון מומלצות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workoutPlans.map((workout, index) => {
@@ -288,15 +286,10 @@ const Index = () => {
           </div>
 
           {isManagingExercises && (
-            <div className="flex gap-2 mb-4">
+            <div className="mb-4">
               <AddExerciseDialog 
                 workoutType={selectedWorkout}
                 onAddExercise={addExercise}
-              />
-              <CopyExercisesDialog
-                currentWorkoutType={selectedWorkout}
-                getExercisesByWorkout={getExercisesByWorkout}
-                onCopyExercises={addMultipleExercises}
               />
             </div>
           )}

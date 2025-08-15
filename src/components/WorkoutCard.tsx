@@ -31,8 +31,8 @@ export const WorkoutCard = ({
   return (
     <Card className="bg-card/50 backdrop-blur-sm border-border/50 hover:bg-card/70 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-bold text-foreground hebrew-text">{title}</CardTitle>
-        <div className={`text-sm font-medium hebrew-text ${getDifficultyColor(difficulty)}`}>
+        <CardTitle className="text-lg font-bold text-foreground">{title}</CardTitle>
+        <div className={`text-sm font-medium ${getDifficultyColor(difficulty)}`}>
           {difficulty}
         </div>
       </CardHeader>
@@ -40,20 +40,20 @@ export const WorkoutCard = ({
         <div className="flex justify-between items-center text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
             <Clock className="w-4 h-4" />
-            <span className="hebrew-text">{duration}</span>
+            <span>{duration}</span>
           </div>
           <div className="flex items-center gap-1">
             <Flame className="w-4 h-4" />
-            <span className="hebrew-text">{calories}</span>
+            <span>{calories}</span>
           </div>
           <div className="flex items-center gap-1">
             <Target className="w-4 h-4" />
-            <span className="hebrew-text">{exercises} תרגילים</span>
+            <span>{exercises} תרגילים</span>
           </div>
         </div>
         <Button 
-          variant="default" 
-          className="w-full hebrew-text"
+          variant="workout" 
+          className="w-full"
           onClick={() => {
             console.log('Workout button clicked:', title);
             onStart();
