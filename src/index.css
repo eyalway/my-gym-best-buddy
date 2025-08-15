@@ -139,43 +139,20 @@ All colors MUST be HSL.
   }
 }
 
-/* Mobile RTL specific styles */
+/* Ultra simple mobile RTL - flip everything */
 @media (max-width: 768px) {
-  body, html {
+  body {
     direction: rtl !important;
-    text-align: right !important;
+    transform: scaleX(-1) !important;
   }
-
-  /* Replace flex with grid for better RTL control on mobile */
-  .mobile-rtl-grid {
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    gap: 1rem !important;
-    align-items: center !important;
+  
+  /* Flip content back so text is readable */
+  body * {
+    transform: scaleX(-1) !important;
   }
-
-  .mobile-rtl-grid-reverse {
-    display: grid !important;
-    grid-template-columns: auto 1fr !important;
-    gap: 1rem !important;
-    align-items: center !important;
-  }
-
-  /* Force all text alignment to right on mobile */
-  * {
-    text-align: right !important;
-  }
-
-  .text-center, .text-center * {
-    text-align: center !important;
-  }
-
-  /* Override flex behavior on mobile */
-  .flex {
-    direction: rtl !important;
-  }
-
-  .justify-between {
-    justify-content: flex-end !important;
+  
+  /* Don't double-flip icons */
+  .lucide {
+    transform: scaleX(1) !important;
   }
 }
