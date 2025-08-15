@@ -139,44 +139,29 @@ All colors MUST be HSL.
   }
 }
 
-/* iOS Safari specific RTL fix */
-@media (max-width: 768px) {
-  /* Force RTL on everything */
-  * {
-    direction: rtl !important;
-    text-align: right !important;
-  }
-  
-  /* Specific fixes for flex containers */
-  .flex {
-    display: flex !important;
-    flex-direction: row-reverse !important;
-  }
-  
-  .flex-col {
-    flex-direction: column !important;
-  }
-  
-  .justify-between {
-    justify-content: space-between !important;
-  }
-  
-  .items-center {
-    align-items: center !important;
-  }
-  
-  /* Fix for gaps in flex */
-  .gap-2 {
-    gap: 0.5rem !important;
-  }
-  
-  .gap-4 {
-    gap: 1rem !important;
-  }
-  
-  /* Center text stays centered */
-  .text-center,
-  .text-center * {
-    text-align: center !important;
-  }
+/* JavaScript-enforced mobile RTL */
+.mobile-rtl-forced {
+  direction: rtl !important;
+}
+
+.mobile-rtl-forced * {
+  direction: rtl !important;
+  text-align: right !important;
+}
+
+.mobile-rtl-forced .flex {
+  flex-direction: row-reverse !important;
+}
+
+.mobile-rtl-forced .justify-between {
+  justify-content: space-between !important;
+}
+
+.mobile-rtl-forced .text-center,
+.mobile-rtl-forced .text-center * {
+  text-align: center !important;
+}
+
+.mobile-rtl-forced .flex-col {
+  flex-direction: column !important;
 }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
@@ -30,6 +30,21 @@ const Index = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
+
+  // Force RTL on mobile with JavaScript
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      // Force RTL on document
+      document.documentElement.dir = 'rtl';
+      document.body.dir = 'rtl';
+      document.documentElement.style.direction = 'rtl';
+      document.body.style.direction = 'rtl';
+      
+      // Add mobile RTL class
+      document.body.classList.add('mobile-rtl-forced');
+    }
+  }, []);
 
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
