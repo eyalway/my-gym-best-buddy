@@ -31,53 +31,67 @@ const Index = () => {
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
 
-  // Force RTL on mobile with JavaScript + DEBUG
+  // Force RTL on mobile with JavaScript + VISIBLE DEBUG
   useEffect(() => {
-    console.log('=== MOBILE RTL DEBUG ===');
-    console.log('Window width:', window.innerWidth);
-    console.log('Window height:', window.innerHeight);
-    console.log('User agent:', navigator.userAgent);
-    console.log('Screen orientation:', screen.orientation?.type);
-    
     const isMobile = window.innerWidth <= 1024;
-    console.log('Is mobile detected:', isMobile);
+    
+    // Show debug info on screen
+    const debugInfo = `
+      Width: ${window.innerWidth}px
+      Height: ${window.innerHeight}px
+      Mobile detected: ${isMobile}
+      User agent: ${navigator.userAgent.substring(0, 50)}...
+    `;
+    
+    // Create debug overlay
+    const debugDiv = document.createElement('div');
+    debugDiv.innerHTML = `
+      <div style="
+        position: fixed; 
+        top: 10px; 
+        right: 10px; 
+        background: red; 
+        color: white; 
+        padding: 10px; 
+        z-index: 9999; 
+        font-size: 12px;
+        border-radius: 5px;
+        max-width: 250px;
+      ">
+        <strong>DEBUG INFO:</strong><br>
+        ${debugInfo.replace(/\n/g, '<br>')}
+      </div>
+    `;
+    document.body.appendChild(debugDiv);
+    
+    // Remove debug after 5 seconds
+    setTimeout(() => {
+      document.body.removeChild(debugDiv);
+    }, 5000);
     
     if (isMobile) {
-      console.log('Applying mobile RTL fixes...');
-      
       // Force RTL on document
       document.documentElement.dir = 'rtl';
       document.body.dir = 'rtl';
       document.documentElement.style.direction = 'rtl';
       document.body.style.direction = 'rtl';
       
-      console.log('Document dir after setting:', document.documentElement.dir);
-      console.log('Body dir after setting:', document.body.dir);
-      
       // Add mobile RTL class
       document.body.classList.add('mobile-rtl-forced');
-      console.log('Body classes:', document.body.className);
       
       // Force all flex containers to be RTL
       const flexElements = document.querySelectorAll('.flex');
-      console.log('Found flex elements:', flexElements.length);
-      flexElements.forEach((el, index) => {
+      flexElements.forEach(el => {
         (el as HTMLElement).style.flexDirection = 'row-reverse';
         (el as HTMLElement).style.direction = 'rtl';
-        console.log(`Flex element ${index} direction set to:`, (el as HTMLElement).style.direction);
       });
       
       // Show visual indicator that JS ran
       document.body.style.border = '3px solid red';
       setTimeout(() => {
         document.body.style.border = '';
-      }, 2000);
-      
-      console.log('Mobile RTL setup complete');
-    } else {
-      console.log('Desktop detected, no mobile RTL applied');
+      }, 3000);
     }
-    console.log('=== END DEBUG ===');
   }, []);
 
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
