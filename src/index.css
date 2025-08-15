@@ -210,24 +210,50 @@ All colors MUST be HSL.
     direction: inherit !important;
   }
 
-  /* Specific mobile browser overrides */
-  @media screen and (max-width: 768px) {
-    html[dir="rtl"], body, #root, [data-reactroot] {
+  /* Ultra-specific mobile RTL enforcement */
+  @media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio: 1) {
+    html, body, #root, [data-reactroot], div, section, main, header, footer {
+      direction: rtl !important;
+      text-align: right !important;
+      unicode-bidi: bidi-override !important;
+    }
+    
+    /* Tailwind container overrides */
+    .container, .max-w-7xl, .mx-auto, .min-h-screen, .bg-background {
       direction: rtl !important;
       text-align: right !important;
     }
     
-    /* Force RTL on all containers */
-    .container, .max-w-7xl, .mx-auto {
+    /* Flex containers */
+    .flex, .inline-flex {
       direction: rtl !important;
     }
     
-    /* Override any webkit defaults */
-    body {
-      -webkit-writing-mode: horizontal-tb !important;
-      writing-mode: horizontal-tb !important;
-      -webkit-text-orientation: mixed !important;
-      text-orientation: mixed !important;
+    /* Grid containers */
+    .grid {
+      direction: rtl !important;
+    }
+    
+    /* Text elements */
+    h1, h2, h3, h4, h5, h6, p, span, div {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    /* Mobile Safari specific */
+    @supports (-webkit-touch-callout: none) {
+      html, body {
+        direction: rtl !important;
+        text-align: right !important;
+        -webkit-text-size-adjust: 100% !important;
+      }
+    }
+    
+    /* Android Chrome specific */
+    @media screen and (-webkit-min-device-pixel-ratio: 1) and (orientation: portrait) {
+      * {
+        direction: rtl !important;
+      }
     }
   }
 }

@@ -37,6 +37,48 @@
           document.body.style.direction = 'rtl';
           document.body.style.textAlign = 'right';
         }
+        
+        // Mobile-specific RTL enforcement
+        function enforceMobileRTL() {
+          if (window.innerWidth <= 768) {
+            const elements = [document.documentElement, document.body];
+            const allElements = document.querySelectorAll('*');
+            
+            elements.forEach(el => {
+              if (el) {
+                el.setAttribute('dir', 'rtl');
+                el.style.direction = 'rtl';
+                el.style.textAlign = 'right';
+                el.style.setProperty('direction', 'rtl', 'important');
+                el.style.setProperty('text-align', 'right', 'important');
+              }
+            });
+            
+            // Force RTL on all elements for mobile
+            allElements.forEach(el => {
+              if (el && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+                el.style.setProperty('direction', 'rtl', 'important');
+                el.style.setProperty('text-align', 'right', 'important');
+              }
+            });
+          }
+        }
+        
+        // Run on load and resize
+        enforceMobileRTL();
+        window.addEventListener('resize', enforceMobileRTL);
+        window.addEventListener('orientationchange', enforceMobileRTL);
+        
+        // Continuously monitor for mobile (for 5 seconds after load)
+        let mobileEnforceCount = 0;
+        const mobileInterval = setInterval(() => {
+          if (mobileEnforceCount > 50) { // Stop after 5 seconds
+            clearInterval(mobileInterval);
+            return;
+          }
+          enforceMobileRTL();
+          mobileEnforceCount++;
+        }, 100);
       })();
     </script>
   </head>
