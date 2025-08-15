@@ -31,18 +31,6 @@ const Index = () => {
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
 
-  // Simple RTL test
-  useEffect(() => {
-    // Simple alert to test if JS works
-    alert(`רוחב המסך: ${window.innerWidth}px - האם זה טלפון? ${window.innerWidth <= 1024 ? 'כן' : 'לא'}`);
-    
-    // Force everything RTL on mobile
-    if (window.innerWidth <= 1024) {
-      document.body.style.direction = 'rtl';
-      document.body.style.textAlign = 'right';
-    }
-  }, []);
-
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);

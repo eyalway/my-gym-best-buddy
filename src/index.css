@@ -139,30 +139,23 @@ All colors MUST be HSL.
   }
 }
 
-/* FINAL ATTEMPT - NUCLEAR OPTION FOR MOBILE RTL */
-html[dir="rtl"] {
-  direction: rtl !important;
-}
+/* PURE CSS RTL FOR MOBILE - NO JAVASCRIPT NEEDED */
+/* This should work even if JS is blocked */
 
-/* Force everything on mobile to be RTL regardless of Tailwind */
-@media screen and (max-width: 1024px) {
-  * {
+/* Force RTL on all mobile devices */
+@media screen and (max-width: 1200px) {
+  html {
+    direction: rtl !important;
+  }
+  
+  body {
     direction: rtl !important;
     text-align: right !important;
   }
   
-  .text-center, .text-center * {
-    text-align: center !important;  
-  }
-  
-  /* Override flexbox completely */
+  /* Target specific Tailwind classes */
   .flex {
-    display: flex !important;
     flex-direction: row-reverse !important;
-  }
-  
-  .flex-col {
-    flex-direction: column !important;
   }
   
   .justify-between {
@@ -173,16 +166,31 @@ html[dir="rtl"] {
     align-items: center !important;
   }
   
-  /* Custom utility classes for mobile RTL */  
-  .mobile-rtl-container {
-    display: flex !important;
-    flex-direction: row-reverse !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-  }
-  
-  .mobile-rtl-text {
+  /* Force text alignment on common elements */
+  h1, h2, h3, h4, h5, h6, p, span, div, button {
     text-align: right !important;
     direction: rtl !important;
+  }
+  
+  /* Keep centered elements centered */
+  .text-center,
+  .text-center * {
+    text-align: center !important;
+  }
+  
+  /* Override specific layout classes */
+  .max-w-7xl {
+    direction: rtl !important;
+  }
+}
+
+/* Even more aggressive for very small screens */
+@media screen and (max-width: 768px) {
+  * {
+    direction: rtl !important;
+  }
+  
+  *:not(.text-center) {
+    text-align: right !important;
   }
 }
