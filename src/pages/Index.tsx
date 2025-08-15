@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
@@ -30,6 +30,18 @@ const Index = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
+
+  // Debug RTL
+  useEffect(() => {
+    console.log('=== RTL DEBUG INFO ===');
+    console.log('Document dir:', document.documentElement.dir);
+    console.log('Body dir:', document.body.dir);  
+    console.log('Window width:', window.innerWidth);
+    console.log('User agent:', navigator.userAgent);
+    console.log('Document direction style:', getComputedStyle(document.documentElement).direction);
+    console.log('Body direction style:', getComputedStyle(document.body).direction);
+    console.log('======================');
+  }, []);
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -183,7 +195,7 @@ const Index = () => {
     <div className="min-h-screen bg-background text-right" dir="rtl">
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-row-reverse">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-row-reverse md:flex md:justify-between mobile-rtl-grid-reverse">
           <div className="flex items-center gap-2 flex-row-reverse">
             <Dumbbell className="h-6 w-6 text-fitness-primary" />
             <span className="font-bold text-lg">מערכת כושר</span>
@@ -244,7 +256,7 @@ const Index = () => {
 
         {/* Exercise Management Section */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 md:flex md:justify-between mobile-rtl-grid">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Target className="w-6 h-6 text-fitness-primary" />
               ניהול תרגילי אימון {selectedWorkout}
