@@ -183,10 +183,10 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="bg-background/80 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-row-reverse items-center justify-between">
           <div className="flex items-center gap-2">
             <Dumbbell className="h-6 w-6 text-fitness-primary" />
-            <span className="font-bold text-lg">מערכת כושר</span>
+            <span className="font-bold text-lg hebrew-text">מערכת כושר</span>
           </div>
           <UserButton />
         </div>
@@ -211,9 +211,9 @@ const Index = () => {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
         {/* Today's Stats */}
         <section>
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <h2 className="text-2xl font-bold mb-6 flex flex-row-reverse items-center gap-2">
+            <span className="hebrew-text">הסטטיסטיקות שלך היום</span>
             <TrendingUp className="w-6 h-6 text-fitness-primary" />
-            הסטטיסטיקות שלך היום
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {todayStats.map((stat, index) => (
@@ -224,9 +224,9 @@ const Index = () => {
 
         {/* Workout Plans */}
         <section>
-          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <h2 className="text-2xl font-bold mb-6 flex flex-row-reverse items-center gap-2">
+            <span className="hebrew-text">תוכניות אימון מומלצות</span>
             <Dumbbell className="w-6 h-6 text-fitness-primary" />
-            תוכניות אימון מומלצות
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {workoutPlans.map((workout, index) => {

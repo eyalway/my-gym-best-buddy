@@ -117,21 +117,28 @@ All colors MUST be HSL.
   }
 
   html {
-    direction: rtl !important;
+    direction: ltr;
   }
 
   body {
     @apply bg-background text-foreground;
-    direction: rtl !important;
+    direction: ltr;
   }
 
-  * {
-    direction: rtl !important;
+  /* Hebrew text alignment */
+  .hebrew-text {
+    text-align: right;
+    direction: rtl;
   }
 
-  /* Force RTL for all containers */
-  div, section, main, header, footer, nav, article, aside {
-    direction: rtl !important;
+  /* Right-to-left layout classes */
+  .rtl-flex {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .rtl-grid {
+    direction: rtl;
   }
 
   /* RTL support for better text alignment */
