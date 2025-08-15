@@ -5,6 +5,7 @@ import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
 import { AddExerciseDialog } from "@/components/AddExerciseDialog";
 import { EditExerciseDialog } from "@/components/EditExerciseDialog";
+import { CopyExercisesDialog } from "@/components/CopyExercisesDialog";
 import { UserButton } from "@/components/UserButton";
 import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
 import { useWorkoutStats } from "@/hooks/useWorkoutStats";
@@ -75,6 +76,7 @@ const Index = () => {
   // Use the exercises hook
   const { 
     addExercise, 
+    addMultipleExercises,
     updateExercise, 
     deleteExercise, 
     getExercisesByWorkout,
@@ -172,6 +174,22 @@ const Index = () => {
       toast({
         title: "שגיאה",
         description: "לא ניתן להוסיף את התרגילים",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCopyExercises = async (exercises: Omit<Exercise, 'id'>[]) => {
+    try {
+      await addMultipleExercises(exercises);
+      toast({
+        title: "הועתקו בהצלחה!",
+        description: `${exercises.length} תרגילים הועתקו לאימון ${selectedWorkout}`,
+      });
+    } catch (error) {
+      toast({
+        title: "שגיאה",
+        description: "לא ניתן להעתיק את התרגילים",
         variant: "destructive",
       });
     }
@@ -286,10 +304,15 @@ const Index = () => {
           </div>
 
           {isManagingExercises && (
-            <div className="mb-4">
+            <div className="mb-4 flex gap-3">
               <AddExerciseDialog 
                 workoutType={selectedWorkout}
                 onAddExercise={addExercise}
+              />
+              <CopyExercisesDialog 
+                currentWorkoutType={selectedWorkout}
+                getExercisesByWorkout={getExercisesByWorkout}
+                onCopyExercises={handleCopyExercises}
               />
             </div>
           )}
