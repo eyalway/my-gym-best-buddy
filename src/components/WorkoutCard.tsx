@@ -37,18 +37,18 @@ export const WorkoutCard = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex justify-between items-center text-sm text-muted-foreground rtl-flex">
+        <div className="flex justify-between items-center text-sm text-muted-foreground">
           <div className="flex items-center gap-1">
-            <span className="hebrew-text">{exercises} תרגילים</span>
-            <Target className="w-4 h-4" />
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="hebrew-text">{calories}</span>
-            <Flame className="w-4 h-4" />
-          </div>
-          <div className="flex items-center gap-1">
-            <span className="hebrew-text">{duration}</span>
             <Clock className="w-4 h-4" />
+            <span className="hebrew-text">{duration}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Flame className="w-4 h-4" />
+            <span className="hebrew-text">{calories}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Target className="w-4 h-4" />
+            <span className="hebrew-text">{exercises} תרגילים</span>
           </div>
         </div>
         <Button 

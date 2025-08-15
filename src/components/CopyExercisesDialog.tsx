@@ -115,7 +115,7 @@ export const CopyExercisesDialog = ({
                     {exercises.map(exercise => (
                       <div 
                         key={exercise.id}
-                        className="flex items-center space-x-2 p-3 border border-border/50 rounded-lg hover:bg-accent/10 cursor-pointer rtl-flex"
+                        className="flex items-center space-x-2 p-3 border border-border/50 rounded-lg hover:bg-accent/10 cursor-pointer"
                         onClick={() => toggleExercise(exercise.id)}
                       >
                         <Checkbox

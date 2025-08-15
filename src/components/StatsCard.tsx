@@ -23,7 +23,7 @@ export const StatsCard = ({
         : "bg-card/50 backdrop-blur-sm border-border/50"
     } hover:scale-105 transition-all duration-300 hover:shadow-lg`}>
       <CardContent className="p-4">
-        <div className="flex items-center justify-between rtl-flex">
+        <div className="flex items-center justify-between">
           <div className="hebrew-text">
             <p className="text-sm text-muted-foreground">{title}</p>
             <p className="text-2xl font-bold text-foreground">{value}</p>
