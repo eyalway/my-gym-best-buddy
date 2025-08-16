@@ -118,12 +118,23 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    direction: rtl;
+    direction: rtl !important;
+  }
+  
+  html {
+    direction: rtl !important;
+  }
+  
+  * {
+    direction: inherit;
   }
 
   /* RTL support for better text alignment */
-  [dir="rtl"] {
-    text-align: right;
+  [dir="rtl"], 
+  html[dir="rtl"], 
+  html[dir="rtl"] * {
+    text-align: right !important;
+    direction: rtl !important;
   }
 
   /* Fix bidirectional text with mixed Hebrew/English */
@@ -170,5 +181,25 @@ All colors MUST be HSL.
   /* Don't flip certain icons that should stay the same */
   [dir="rtl"] .lucide.no-flip {
     transform: none;
+  }
+  
+  /* Mobile-specific RTL fixes */
+  @media (max-width: 768px) {
+    html, body {
+      direction: rtl !important;
+      text-align: right !important;
+    }
+    
+    * {
+      direction: inherit !important;
+    }
+    
+    .flex {
+      direction: ltr;
+    }
+    
+    .flex > * {
+      direction: rtl;
+    }
   }
 }
