@@ -13,7 +13,7 @@ export const calculateWorkoutDuration = (exercises: Exercise[]): string => {
   return `${totalMinutes} דקות`;
 };
 
-// חישוב זמן אימון על בסיס ממוצע אימונים קודמים או fallback
+// חישוב זמן אימון על בסיס ממוצע אימונים קודמים בלבד
 export const calculateWorkoutDurationWithHistory = (
   exercises: Exercise[], 
   averageDuration: number | null
@@ -22,8 +22,8 @@ export const calculateWorkoutDurationWithHistory = (
     return `${averageDuration} דקות`;
   }
   
-  // אם אין היסטוריה, נשתמש בחישוב הבסיסי
-  return calculateWorkoutDuration(exercises);
+  // אם אין היסטוריה, נציג שאין נתונים
+  return "אין נתונים";
 };
 
 // חישוב קלוריות על בסיס התרגילים
