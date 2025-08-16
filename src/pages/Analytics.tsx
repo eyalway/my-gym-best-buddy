@@ -342,7 +342,7 @@ const Analytics = () => {
                   <div className="w-full overflow-hidden">
                     <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                        <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis 
                             dataKey="name" 
@@ -350,15 +350,18 @@ const Analytics = () => {
                             tickLine={false}
                             axisLine={false}
                             interval={0}
-                            angle={-45}
+                            angle={-30}
                             textAnchor="end"
-                            height={60}
+                            height={50}
+                            tick={{ fontSize: 10 }}
+                            width={0}
                           />
                           <YAxis 
                             fontSize={10}
                             tickLine={false}
                             axisLine={false}
-                            width={40}
+                            width={30}
+                            tick={{ fontSize: 10 }}
                           />
                           <ChartTooltip 
                             content={<ChartTooltipContent />}
@@ -430,30 +433,33 @@ const Analytics = () => {
                           }
                         }} className="h-[250px] sm:h-[300px] w-full">
                           <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={selectedExerciseData} margin={{ top: 5, right: 5, left: 5, bottom: 60 }}>
+                            <LineChart data={selectedExerciseData} margin={{ top: 10, right: 10, left: 0, bottom: 50 }}>
                               <CartesianGrid strokeDasharray="3 3" />
                               <XAxis 
                                 dataKey="date" 
-                                fontSize={10}
+                                fontSize={9}
                                 tickLine={false}
                                 axisLine={false}
-                                angle={-45}
+                                angle={-30}
                                 textAnchor="end"
-                                height={60}
+                                height={50}
                                 interval={0}
+                                tick={{ fontSize: 9 }}
+                                width={0}
                               />
                               <YAxis 
                                 fontSize={10}
                                 tickLine={false}
                                 axisLine={false}
-                                width={40}
-                                label={{ value: 'ק״ג', angle: 0, position: 'insideLeft' }}
+                                width={25}
+                                tick={{ fontSize: 10 }}
+                                label={{ value: 'ק״ג', angle: 0, position: 'insideLeft', style: { fontSize: 10 } }}
                               />
                               <ChartTooltip 
                                 content={({ active, payload, label }) => {
                                   if (active && payload && payload.length > 0) {
                                     return (
-                                      <div className="bg-background border border-border rounded-lg p-3 shadow-lg text-sm">
+                                      <div className="bg-background border border-border rounded-lg p-2 shadow-lg text-xs">
                                         <p className="font-medium">{`תאריך: ${label}`}</p>
                                         <p className="text-fitness-primary">
                                           {`משקל: ${payload[0].value} ק״ג`}
@@ -469,8 +475,8 @@ const Analytics = () => {
                                 dataKey="weight" 
                                 stroke="hsl(var(--fitness-primary))" 
                                 strokeWidth={2}
-                                dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 1, r: 4 }}
-                                activeDot={{ r: 6 }}
+                                dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 1, r: 3 }}
+                                activeDot={{ r: 5 }}
                               />
                             </LineChart>
                           </ResponsiveContainer>
@@ -512,19 +518,22 @@ const Analytics = () => {
                   <div className="w-full overflow-hidden">
                     <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={workoutTypeData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                        <BarChart data={workoutTypeData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis 
                             dataKey="type" 
                             fontSize={10}
                             tickLine={false}
                             axisLine={false}
+                            tick={{ fontSize: 10 }}
+                            width={0}
                           />
                           <YAxis 
                             fontSize={10}
                             tickLine={false}
                             axisLine={false}
-                            width={30}
+                            width={25}
+                            tick={{ fontSize: 10 }}
                           />
                           <ChartTooltip 
                             content={<ChartTooltipContent />}
