@@ -139,6 +139,25 @@ const Analytics = () => {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - daysAgo);
 
+      // First get current exercise templates to filter by
+      const { data: currentExercises, error: exerciseError } = await supabase
+        .from('exercise_templates')
+        .select('exercise_name')
+        .eq('user_id', user.id);
+
+      if (exerciseError) {
+        console.error('Error fetching current exercises:', exerciseError);
+        return;
+      }
+
+      const currentExerciseNames = (currentExercises || []).map(ex => ex.exercise_name);
+
+      if (currentExerciseNames.length === 0) {
+        setAvailableExercises([]);
+        setExerciseProgress([]);
+        return;
+      }
+
       const { data: exerciseData, error } = await supabase
         .from('workout_exercises')
         .select(`
@@ -155,6 +174,7 @@ const Analytics = () => {
         .eq('workouts.user_id', user.id)
         .eq('workouts.completed', true)
         .gte('workouts.start_time', startDate.toISOString())
+        .in('exercise_name', currentExerciseNames)
         .not('weight', 'is', null)
         .order('created_at', { ascending: true });
 
@@ -164,7 +184,7 @@ const Analytics = () => {
       }
 
       if (exerciseData) {
-        // Get unique exercise names
+        // Get unique exercise names from filtered data
         const exercises = [...new Set(exerciseData.map(item => item.exercise_name))];
         setAvailableExercises(exercises);
         
