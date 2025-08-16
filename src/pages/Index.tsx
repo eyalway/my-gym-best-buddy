@@ -242,14 +242,17 @@ const Index = () => {
 
         {/* Progress Report Section */}
         <section>
-          <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+            <TrendingUp className="w-6 h-6 text-fitness-primary" />
+            דוח התקדמות
+          </h2>
+          <div className="text-center">
             <Button 
               onClick={() => navigate('/analytics')}
               size="lg"
-              className="text-xl py-6 px-8 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+              className="py-4 px-6 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
             >
-              <TrendingUp className="w-6 h-6 ml-3" />
-              דוח התקדמות
+              צפה בדוח מלא
             </Button>
             <p className="text-sm text-muted-foreground mt-3">
               עקוב אחר ההתקדמות שלך וראה את הנתונים והגרפים
