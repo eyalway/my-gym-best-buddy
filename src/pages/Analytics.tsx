@@ -340,53 +340,23 @@ const Analytics = () => {
               <CardContent className="p-3 sm:p-6 overflow-hidden">
                 {chartData.length > 0 ? (
                   <div className="w-full overflow-hidden">
-                    {/* Mobile version - fixed small size */}
-                    <div className="block sm:hidden overflow-hidden">
-                      <div className="w-full max-w-[250px] mx-auto overflow-hidden">
-                        <LineChart 
-                          width={250}
-                          height={180}
-                          data={chartData} 
-                          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="name" 
-                            fontSize={8}
-                            tickLine={false}
-                            axisLine={false}
-                            interval="preserveStartEnd"
-                            textAnchor="middle"
-                            height={25}
-                          />
-                          <YAxis 
-                            fontSize={8}
-                            tickLine={false}
-                            axisLine={false}
-                            width={25}
-                          />
-                          <ChartTooltip 
-                            content={<ChartTooltipContent />}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="duration" 
-                            stroke="var(--color-duration)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-duration)", r: 3 }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="exercises" 
-                            stroke="var(--color-exercises)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-exercises)", r: 3 }}
-                          />
-                        </LineChart>
+                    {/* Mobile version - simple data table instead of chart */}
+                    <div className="block sm:hidden">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-medium mb-3">אימונים אחרונים:</h4>
+                        {chartData.slice(0, 5).map((workout, index) => (
+                          <div key={index} className="flex justify-between items-center p-2 bg-muted/30 rounded text-xs">
+                            <span>{workout.name}</span>
+                            <div className="flex gap-4 text-muted-foreground">
+                              <span>{workout.duration} דק׳</span>
+                              <span>{workout.exercises} תרגילים</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                     
-                    {/* Desktop version */}
+                    {/* Desktop version - full chart */}
                     <div className="hidden sm:block">
                       <ChartContainer config={chartConfig} className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
