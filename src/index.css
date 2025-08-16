@@ -239,20 +239,27 @@ All colors MUST be HSL.
       padding: 0 0.5rem !important;
     }
     
-    /* SUPER SPECIFIC MOBILE CHART CONSTRAINTS */
-    .recharts-wrapper svg {
-      max-width: 280px !important;
-      width: 280px !important;
+    /* FORCE HIDE ALL CHARTS ON MOBILE - NUCLEAR OPTION */
+    .recharts-wrapper {
+      display: none !important;
     }
     
-    .recharts-surface {
-      max-width: 280px !important;
-      width: 280px !important;
+    .recharts-responsive-container {
+      display: none !important;
     }
     
-    /* Mobile card content should clip overflow */
-    [class*="CardContent"] {
-      overflow: hidden !important;
+    svg[class*="recharts"] {
+      display: none !important;
+    }
+    
+    /* Hide any element with chart in the name */
+    [class*="chart"]:has(svg) {
+      display: none !important;
+    }
+    
+    /* Hide ChartContainer on mobile */
+    [data-chart] {
+      display: none !important;
     }
   }
 }
