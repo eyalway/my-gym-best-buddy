@@ -9,6 +9,7 @@ import { CopyExercisesDialog } from "@/components/CopyExercisesDialog";
 import { UserButton } from "@/components/UserButton";
 import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
 import { useWorkoutStats } from "@/hooks/useWorkoutStats";
+import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -25,13 +26,14 @@ import {
   Sparkles
 } from "lucide-react";
 import fitnessHero from "@/assets/fitness-hero.jpg";
-import { calculateWorkoutDuration, calculateCalories, calculateDifficulty } from "@/utils/workoutCalculations";
+import { calculateWorkoutDurationWithHistory, calculateCalories, calculateDifficulty } from "@/utils/workoutCalculations";
 
 const Index = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
+  const { getAverageWorkoutDuration } = useWorkoutHistory();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
@@ -118,7 +120,7 @@ const Index = () => {
   const workoutPlans = [
     {
       title: "אימון A: חזה, כתפיים, יד אחורית ובטן",
-      duration: calculateWorkoutDuration(getExercisesByWorkout('A')),
+      duration: calculateWorkoutDurationWithHistory(getExercisesByWorkout('A'), getAverageWorkoutDuration('A')),
       calories: calculateCalories(getExercisesByWorkout('A')),
       exercises: getExercisesByWorkout('A').length,
       difficulty: calculateDifficulty(getExercisesByWorkout('A')),
@@ -126,7 +128,7 @@ const Index = () => {
     },
     {
       title: "אימון B: גב, יד קידמית ובטן",
-      duration: calculateWorkoutDuration(getExercisesByWorkout('B')),
+      duration: calculateWorkoutDurationWithHistory(getExercisesByWorkout('B'), getAverageWorkoutDuration('B')),
       calories: calculateCalories(getExercisesByWorkout('B')),
       exercises: getExercisesByWorkout('B').length,
       difficulty: calculateDifficulty(getExercisesByWorkout('B')),
@@ -134,7 +136,7 @@ const Index = () => {
     },
     {
       title: "אימון C: רגליים, זרועות ובטן",
-      duration: calculateWorkoutDuration(getExercisesByWorkout('C')),
+      duration: calculateWorkoutDurationWithHistory(getExercisesByWorkout('C'), getAverageWorkoutDuration('C')),
       calories: calculateCalories(getExercisesByWorkout('C')),
       exercises: getExercisesByWorkout('C').length,
       difficulty: calculateDifficulty(getExercisesByWorkout('C')),

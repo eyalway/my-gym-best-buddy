@@ -1,6 +1,6 @@
 import { Exercise } from "@/hooks/useSupabaseExercises";
 
-// חישוב זמן אימון על בסיס מספר התרגילים
+// חישוב זמן אימון על בסיס מספר התרגילים (fallback)
 export const calculateWorkoutDuration = (exercises: Exercise[]): string => {
   if (exercises.length === 0) return "0 דקות";
   
@@ -11,6 +11,19 @@ export const calculateWorkoutDuration = (exercises: Exercise[]): string => {
   
   const totalMinutes = warmupTime + (exercises.length * baseTimePerExercise) + cooldownTime;
   return `${totalMinutes} דקות`;
+};
+
+// חישוב זמן אימון על בסיס ממוצע אימונים קודמים או fallback
+export const calculateWorkoutDurationWithHistory = (
+  exercises: Exercise[], 
+  averageDuration: number | null
+): string => {
+  if (averageDuration !== null) {
+    return `${averageDuration} דקות`;
+  }
+  
+  // אם אין היסטוריה, נשתמש בחישוב הבסיסי
+  return calculateWorkoutDuration(exercises);
 };
 
 // חישוב קלוריות על בסיס התרגילים
