@@ -215,7 +215,7 @@ All colors MUST be HSL.
       max-width: 100vw !important;
     }
     
-    * {
+    *, *::before, *::after {
       direction: inherit !important;
       max-width: 100% !important;
       box-sizing: border-box !important;
@@ -235,16 +235,35 @@ All colors MUST be HSL.
       overflow-x: hidden !important;
     }
     
-    /* Force charts to fit container */
+    /* Force charts to fit container - STRONGER RULES */
     .recharts-wrapper {
-      max-width: 100% !important;
+      max-width: calc(100vw - 2rem) !important;
+      width: calc(100vw - 2rem) !important;
       overflow: hidden !important;
     }
     
-    /* Make sure responsive container respects bounds */
     .recharts-responsive-container {
-      max-width: 100% !important;
+      max-width: calc(100vw - 2rem) !important;
+      width: calc(100vw - 2rem) !important;
       overflow: hidden !important;
+    }
+    
+    .recharts-surface {
+      max-width: calc(100vw - 2rem) !important;
+      width: calc(100vw - 2rem) !important;
+      overflow: hidden !important;
+    }
+    
+    /* Force chart containers */
+    [role="img"] {
+      max-width: calc(100vw - 2rem) !important;
+      overflow: hidden !important;
+    }
+    
+    /* Card content padding compensation */
+    .max-w-7xl {
+      max-width: 100vw !important;
+      padding: 0 1rem !important;
     }
   }
 }
