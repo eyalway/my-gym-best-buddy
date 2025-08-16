@@ -205,6 +205,29 @@ export const useSupabaseExercises = () => {
     }
   };
 
+  const cleanupOrphanedExercises = async () => {
+    if (!user) return;
+
+    try {
+      // מחק תרגילים שיש להם workout_type לא תקין או null
+      const { error } = await supabase
+        .from('exercise_templates' as any)
+        .delete()
+        .eq('user_id', user.id)
+        .not('workout_type', 'in', '("A","B","C")');
+
+      if (error) {
+        console.error('Error cleaning up orphaned exercises:', error);
+        return;
+      }
+
+      // רענן את רשימת התרגילים
+      await loadExercises();
+    } catch (error) {
+      console.error('Error cleaning up orphaned exercises:', error);
+    }
+  };
+
   const addMultipleExercises = async (exercisesToAdd: Omit<Exercise, 'id'>[]) => {
     if (!user || exercisesToAdd.length === 0) return;
 
@@ -262,5 +285,6 @@ export const useSupabaseExercises = () => {
     deleteExercise,
     getExercisesByWorkout,
     reorderExercise,
+    cleanupOrphanedExercises,
   };
 };

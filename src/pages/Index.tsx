@@ -84,6 +84,7 @@ const Index = () => {
     deleteExercise, 
     getExercisesByWorkout,
     reorderExercise,
+    cleanupOrphanedExercises,
     loading 
   } = useSupabaseExercises();
 
@@ -437,6 +438,20 @@ const Index = () => {
             >
               <TrendingUp className="w-4 h-4" />
               דוח התקדמות
+            </Button>
+            <Button 
+              variant="outline" 
+              className="gap-2"
+              onClick={async () => {
+                await cleanupOrphanedExercises();
+                toast({
+                  title: "ניקוי הושלם",
+                  description: "תרגילים יתומים נמחקו מהמערכת",
+                });
+              }}
+            >
+              <Sparkles className="w-4 h-4" />
+              נקה תרגילים יתומים
             </Button>
           </div>
         </section>
