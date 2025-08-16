@@ -339,50 +339,58 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {chartData.length > 0 ? (
-                  <div className="w-full overflow-hidden">
-                    <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="name" 
-                            fontSize={10}
-                            tickLine={false}
-                            axisLine={false}
-                            interval={0}
-                            angle={-30}
-                            textAnchor="end"
-                            height={50}
-                            tick={{ fontSize: 10 }}
-                            width={0}
-                          />
-                          <YAxis 
-                            fontSize={10}
-                            tickLine={false}
-                            axisLine={false}
-                            width={30}
-                            tick={{ fontSize: 10 }}
-                          />
-                          <ChartTooltip 
-                            content={<ChartTooltipContent />}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="duration" 
-                            stroke="var(--color-duration)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-duration)", strokeWidth: 1, r: 3 }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="exercises" 
-                            stroke="var(--color-exercises)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-exercises)", strokeWidth: 1, r: 3 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
+                  <div className="w-full max-w-full overflow-hidden">
+                    <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                      <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full max-w-full">
+                        <div style={{ width: '100%', height: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                          <ResponsiveContainer width="100%" height="100%" maxHeight={300}>
+                            <LineChart 
+                              data={chartData} 
+                              margin={{ top: 10, right: 5, left: 5, bottom: 10 }}
+                              width={undefined}
+                              height={undefined}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis 
+                                dataKey="name" 
+                                fontSize={9}
+                                tickLine={false}
+                                axisLine={false}
+                                interval="preserveStartEnd"
+                                angle={0}
+                                textAnchor="middle"
+                                height={40}
+                                tick={{ fontSize: 9 }}
+                              />
+                              <YAxis 
+                                fontSize={9}
+                                tickLine={false}
+                                axisLine={false}
+                                width={25}
+                                tick={{ fontSize: 9 }}
+                              />
+                              <ChartTooltip 
+                                content={<ChartTooltipContent />}
+                              />
+                              <Line 
+                                type="monotone" 
+                                dataKey="duration" 
+                                stroke="var(--color-duration)" 
+                                strokeWidth={2}
+                                dot={{ fill: "var(--color-duration)", strokeWidth: 1, r: 3 }}
+                              />
+                              <Line 
+                                type="monotone" 
+                                dataKey="exercises" 
+                                stroke="var(--color-exercises)" 
+                                strokeWidth={2}
+                                dot={{ fill: "var(--color-exercises)", strokeWidth: 1, r: 3 }}
+                              />
+                            </LineChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </ChartContainer>
+                    </div>
                   </div>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -425,62 +433,70 @@ const Analytics = () => {
                     </div>
                     
                     {selectedExerciseData.length > 0 ? (
-                      <div className="w-full overflow-hidden">
-                        <ChartContainer config={{
-                          weight: {
-                            label: "משקל (ק״ג)",
-                            color: "hsl(var(--fitness-primary))",
-                          }
-                        }} className="h-[250px] sm:h-[300px] w-full">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={selectedExerciseData} margin={{ top: 10, right: 10, left: 0, bottom: 50 }}>
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis 
-                                dataKey="date" 
-                                fontSize={9}
-                                tickLine={false}
-                                axisLine={false}
-                                angle={-30}
-                                textAnchor="end"
-                                height={50}
-                                interval={0}
-                                tick={{ fontSize: 9 }}
-                                width={0}
-                              />
-                              <YAxis 
-                                fontSize={10}
-                                tickLine={false}
-                                axisLine={false}
-                                width={25}
-                                tick={{ fontSize: 10 }}
-                                label={{ value: 'ק״ג', angle: 0, position: 'insideLeft', style: { fontSize: 10 } }}
-                              />
-                              <ChartTooltip 
-                                content={({ active, payload, label }) => {
-                                  if (active && payload && payload.length > 0) {
-                                    return (
-                                      <div className="bg-background border border-border rounded-lg p-2 shadow-lg text-xs">
-                                        <p className="font-medium">{`תאריך: ${label}`}</p>
-                                        <p className="text-fitness-primary">
-                                          {`משקל: ${payload[0].value} ק״ג`}
-                                        </p>
-                                      </div>
-                                    );
-                                  }
-                                  return null;
-                                }}
-                              />
-                              <Line 
-                                type="monotone" 
-                                dataKey="weight" 
-                                stroke="hsl(var(--fitness-primary))" 
-                                strokeWidth={2}
-                                dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 1, r: 3 }}
-                                activeDot={{ r: 5 }}
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </ChartContainer>
+                      <div className="w-full max-w-full overflow-hidden">
+                        <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                          <ChartContainer config={{
+                            weight: {
+                              label: "משקל (ק״ג)",
+                              color: "hsl(var(--fitness-primary))",
+                            }
+                          }} className="h-[250px] sm:h-[300px] w-full max-w-full">
+                            <div style={{ width: '100%', height: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                              <ResponsiveContainer width="100%" height="100%" maxHeight={300}>
+                                <LineChart 
+                                  data={selectedExerciseData} 
+                                  margin={{ top: 10, right: 5, left: 5, bottom: 40 }}
+                                  width={undefined}
+                                  height={undefined}
+                                >
+                                  <CartesianGrid strokeDasharray="3 3" />
+                                  <XAxis 
+                                    dataKey="date" 
+                                    fontSize={9}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    interval="preserveStartEnd"
+                                    angle={0}
+                                    textAnchor="middle"
+                                    height={35}
+                                    tick={{ fontSize: 9 }}
+                                  />
+                                  <YAxis 
+                                    fontSize={9}
+                                    tickLine={false}
+                                    axisLine={false}
+                                    width={25}
+                                    tick={{ fontSize: 9 }}
+                                    label={{ value: 'ק״ג', angle: 0, position: 'insideLeft', style: { fontSize: 9 } }}
+                                  />
+                                  <ChartTooltip 
+                                    content={({ active, payload, label }) => {
+                                      if (active && payload && payload.length > 0) {
+                                        return (
+                                          <div className="bg-background border border-border rounded-lg p-2 shadow-lg text-xs">
+                                            <p className="font-medium">{`תאריך: ${label}`}</p>
+                                            <p className="text-fitness-primary">
+                                              {`משקל: ${payload[0].value} ק״ג`}
+                                            </p>
+                                          </div>
+                                        );
+                                      }
+                                      return null;
+                                    }}
+                                  />
+                                  <Line 
+                                    type="monotone" 
+                                    dataKey="weight" 
+                                    stroke="hsl(var(--fitness-primary))" 
+                                    strokeWidth={2}
+                                    dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 1, r: 3 }}
+                                    activeDot={{ r: 5 }}
+                                  />
+                                </LineChart>
+                              </ResponsiveContainer>
+                            </div>
+                          </ChartContainer>
+                        </div>
                       </div>
                     ) : (
                       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -515,37 +531,45 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {workoutTypeData.some(d => d.count > 0) ? (
-                  <div className="w-full overflow-hidden">
-                    <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={workoutTypeData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="type" 
-                            fontSize={10}
-                            tickLine={false}
-                            axisLine={false}
-                            tick={{ fontSize: 10 }}
-                            width={0}
-                          />
-                          <YAxis 
-                            fontSize={10}
-                            tickLine={false}
-                            axisLine={false}
-                            width={25}
-                            tick={{ fontSize: 10 }}
-                          />
-                          <ChartTooltip 
-                            content={<ChartTooltipContent />}
-                          />
-                          <Bar 
-                            dataKey="count" 
-                            fill="hsl(var(--fitness-primary))"
-                            radius={[4, 4, 0, 0]}
-                          />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
+                  <div className="w-full max-w-full overflow-hidden">
+                    <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                      <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full max-w-full">
+                        <div style={{ width: '100%', height: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                          <ResponsiveContainer width="100%" height="100%" maxHeight={300}>
+                            <BarChart 
+                              data={workoutTypeData} 
+                              margin={{ top: 10, right: 5, left: 5, bottom: 10 }}
+                              width={undefined}
+                              height={undefined}
+                            >
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis 
+                                dataKey="type" 
+                                fontSize={9}
+                                tickLine={false}
+                                axisLine={false}
+                                tick={{ fontSize: 9 }}
+                              />
+                              <YAxis 
+                                fontSize={9}
+                                tickLine={false}
+                                axisLine={false}
+                                width={25}
+                                tick={{ fontSize: 9 }}
+                              />
+                              <ChartTooltip 
+                                content={<ChartTooltipContent />}
+                              />
+                              <Bar 
+                                dataKey="count" 
+                                fill="hsl(var(--fitness-primary))"
+                                radius={[4, 4, 0, 0]}
+                              />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </ChartContainer>
+                    </div>
                   </div>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
