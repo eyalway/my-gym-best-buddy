@@ -238,28 +238,5 @@ All colors MUST be HSL.
       max-width: 100vw !important;
       padding: 0 0.5rem !important;
     }
-    
-    /* FORCE HIDE ALL CHARTS ON MOBILE - NUCLEAR OPTION */
-    .recharts-wrapper {
-      display: none !important;
-    }
-    
-    .recharts-responsive-container {
-      display: none !important;
-    }
-    
-    svg[class*="recharts"] {
-      display: none !important;
-    }
-    
-    /* Hide any element with chart in the name */
-    [class*="chart"]:has(svg) {
-      display: none !important;
-    }
-    
-    /* Hide ChartContainer on mobile */
-    [data-chart] {
-      display: none !important;
-    }
   }
 }
