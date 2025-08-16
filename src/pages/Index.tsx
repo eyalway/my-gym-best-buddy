@@ -25,6 +25,7 @@ import {
   Sparkles
 } from "lucide-react";
 import fitnessHero from "@/assets/fitness-hero.jpg";
+import { calculateWorkoutDuration, calculateCalories, calculateDifficulty } from "@/utils/workoutCalculations";
 
 const Index = () => {
   const { toast } = useToast();
@@ -117,26 +118,26 @@ const Index = () => {
   const workoutPlans = [
     {
       title: "אימון A: חזה, כתפיים, יד אחורית ובטן",
-      duration: "60 דקות",
-      calories: "350 קלוריות",
+      duration: calculateWorkoutDuration(getExercisesByWorkout('A')),
+      calories: calculateCalories(getExercisesByWorkout('A')),
       exercises: getExercisesByWorkout('A').length,
-      difficulty: "בינוני" as const,
+      difficulty: calculateDifficulty(getExercisesByWorkout('A')),
       muscleGroups: ["חזה", "כתפיים", "יד אחורית", "בטן"]
     },
     {
       title: "אימון B: גב, יד קידמית ובטן",
-      duration: "55 דקות", 
-      calories: "320 קלוריות",
+      duration: calculateWorkoutDuration(getExercisesByWorkout('B')),
+      calories: calculateCalories(getExercisesByWorkout('B')),
       exercises: getExercisesByWorkout('B').length,
-      difficulty: "בינוני" as const,
+      difficulty: calculateDifficulty(getExercisesByWorkout('B')),
       muscleGroups: ["גב", "יד קידמית", "בטן"]
     },
     {
       title: "אימון C: רגליים, זרועות ובטן",
-      duration: "70 דקות",
-      calories: "450 קלוריות", 
+      duration: calculateWorkoutDuration(getExercisesByWorkout('C')),
+      calories: calculateCalories(getExercisesByWorkout('C')),
       exercises: getExercisesByWorkout('C').length,
-      difficulty: "קשה" as const,
+      difficulty: calculateDifficulty(getExercisesByWorkout('C')),
       muscleGroups: ["רגליים", "יד קידמית", "יד אחורית", "בטן"]
     },
   ];

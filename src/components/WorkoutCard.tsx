@@ -7,7 +7,7 @@ interface WorkoutCardProps {
   duration: string;
   calories: string;
   exercises: number;
-  difficulty: "קל" | "בינוני" | "קשה";
+  difficulty: "קל" | "בינוני" | "קשה" | "מתקדם";
   onStart: () => void;
 }
 
@@ -24,6 +24,7 @@ export const WorkoutCard = ({
       case "קל": return "text-fitness-success";
       case "בינוני": return "text-fitness-warning";
       case "קשה": return "text-fitness-primary";
+      case "מתקדם": return "text-destructive";
       default: return "text-foreground";
     }
   };
