@@ -116,17 +116,31 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
-    direction: rtl !important;
-  }
-  
   html {
     direction: rtl !important;
   }
   
-  * {
-    direction: inherit;
+  body {
+    @apply bg-background text-foreground;
+    direction: rtl !important;
+    text-align: right !important;
+  }
+  
+  #root {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* RTL support for all elements */
+  *, *::before, *::after {
+    direction: inherit !important;
+  }
+  
+  /* Force RTL for all text containers */
+  p, h1, h2, h3, h4, h5, h6, span, div, section, main, header, footer, article, aside {
+    direction: rtl !important;
+    text-align: right !important;
+    unicode-bidi: isolate;
   }
 
   /* RTL support for better text alignment */
@@ -171,6 +185,15 @@ All colors MUST be HSL.
   
   [dir="rtl"] .flex-row {
     flex-direction: row-reverse;
+  }
+  
+  /* Force flex containers to respect RTL */
+  .flex {
+    direction: ltr;
+  }
+  
+  .flex > * {
+    direction: rtl !important;
   }
 
   /* Ensure icons and buttons work well in RTL */
