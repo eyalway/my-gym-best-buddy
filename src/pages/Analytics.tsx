@@ -339,54 +339,26 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {chartData.length > 0 ? (
-                  <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
-                    <>
-                      <div className="block sm:hidden w-full" style={{ transform: 'scale(0.8)', transformOrigin: 'top right', overflow: 'hidden' }}>
-                        <ResponsiveContainer width={320} height={200}>
-                          <LineChart 
-                            data={chartData} 
-                            width={320}
-                            height={200}
-                            margin={{ top: 10, right: 20, left: 20, bottom: 10 }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                              dataKey="name" 
-                              fontSize={10}
-                              tickLine={false}
-                              axisLine={false}
-                              interval="preserveStartEnd"
-                              textAnchor="middle"
-                              height={30}
-                            />
-                            <YAxis 
-                              fontSize={10}
-                              tickLine={false}
-                              axisLine={false}
-                              width={35}
-                            />
-                            <ChartTooltip 
-                              content={<ChartTooltipContent />}
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="duration" 
-                              stroke="var(--color-duration)" 
-                              strokeWidth={2}
-                              dot={{ fill: "var(--color-duration)", r: 3 }}
-                            />
-                            <Line 
-                              type="monotone" 
-                              dataKey="exercises" 
-                              stroke="var(--color-exercises)" 
-                              strokeWidth={2}
-                              dot={{ fill: "var(--color-exercises)", r: 3 }}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
+                  <>
+                    {/* Mobile - simple text data */}
+                    <div className="block sm:hidden">
+                      <div className="space-y-3">
+                        <h4 className="text-sm font-medium mb-3">אימונים אחרונים:</h4>
+                        {chartData.slice(0, 5).map((workout, index) => (
+                          <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                            <span className="font-medium">{workout.name}</span>
+                            <div className="flex gap-4 text-muted-foreground text-xs">
+                              <span>{workout.duration} דק׳</span>
+                              <span>{workout.exercises} תרגילים</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      
-                      <div className="hidden sm:block">
+                    </div>
+                    
+                    {/* Desktop - full chart */}
+                    <div className="hidden sm:block">
+                      <ChartContainer config={chartConfig} className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart 
                             data={chartData} 
@@ -427,9 +399,9 @@ const Analytics = () => {
                             />
                           </LineChart>
                         </ResponsiveContainer>
-                      </div>
-                    </>
-                  </ChartContainer>
+                      </ChartContainer>
+                    </div>
+                  </>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                     <div className="text-center">
@@ -471,71 +443,78 @@ const Analytics = () => {
                     </div>
                     
                     {selectedExerciseData.length > 0 ? (
-                      <div className="w-full max-w-full overflow-hidden">
-                        <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
+                      <>
+                        {/* Mobile - simple data */}
+                        <div className="block sm:hidden">
+                          <h4 className="text-sm font-medium mb-3">התקדמות ב{selectedExercise}:</h4>
+                          <div className="space-y-2">
+                            {selectedExerciseData.slice(-5).map((data, index) => (
+                              <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                                <span className="font-medium">{data.date}</span>
+                                <span className="text-fitness-primary font-bold">{data.weight} ק״ג</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                        
+                        {/* Desktop - full chart */}
+                        <div className="hidden sm:block">
                           <ChartContainer config={{
                             weight: {
                               label: "משקל (ק״ג)",
                               color: "hsl(var(--fitness-primary))",
                             }
-                          }} className="h-[250px] sm:h-[300px] w-full max-w-full">
-                            <div style={{ width: '100%', height: '100%', maxWidth: '100%', overflow: 'hidden' }}>
-                              <ResponsiveContainer width="100%" height="100%" maxHeight={300}>
-                                <LineChart 
-                                  data={selectedExerciseData} 
-                                  margin={{ top: 10, right: 5, left: 5, bottom: 40 }}
-                                  width={undefined}
-                                  height={undefined}
-                                >
-                                  <CartesianGrid strokeDasharray="3 3" />
-                                  <XAxis 
-                                    dataKey="date" 
-                                    fontSize={9}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    interval="preserveStartEnd"
-                                    angle={0}
-                                    textAnchor="middle"
-                                    height={35}
-                                    tick={{ fontSize: 9 }}
-                                  />
-                                  <YAxis 
-                                    fontSize={9}
-                                    tickLine={false}
-                                    axisLine={false}
-                                    width={25}
-                                    tick={{ fontSize: 9 }}
-                                    label={{ value: 'ק״ג', angle: 0, position: 'insideLeft', style: { fontSize: 9 } }}
-                                  />
-                                  <ChartTooltip 
-                                    content={({ active, payload, label }) => {
-                                      if (active && payload && payload.length > 0) {
-                                        return (
-                                          <div className="bg-background border border-border rounded-lg p-2 shadow-lg text-xs">
-                                            <p className="font-medium">{`תאריך: ${label}`}</p>
-                                            <p className="text-fitness-primary">
-                                              {`משקל: ${payload[0].value} ק״ג`}
-                                            </p>
-                                          </div>
-                                        );
-                                      }
-                                      return null;
-                                    }}
-                                  />
-                                  <Line 
-                                    type="monotone" 
-                                    dataKey="weight" 
-                                    stroke="hsl(var(--fitness-primary))" 
-                                    strokeWidth={2}
-                                    dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 1, r: 3 }}
-                                    activeDot={{ r: 5 }}
-                                  />
-                                </LineChart>
-                              </ResponsiveContainer>
-                            </div>
+                          }} className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <LineChart 
+                                data={selectedExerciseData} 
+                                margin={{ top: 10, right: 15, left: 10, bottom: 40 }}
+                              >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                  dataKey="date" 
+                                  fontSize={12}
+                                  tickLine={false}
+                                  axisLine={false}
+                                  angle={-45}
+                                  textAnchor="end"
+                                  height={60}
+                                />
+                                <YAxis 
+                                  fontSize={12}
+                                  tickLine={false}
+                                  axisLine={false}
+                                  width={40}
+                                  label={{ value: 'משקל (ק״ג)', angle: -90, position: 'insideLeft' }}
+                                />
+                                <ChartTooltip 
+                                  content={({ active, payload, label }) => {
+                                    if (active && payload && payload.length > 0) {
+                                      return (
+                                        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
+                                          <p className="font-medium">{`תאריך: ${label}`}</p>
+                                          <p className="text-fitness-primary">
+                                            {`משקל: ${payload[0].value} ק״ג`}
+                                          </p>
+                                        </div>
+                                      );
+                                    }
+                                    return null;
+                                  }}
+                                />
+                                <Line 
+                                  type="monotone" 
+                                  dataKey="weight" 
+                                  stroke="hsl(var(--fitness-primary))" 
+                                  strokeWidth={3}
+                                  dot={{ fill: "hsl(var(--fitness-primary))", strokeWidth: 2, r: 6 }}
+                                  activeDot={{ r: 8 }}
+                                />
+                              </LineChart>
+                            </ResponsiveContainer>
                           </ChartContainer>
                         </div>
-                      </div>
+                      </>
                     ) : (
                       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                         <div className="text-center">
@@ -569,46 +548,54 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {workoutTypeData.some(d => d.count > 0) ? (
-                  <div className="w-full max-w-full overflow-hidden">
-                    <div style={{ width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
-                      <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full max-w-full">
-                        <div style={{ width: '100%', height: '100%', maxWidth: '100%', overflow: 'hidden' }}>
-                          <ResponsiveContainer width="100%" height="100%" maxHeight={300}>
-                            <BarChart 
-                              data={workoutTypeData} 
-                              margin={{ top: 10, right: 5, left: 5, bottom: 10 }}
-                              width={undefined}
-                              height={undefined}
-                            >
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis 
-                                dataKey="type" 
-                                fontSize={9}
-                                tickLine={false}
-                                axisLine={false}
-                                tick={{ fontSize: 9 }}
-                              />
-                              <YAxis 
-                                fontSize={9}
-                                tickLine={false}
-                                axisLine={false}
-                                width={25}
-                                tick={{ fontSize: 9 }}
-                              />
-                              <ChartTooltip 
-                                content={<ChartTooltipContent />}
-                              />
-                              <Bar 
-                                dataKey="count" 
-                                fill="hsl(var(--fitness-primary))"
-                                radius={[4, 4, 0, 0]}
-                              />
-                            </BarChart>
-                          </ResponsiveContainer>
-                        </div>
+                  <>
+                    {/* Mobile - simple data */}
+                    <div className="block sm:hidden">
+                      <h4 className="text-sm font-medium mb-3">סוגי אימונים:</h4>
+                      <div className="space-y-2">
+                        {workoutTypeData.map((data, index) => (
+                          <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                            <span className="font-medium">{data.type}</span>
+                            <span className="text-fitness-primary font-bold">{data.count} אימונים</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Desktop - full chart */}
+                    <div className="hidden sm:block">
+                      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart 
+                            data={workoutTypeData} 
+                            margin={{ top: 10, right: 15, left: 10, bottom: 10 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="type" 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                            />
+                            <YAxis 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              width={40}
+                            />
+                            <ChartTooltip 
+                              content={<ChartTooltipContent />}
+                            />
+                            <Bar 
+                              dataKey="count" 
+                              fill="hsl(var(--fitness-primary))"
+                              radius={[4, 4, 0, 0]}
+                            />
+                          </BarChart>
+                        </ResponsiveContainer>
                       </ChartContainer>
                     </div>
-                  </div>
+                  </>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
                     <div className="text-center">

@@ -228,11 +228,6 @@ All colors MUST be HSL.
       direction: rtl;
     }
     
-    /* Prevent horizontal overflow for all containers */
-    div, section, main, article, aside {
-      overflow-x: hidden !important;
-    }
-
     /* Hide horizontal scrollbar completely on mobile */
     body, html, #root {
       overflow-x: hidden !important;
@@ -242,6 +237,22 @@ All colors MUST be HSL.
     .max-w-7xl {
       max-width: 100vw !important;
       padding: 0 0.5rem !important;
+    }
+    
+    /* SUPER SPECIFIC MOBILE CHART CONSTRAINTS */
+    .recharts-wrapper svg {
+      max-width: 280px !important;
+      width: 280px !important;
+    }
+    
+    .recharts-surface {
+      max-width: 280px !important;
+      width: 280px !important;
+    }
+    
+    /* Mobile card content should clip overflow */
+    [class*="CardContent"] {
+      overflow: hidden !important;
     }
   }
 }
