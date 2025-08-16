@@ -312,6 +312,9 @@ const Analytics = () => {
               <ArrowRight className="w-4 h-4 ml-2" />
               חזרה לבית
             </Button>
+            <Button variant="outline" onClick={() => navigate('/test-chart')} className="w-full sm:w-auto">
+              בדיקת גרף
+            </Button>
           </div>
         </div>
 
