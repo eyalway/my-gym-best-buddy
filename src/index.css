@@ -235,28 +235,36 @@ All colors MUST be HSL.
       overflow-x: hidden !important;
     }
     
-    /* MOBILE ONLY - Force charts to fit container */
+    /* MOBILE ONLY - Force ALL SVG elements to be contained */
+    svg {
+      max-width: 100% !important;
+      width: 100% !important;
+      overflow: visible !important;
+      transform-origin: top right !important;
+    }
+    
+    /* Force Recharts components to respect container bounds */
     .recharts-wrapper {
-      max-width: calc(100vw - 4rem) !important;
-      width: calc(100vw - 4rem) !important;
+      max-width: 100% !important;
+      width: 100% !important;
       overflow: hidden !important;
     }
     
     .recharts-responsive-container {
-      max-width: calc(100vw - 4rem) !important;
-      width: calc(100vw - 4rem) !important;
+      max-width: 100% !important;
+      width: 100% !important;
       overflow: hidden !important;
     }
     
     .recharts-surface {
-      max-width: calc(100vw - 4rem) !important;
-      width: calc(100vw - 4rem) !important;
+      max-width: 100% !important;
+      width: 100% !important;
       overflow: hidden !important;
     }
     
-    /* Force all SVG charts to be contained */
-    svg {
-      max-width: calc(100vw - 4rem) !important;
+    /* Chart containers should be bounded */
+    [data-chart] {
+      max-width: 100% !important;
       overflow: hidden !important;
     }
     
@@ -266,13 +274,16 @@ All colors MUST be HSL.
       padding: 0 1rem !important;
     }
     
-    /* Mobile chart text size adjustments */
-    .recharts-cartesian-axis-tick-value {
-      font-size: 9px !important;
+    /* All chart-related containers */
+    [class*="chart"], [class*="Chart"] {
+      max-width: 100% !important;
+      overflow: hidden !important;
     }
     
-    .recharts-tooltip-wrapper {
-      max-width: calc(100vw - 6rem) !important;
+    /* Force any element with 'recharts' in class to be contained */
+    [class*="recharts"] {
+      max-width: 100% !important;
+      overflow: hidden !important;
     }
   }
 }
