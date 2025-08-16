@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { StatsCard } from '@/components/StatsCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { 
   TrendingUp, 
   Calendar, 
@@ -61,6 +62,7 @@ interface ExerciseProgress {
 const Analytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([]);
   const [availableExercises, setAvailableExercises] = useState<string[]>([]);
@@ -340,24 +342,24 @@ const Analytics = () => {
               <CardContent className="p-3 sm:p-6">
                 {chartData.length > 0 ? (
                   <>
-                    {/* Mobile - simple text data */}
-                    <div className="block sm:hidden">
-                      <div className="space-y-3">
-                        <h4 className="text-sm font-medium mb-3">אימונים אחרונים:</h4>
-                        {chartData.slice(0, 5).map((workout, index) => (
-                          <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
-                            <span className="font-medium">{workout.name}</span>
-                            <div className="flex gap-4 text-muted-foreground text-xs">
-                              <span>{workout.duration} דק׳</span>
-                              <span>{workout.exercises} תרגילים</span>
+                    {isMobile ? (
+                      /* Mobile - simple text data */
+                      <div>
+                        <div className="space-y-3">
+                          <h4 className="text-sm font-medium mb-3">אימונים אחרונים:</h4>
+                          {chartData.slice(0, 5).map((workout, index) => (
+                            <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                              <span className="font-medium">{workout.name}</span>
+                              <div className="flex gap-4 text-muted-foreground text-xs">
+                                <span>{workout.duration} דק׳</span>
+                                <span>{workout.exercises} תרגילים</span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Desktop - full chart */}
-                    <div className="hidden sm:block">
+                    ) : (
+                      /* Desktop - full chart */
                       <ChartContainer config={chartConfig} className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart 
@@ -400,7 +402,7 @@ const Analytics = () => {
                           </LineChart>
                         </ResponsiveContainer>
                       </ChartContainer>
-                    </div>
+                    )}
                   </>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -444,21 +446,21 @@ const Analytics = () => {
                     
                     {selectedExerciseData.length > 0 ? (
                       <>
-                        {/* Mobile - simple data */}
-                        <div className="block sm:hidden">
-                          <h4 className="text-sm font-medium mb-3">התקדמות ב{selectedExercise}:</h4>
-                          <div className="space-y-2">
-                            {selectedExerciseData.slice(-5).map((data, index) => (
-                              <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
-                                <span className="font-medium">{data.date}</span>
-                                <span className="text-fitness-primary font-bold">{data.weight} ק״ג</span>
-                              </div>
-                            ))}
+                        {isMobile ? (
+                          /* Mobile - simple data */
+                          <div>
+                            <h4 className="text-sm font-medium mb-3">התקדמות ב{selectedExercise}:</h4>
+                            <div className="space-y-2">
+                              {selectedExerciseData.slice(-5).map((data, index) => (
+                                <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                                  <span className="font-medium">{data.date}</span>
+                                  <span className="text-fitness-primary font-bold">{data.weight} ק״ג</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                        
-                        {/* Desktop - full chart */}
-                        <div className="hidden sm:block">
+                        ) : (
+                          /* Desktop - full chart */
                           <ChartContainer config={{
                             weight: {
                               label: "משקל (ק״ג)",
@@ -513,7 +515,7 @@ const Analytics = () => {
                               </LineChart>
                             </ResponsiveContainer>
                           </ChartContainer>
-                        </div>
+                        )}
                       </>
                     ) : (
                       <div className="h-[300px] flex items-center justify-center text-muted-foreground">
@@ -549,21 +551,21 @@ const Analytics = () => {
               <CardContent className="p-3 sm:p-6">
                 {workoutTypeData.some(d => d.count > 0) ? (
                   <>
-                    {/* Mobile - simple data */}
-                    <div className="block sm:hidden">
-                      <h4 className="text-sm font-medium mb-3">סוגי אימונים:</h4>
-                      <div className="space-y-2">
-                        {workoutTypeData.map((data, index) => (
-                          <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
-                            <span className="font-medium">{data.type}</span>
-                            <span className="text-fitness-primary font-bold">{data.count} אימונים</span>
-                          </div>
-                        ))}
+                    {isMobile ? (
+                      /* Mobile - simple data */
+                      <div>
+                        <h4 className="text-sm font-medium mb-3">סוגי אימונים:</h4>
+                        <div className="space-y-2">
+                          {workoutTypeData.map((data, index) => (
+                            <div key={index} className="flex justify-between items-center p-3 bg-muted/30 rounded text-sm">
+                              <span className="font-medium">{data.type}</span>
+                              <span className="text-fitness-primary font-bold">{data.count} אימונים</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                    
-                    {/* Desktop - full chart */}
-                    <div className="hidden sm:block">
+                    ) : (
+                      /* Desktop - full chart */
                       <ChartContainer config={chartConfig} className="h-[300px] w-full">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart 
@@ -594,7 +596,7 @@ const Analytics = () => {
                           </BarChart>
                         </ResponsiveContainer>
                       </ChartContainer>
-                    </div>
+                    )}
                   </>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
