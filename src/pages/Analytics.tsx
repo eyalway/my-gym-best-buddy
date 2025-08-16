@@ -286,12 +286,6 @@ const Analytics = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-2 sm:p-4">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-        {/* Debug info */}
-        <div className="text-center p-2 bg-yellow-200 text-black text-sm">
-          רוחב מסך: {typeof window !== 'undefined' ? window.innerWidth : 'לא ידוע'} | 
-          מובייל: {isMobile ? 'כן' : 'לא'}
-        </div>
-
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -317,13 +311,6 @@ const Analytics = () => {
             <Button variant="ghost" onClick={() => navigate('/')} className="w-full sm:w-auto">
               <ArrowRight className="w-4 h-4 ml-2" />
               חזרה לבית
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate('/test-chart')} 
-              className="w-full sm:w-auto bg-red-500 text-white border-red-500 hover:bg-red-600"
-            >
-              🔴 בדיקת גרף 🔴
             </Button>
           </div>
         </div>
