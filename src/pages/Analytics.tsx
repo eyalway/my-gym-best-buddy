@@ -339,51 +339,98 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {chartData.length > 0 ? (
-                  <div className="w-full overflow-hidden">
-                    <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart 
-                          data={chartData} 
-                          margin={{ top: 10, right: 15, left: 10, bottom: 10 }}
-                        >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis 
-                            dataKey="name" 
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            interval="preserveStartEnd"
-                            textAnchor="middle"
-                            height={40}
-                            className="sm:text-xs"
-                          />
-                          <YAxis 
-                            fontSize={12}
-                            tickLine={false}
-                            axisLine={false}
-                            width={40}
-                            className="sm:text-xs"
-                          />
-                          <ChartTooltip 
-                            content={<ChartTooltipContent />}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="duration" 
-                            stroke="var(--color-duration)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-duration)", r: 4 }}
-                          />
-                          <Line 
-                            type="monotone" 
-                            dataKey="exercises" 
-                            stroke="var(--color-exercises)" 
-                            strokeWidth={2}
-                            dot={{ fill: "var(--color-exercises)", r: 4 }}
-                          />
-                        </LineChart>
-                      </ResponsiveContainer>
-                    </ChartContainer>
+                  <div className="w-full overflow-hidden relative">
+                    <div className="block sm:hidden overflow-hidden" style={{ maxWidth: '320px', width: '100%' }}>
+                      <ChartContainer config={chartConfig} className="h-[250px] w-full">
+                        <ResponsiveContainer width={300} height={250}>
+                          <LineChart 
+                            data={chartData} 
+                            width={300}
+                            height={250}
+                            margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="name" 
+                              fontSize={8}
+                              tickLine={false}
+                              axisLine={false}
+                              interval="preserveStartEnd"
+                              textAnchor="middle"
+                              height={30}
+                            />
+                            <YAxis 
+                              fontSize={8}
+                              tickLine={false}
+                              axisLine={false}
+                              width={25}
+                            />
+                            <ChartTooltip 
+                              content={<ChartTooltipContent />}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="duration" 
+                              stroke="var(--color-duration)" 
+                              strokeWidth={2}
+                              dot={{ fill: "var(--color-duration)", r: 3 }}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="exercises" 
+                              stroke="var(--color-exercises)" 
+                              strokeWidth={2}
+                              dot={{ fill: "var(--color-exercises)", r: 3 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    </div>
+                    
+                    <div className="hidden sm:block">
+                      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart 
+                            data={chartData} 
+                            margin={{ top: 10, right: 15, left: 10, bottom: 10 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                              dataKey="name" 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              interval="preserveStartEnd"
+                              textAnchor="middle"
+                              height={40}
+                            />
+                            <YAxis 
+                              fontSize={12}
+                              tickLine={false}
+                              axisLine={false}
+                              width={40}
+                            />
+                            <ChartTooltip 
+                              content={<ChartTooltipContent />}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="duration" 
+                              stroke="var(--color-duration)" 
+                              strokeWidth={2}
+                              dot={{ fill: "var(--color-duration)", r: 4 }}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="exercises" 
+                              stroke="var(--color-exercises)" 
+                              strokeWidth={2}
+                              dot={{ fill: "var(--color-exercises)", r: 4 }}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                    </div>
                   </div>
                 ) : (
                   <div className="h-[300px] flex items-center justify-center text-muted-foreground">
