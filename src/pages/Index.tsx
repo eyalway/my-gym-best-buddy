@@ -282,26 +282,27 @@ const Index = () => {
 
         {/* Exercise Management Section */}
         <section>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <h2 className="text-2xl font-bold flex items-center gap-2">
               <Target className="w-6 h-6 text-fitness-primary" />
               ניהול תרגילי אימון {selectedWorkout}
             </h2>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
               <Button
                 variant={isManagingExercises ? "default" : "outline"}
                 onClick={() => setIsManagingExercises(!isManagingExercises)}
                 size="sm"
-                className="gap-2"
+                className="gap-2 w-full sm:w-auto"
               >
                 <Settings className="w-4 h-4" />
                 {isManagingExercises ? "סיום עריכה" : "נהל תרגילים"}
               </Button>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex">
                 <Button 
                   variant={selectedWorkout === "A" ? "default" : "outline"} 
                   onClick={() => setSelectedWorkout("A")}
                   size="sm"
+                  className="text-xs"
                 >
                   אימון A
                 </Button>
@@ -309,6 +310,7 @@ const Index = () => {
                   variant={selectedWorkout === "B" ? "default" : "outline"} 
                   onClick={() => setSelectedWorkout("B")}
                   size="sm"
+                  className="text-xs"
                 >
                   אימון B
                 </Button>
@@ -316,6 +318,7 @@ const Index = () => {
                   variant={selectedWorkout === "C" ? "default" : "outline"} 
                   onClick={() => setSelectedWorkout("C")}
                   size="sm"
+                  className="text-xs"
                 >
                   אימון C
                 </Button>
