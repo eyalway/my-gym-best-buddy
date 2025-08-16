@@ -339,28 +339,30 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6">
                 {chartData.length > 0 ? (
-                  <div className="w-full" style={{ maxWidth: 'calc(100vw - 4rem)', overflow: 'hidden' }}>
-                    <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px]" style={{ maxWidth: '100%', overflow: 'hidden' }}>
+                  <div className="w-full overflow-hidden">
+                    <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <LineChart 
                           data={chartData} 
-                          margin={{ top: 10, right: 10, left: 10, bottom: 10 }}
+                          margin={{ top: 10, right: 15, left: 10, bottom: 10 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" />
                           <XAxis 
                             dataKey="name" 
-                            fontSize={9}
+                            fontSize={12}
                             tickLine={false}
                             axisLine={false}
                             interval="preserveStartEnd"
                             textAnchor="middle"
-                            height={30}
+                            height={40}
+                            className="sm:text-xs"
                           />
                           <YAxis 
-                            fontSize={9}
+                            fontSize={12}
                             tickLine={false}
                             axisLine={false}
-                            width={30}
+                            width={40}
+                            className="sm:text-xs"
                           />
                           <ChartTooltip 
                             content={<ChartTooltipContent />}
@@ -370,14 +372,14 @@ const Analytics = () => {
                             dataKey="duration" 
                             stroke="var(--color-duration)" 
                             strokeWidth={2}
-                            dot={{ fill: "var(--color-duration)", r: 3 }}
+                            dot={{ fill: "var(--color-duration)", r: 4 }}
                           />
                           <Line 
                             type="monotone" 
                             dataKey="exercises" 
                             stroke="var(--color-exercises)" 
                             strokeWidth={2}
-                            dot={{ fill: "var(--color-exercises)", r: 3 }}
+                            dot={{ fill: "var(--color-exercises)", r: 4 }}
                           />
                         </LineChart>
                       </ResponsiveContainer>

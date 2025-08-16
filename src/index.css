@@ -235,35 +235,44 @@ All colors MUST be HSL.
       overflow-x: hidden !important;
     }
     
-    /* Force charts to fit container - STRONGER RULES */
+    /* MOBILE ONLY - Force charts to fit container */
     .recharts-wrapper {
-      max-width: calc(100vw - 2rem) !important;
-      width: calc(100vw - 2rem) !important;
+      max-width: calc(100vw - 4rem) !important;
+      width: calc(100vw - 4rem) !important;
       overflow: hidden !important;
     }
     
     .recharts-responsive-container {
-      max-width: calc(100vw - 2rem) !important;
-      width: calc(100vw - 2rem) !important;
+      max-width: calc(100vw - 4rem) !important;
+      width: calc(100vw - 4rem) !important;
       overflow: hidden !important;
     }
     
     .recharts-surface {
-      max-width: calc(100vw - 2rem) !important;
-      width: calc(100vw - 2rem) !important;
+      max-width: calc(100vw - 4rem) !important;
+      width: calc(100vw - 4rem) !important;
       overflow: hidden !important;
     }
     
-    /* Force chart containers */
-    [role="img"] {
-      max-width: calc(100vw - 2rem) !important;
+    /* Force all SVG charts to be contained */
+    svg {
+      max-width: calc(100vw - 4rem) !important;
       overflow: hidden !important;
     }
     
-    /* Card content padding compensation */
+    /* Card specific mobile adjustments */
     .max-w-7xl {
       max-width: 100vw !important;
       padding: 0 1rem !important;
+    }
+    
+    /* Mobile chart text size adjustments */
+    .recharts-cartesian-axis-tick-value {
+      font-size: 9px !important;
+    }
+    
+    .recharts-tooltip-wrapper {
+      max-width: calc(100vw - 6rem) !important;
     }
   }
 }
