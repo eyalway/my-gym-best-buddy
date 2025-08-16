@@ -288,16 +288,7 @@ const Index = () => {
               ניהול תרגילי אימון {selectedWorkout}
             </h2>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <Button
-                variant={isManagingExercises ? "default" : "outline"}
-                onClick={() => setIsManagingExercises(!isManagingExercises)}
-                size="sm"
-                className="gap-2 w-full sm:w-auto"
-              >
-                <Settings className="w-4 h-4" />
-                {isManagingExercises ? "סיום עריכה" : "נהל תרגילים"}
-              </Button>
-              <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex">
+              <div className="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex order-1 sm:order-2">
                 <Button 
                   variant={selectedWorkout === "A" ? "default" : "outline"} 
                   onClick={() => setSelectedWorkout("A")}
@@ -323,6 +314,15 @@ const Index = () => {
                   אימון C
                 </Button>
               </div>
+              <Button
+                variant={isManagingExercises ? "default" : "outline"}
+                onClick={() => setIsManagingExercises(!isManagingExercises)}
+                size="sm"
+                className="gap-2 w-full sm:w-auto order-2 sm:order-1"
+              >
+                <Settings className="w-4 h-4" />
+                {isManagingExercises ? "סיום עריכה" : "נהל תרגילים"}
+              </Button>
             </div>
           </div>
 
