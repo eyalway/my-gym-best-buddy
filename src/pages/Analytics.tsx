@@ -72,6 +72,12 @@ const Analytics = () => {
 
   useEffect(() => {
     if (user) {
+      // Clear existing data before fetching
+      setWorkouts([]);
+      setExerciseProgress([]);
+      setAvailableExercises([]);
+      setSelectedExercise('');
+      
       fetchWorkoutData();
       fetchExerciseProgress();
     }
