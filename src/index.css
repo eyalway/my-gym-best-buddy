@@ -235,7 +235,7 @@ All colors MUST be HSL.
     
     /* Mobile viewport units to prevent overflow */
     .max-w-7xl {
-      max-width: 100vw !important;
+      max-width: calc(100vw - 1rem) !important;
       padding: 0 0.5rem !important;
     }
   }

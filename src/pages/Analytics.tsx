@@ -341,17 +341,17 @@ const Analytics = () => {
               </CardHeader>
               <CardContent className="p-3 sm:p-6 overflow-hidden">
                 {chartData.length > 0 ? (
-                  <div className="w-full overflow-hidden" style={{ maxWidth: isMobile ? '280px' : '100%' }}>
+                  <div className="w-full overflow-hidden">
                     <ChartContainer config={chartConfig} className="h-[250px] sm:h-[300px] w-full">
                       <LineChart 
                         data={chartData} 
                         margin={{ 
                           top: 10, 
-                          right: isMobile ? 5 : 15, 
-                          left: isMobile ? 5 : 10, 
+                          right: isMobile ? 2 : 15, 
+                          left: isMobile ? 2 : 10, 
                           bottom: 10 
                         }}
-                        width={isMobile ? 280 : undefined}
+                        width={isMobile ? undefined : undefined}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis 
@@ -367,7 +367,7 @@ const Analytics = () => {
                           fontSize={isMobile ? 9 : 12}
                           tickLine={false}
                           axisLine={false}
-                          width={isMobile ? 25 : 40}
+                          width={isMobile ? 20 : 40}
                         />
                         <ChartTooltip 
                           content={<ChartTooltipContent />}
