@@ -233,7 +233,7 @@ const Index = () => {
             <TrendingUp className="w-6 h-6 text-fitness-primary" />
             הסטטיסטיקות שלך היום
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {todayStats.map((stat, index) => (
               <StatsCard key={index} {...stat} />
             ))}
