@@ -283,11 +283,11 @@ const Index = () => {
         {/* Exercise Management Section */}
         <section>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold flex items-center gap-2">
+            <h2 className="text-2xl font-bold flex items-center gap-2 order-2 sm:order-1">
               <Target className="w-6 h-6 text-fitness-primary" />
               ניהול תרגילי אימון {selectedWorkout}
             </h2>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 order-1 sm:order-2">
               <Button
                 variant={isManagingExercises ? "default" : "outline"}
                 onClick={() => setIsManagingExercises(!isManagingExercises)}
