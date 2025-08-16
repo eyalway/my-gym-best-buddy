@@ -238,5 +238,17 @@ All colors MUST be HSL.
       max-width: calc(100vw - 1rem) !important;
       padding: 0 0.5rem !important;
     }
+    
+    /* Force all recharts containers to be contained on mobile */
+    .recharts-surface {
+      max-width: calc(100vw - 3rem) !important;
+      overflow: hidden !important;
+    }
+    
+    /* Force chart containers to not overflow */
+    [data-chart] {
+      max-width: calc(100vw - 3rem) !important;
+      overflow: hidden !important;
+    }
   }
 }
