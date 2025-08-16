@@ -340,32 +340,38 @@ const Analytics = () => {
               <CardContent className="p-3 sm:p-6 overflow-hidden">
                 {chartData.length > 0 ? (
                   <div className="w-full overflow-hidden">
-                    {/* Mobile version - very constrained */}
-                    <div className="block sm:hidden overflow-hidden max-w-full">
-                      <div style={{ width: '100%', maxWidth: '280px', overflow: 'hidden' }}>
-                        <ChartContainer config={chartConfig} className="h-[200px]" style={{ maxWidth: '280px', overflow: 'hidden' }}>
-                          <ResponsiveContainer width={280} height={200}>
+                    {/* Mobile version - scaled down */}
+                    <div className="block sm:hidden overflow-hidden flex justify-center">
+                      <div style={{ 
+                        transform: 'scale(0.7)', 
+                        transformOrigin: 'center center',
+                        width: '400px',
+                        height: '280px',
+                        overflow: 'hidden'
+                      }}>
+                        <ChartContainer config={chartConfig} className="h-[280px] w-[400px]">
+                          <ResponsiveContainer width={400} height={280}>
                             <LineChart 
                               data={chartData} 
-                              width={280}
-                              height={200}
-                              margin={{ top: 5, right: 15, left: 15, bottom: 5 }}
+                              width={400}
+                              height={280}
+                              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                             >
                               <CartesianGrid strokeDasharray="3 3" />
                               <XAxis 
                                 dataKey="name" 
-                                fontSize={7}
+                                fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
                                 interval="preserveStartEnd"
                                 textAnchor="middle"
-                                height={25}
+                                height={40}
                               />
                               <YAxis 
-                                fontSize={7}
+                                fontSize={12}
                                 tickLine={false}
                                 axisLine={false}
-                                width={20}
+                                width={40}
                               />
                               <ChartTooltip 
                                 content={<ChartTooltipContent />}
@@ -374,15 +380,15 @@ const Analytics = () => {
                                 type="monotone" 
                                 dataKey="duration" 
                                 stroke="var(--color-duration)" 
-                                strokeWidth={1.5}
-                                dot={{ fill: "var(--color-duration)", r: 2 }}
+                                strokeWidth={2}
+                                dot={{ fill: "var(--color-duration)", r: 4 }}
                               />
                               <Line 
                                 type="monotone" 
                                 dataKey="exercises" 
                                 stroke="var(--color-exercises)" 
-                                strokeWidth={1.5}
-                                dot={{ fill: "var(--color-exercises)", r: 2 }}
+                                strokeWidth={2}
+                                dot={{ fill: "var(--color-exercises)", r: 4 }}
                               />
                             </LineChart>
                           </ResponsiveContainer>
