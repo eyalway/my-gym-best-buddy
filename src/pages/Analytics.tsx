@@ -373,6 +373,9 @@ const Analytics = () => {
                 <SelectItem value="7">7 ימים</SelectItem>
                 <SelectItem value="30">30 ימים</SelectItem>
                 <SelectItem value="90">90 ימים</SelectItem>
+                <SelectItem value="180">6 חודשים</SelectItem>
+                <SelectItem value="365">שנה</SelectItem>
+                <SelectItem value="730">שנתיים</SelectItem>
               </SelectContent>
             </Select>
             <Button variant="ghost" onClick={() => navigate('/')} className="w-full sm:w-auto">
