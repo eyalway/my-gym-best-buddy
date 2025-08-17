@@ -101,6 +101,11 @@ const Analytics = () => {
 
       console.log('Fetching workouts for user:', user.id);
       console.log('Start date:', startDate.toISOString());
+      
+      // Debug: Check current user auth state
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      console.log('Current authenticated user:', currentUser?.id);
+      console.log('Are they the same?', user.id === currentUser?.id);
 
       const { data: workoutsData, error } = await supabase
         .from('workouts')
