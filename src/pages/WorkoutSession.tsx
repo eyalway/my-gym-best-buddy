@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSupabaseExercises } from "@/hooks/useSupabaseExercises";
 import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX, SkipForward } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -38,10 +38,12 @@ const WorkoutSession = () => {
   const [isRestRunning, setIsRestRunning] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
   const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
+  const [exerciseQueue, setExerciseQueue] = useState<number[]>([]);
 
   const exercises = workoutType ? getExercisesByWorkout(workoutType) : [];
-  const currentExercise = exercises[currentExerciseIndex];
-  const progress = exercises.length > 0 ? ((currentExerciseIndex + 1) / exercises.length) * 100 : 0;
+  const workoutExercises = exerciseQueue.length > 0 ? exerciseQueue.map(index => exercises[index]) : exercises;
+  const currentExercise = workoutExercises[currentExerciseIndex];
+  const progress = workoutExercises.length > 0 ? ((currentExerciseIndex + 1) / workoutExercises.length) * 100 : 0;
 
   console.log('Exercises found:', exercises.length);
 
@@ -176,12 +178,19 @@ const WorkoutSession = () => {
     }
   }, [workoutType, exercises.length, navigate, getExercisesByWorkout]);
 
+  // Initialize exercise queue when exercises load
+  useEffect(() => {
+    if (exercises.length > 0 && exerciseQueue.length === 0) {
+      setExerciseQueue(Array.from({ length: exercises.length }, (_, i) => i));
+    }
+  }, [exercises.length, exerciseQueue.length]);
+
   // Start workout session when component mounts
   useEffect(() => {
     if (workoutType && exercises.length > 0 && !currentWorkoutId) {
       const workoutTitles = {
         A: "אימון A: חזה, כתפיים, יד אחורית ובטן",
-        B: "אימון B: גב, יד קידמית ובטן", 
+        B: "אימון B: גב, יد קידמית ובטן", 
         C: "אימון C: רגליים, זרועות ובטן"
       };
       startWorkout(workoutType, workoutTitles[workoutType], exercises);
@@ -201,7 +210,7 @@ const WorkoutSession = () => {
     setCompletedExercises(prev => new Set([...prev, currentExerciseIndex]));
     setIsEditingWeight(false); // Reset weight editing state
     
-    if (currentExerciseIndex < exercises.length - 1) {
+    if (currentExerciseIndex < workoutExercises.length - 1) {
       setCurrentExerciseIndex(prev => prev + 1);
       toast({
         title: "תרגיל הושלם! 💪",
@@ -265,6 +274,29 @@ const WorkoutSession = () => {
   const handleWeightCancel = () => {
     setIsEditingWeight(false);
     setTempWeight('');
+  };
+
+  const handleSkipExercise = () => {
+    if (exerciseQueue.length <= 1) return; // Can't skip if only one exercise left
+    
+    // Remove current exercise from current position and insert it at the next position
+    const newQueue = [...exerciseQueue];
+    const currentExerciseInQueue = newQueue[currentExerciseIndex];
+    
+    // Remove from current position
+    newQueue.splice(currentExerciseIndex, 1);
+    
+    // Insert after the next exercise (or at the end if this is the last one)
+    const insertPosition = Math.min(currentExerciseIndex + 1, newQueue.length);
+    newQueue.splice(insertPosition, 0, currentExerciseInQueue);
+    
+    setExerciseQueue(newQueue);
+    setIsEditingWeight(false);
+    
+    toast({
+      title: "תרגיל נדחה",
+      description: "התרגיל יבוא אחרי התרגיל הבא",
+    });
   };
 
   const handleEndWorkout = async () => {
@@ -373,7 +405,7 @@ const WorkoutSession = () => {
               חזרה לבית
             </Button>
             <Badge variant="secondary" className="text-lg px-4 py-2">
-              תרגיל {currentExerciseIndex + 1} מתוך {exercises.length}
+              תרגיל {currentExerciseIndex + 1} מתוך {workoutExercises.length}
             </Badge>
           </div>
 
@@ -536,7 +568,7 @@ const WorkoutSession = () => {
           
           <CardContent className="space-y-6">
             {/* Action Buttons */}
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-2 pt-4">
               <Button
                 variant="outline"
                 onClick={handlePreviousExercise}
@@ -548,10 +580,20 @@ const WorkoutSession = () => {
               </Button>
               
               <Button
+                variant="outline"
+                onClick={handleSkipExercise}
+                disabled={workoutExercises.length <= 1}
+                className="flex-1"
+              >
+                <SkipForward className="w-4 h-4 ml-2" />
+                דלג
+              </Button>
+              
+              <Button
                 onClick={handleNextExercise}
                 className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
               >
-                {currentExerciseIndex === exercises.length - 1 ? (
+                {currentExerciseIndex === workoutExercises.length - 1 ? (
                   <>
                     <CheckCircle className="w-4 h-4 ml-2" />
                     סיים אימון
@@ -574,7 +616,7 @@ const WorkoutSession = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {exercises.map((exercise, index) => (
+              {workoutExercises.map((exercise, index) => (
                 <div
                   key={exercise.id}
                   className={`flex items-center justify-between p-3 rounded-lg transition-all ${
