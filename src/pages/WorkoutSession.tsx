@@ -37,6 +37,7 @@ const WorkoutSession = () => {
   const [isWorkoutRunning, setIsWorkoutRunning] = useState(false);
   const [isRestRunning, setIsRestRunning] = useState(false);
   const [isSoundEnabled, setIsSoundEnabled] = useState(true);
+  const [wakeLock, setWakeLock] = useState<WakeLockSentinel | null>(null);
 
   const exercises = workoutType ? getExercisesByWorkout(workoutType) : [];
   const currentExercise = exercises[currentExerciseIndex];
@@ -74,6 +75,36 @@ const WorkoutSession = () => {
       navigator.vibrate(pattern);
     }
   }, []);
+
+  // Wake Lock functions to prevent screen from turning off
+  const requestWakeLock = useCallback(async () => {
+    try {
+      if ('wakeLock' in navigator) {
+        const wakeLockSentinel = await navigator.wakeLock.request('screen');
+        setWakeLock(wakeLockSentinel);
+        console.log('Wake lock activated');
+        
+        wakeLockSentinel.addEventListener('release', () => {
+          console.log('Wake lock released');
+          setWakeLock(null);
+        });
+      }
+    } catch (error) {
+      console.error('Wake lock failed:', error);
+    }
+  }, []);
+
+  const releaseWakeLock = useCallback(async () => {
+    if (wakeLock) {
+      try {
+        await wakeLock.release();
+        setWakeLock(null);
+        console.log('Wake lock manually released');
+      } catch (error) {
+        console.error('Failed to release wake lock:', error);
+      }
+    }
+  }, [wakeLock]);
 
   // Format time display
   const formatTime = (seconds: number): string => {
@@ -120,13 +151,14 @@ const WorkoutSession = () => {
     if (currentWorkoutId && exercises.length > 0 && !isWorkoutRunning) {
       setIsWorkoutRunning(true);
       setWorkoutStartTime(Date.now());
+      requestWakeLock(); // Prevent screen from turning off during workout
       playBeep(500, 300);
       toast({
         title: 'האימון התחיל! 🔥',
         description: 'הטיימר רץ - בהצלחה!',
       });
     }
-  }, [currentWorkoutId, exercises.length, isWorkoutRunning, playBeep, toast]);
+  }, [currentWorkoutId, exercises.length, isWorkoutRunning, playBeep, toast, requestWakeLock]);
 
   useEffect(() => {
     console.log('useEffect - workoutType:', workoutType, 'exercises.length:', exercises.length);
@@ -156,6 +188,15 @@ const WorkoutSession = () => {
     }
   }, [workoutType, exercises, currentWorkoutId, startWorkout]);
 
+  // Cleanup wake lock when leaving the component
+  useEffect(() => {
+    return () => {
+      if (wakeLock) {
+        wakeLock.release().catch(console.error);
+      }
+    };
+  }, [wakeLock]);
+
   const handleNextExercise = async () => {
     setCompletedExercises(prev => new Set([...prev, currentExerciseIndex]));
     setIsEditingWeight(false); // Reset weight editing state
@@ -169,6 +210,7 @@ const WorkoutSession = () => {
     } else {
       // Workout completed - save to database
       setIsWorkoutRunning(false);
+      releaseWakeLock(); // Allow screen to turn off after workout
       if (currentWorkoutId) {
         const finalCompletedExercises = new Set([...completedExercises, currentExerciseIndex]);
         await completeWorkout(currentWorkoutId, finalCompletedExercises);
@@ -228,6 +270,7 @@ const WorkoutSession = () => {
   const handleEndWorkout = async () => {
     setIsWorkoutRunning(false);
     setIsRestRunning(false);
+    releaseWakeLock(); // Allow screen to turn off when ending workout
     
     // Save partial workout if session exists
     if (currentWorkoutId && completedExercises.size > 0) {
