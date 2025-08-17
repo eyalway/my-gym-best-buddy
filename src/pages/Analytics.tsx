@@ -63,6 +63,37 @@ interface ExerciseProgress {
 const Analytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const clearAllData = async () => {
+    try {
+      // Delete workout exercises first (child records)
+      await supabase
+        .from('workout_exercises')
+        .delete()
+        .in('workout_id', 
+          (await supabase.from('workouts').select('id').eq('user_id', user?.id || ''))
+          .data?.map(w => w.id) || []
+        );
+
+      // Delete workouts
+      await supabase
+        .from('workouts')
+        .delete()
+        .eq('user_id', user?.id || '');
+
+      // Clear local state
+      setWorkouts([]);
+      setExerciseProgress([]);
+      setAvailableExercises([]);
+      
+      console.log('All data cleared successfully');
+      
+      // Refresh the page to clear any cached data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error clearing data:', error);
+    }
+  };
   const isMobile = useIsMobile();
   const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([]);
@@ -375,6 +406,13 @@ const Analytics = () => {
                 <SelectItem value="90">90 ימים</SelectItem>
               </SelectContent>
             </Select>
+            <Button 
+              variant="outline" 
+              onClick={clearAllData}
+              className="bg-red-500/20 text-red-300 border-red-300/30 hover:bg-red-500/30 w-full sm:w-auto"
+            >
+              מחק כל הנתונים
+            </Button>
             <Button variant="ghost" onClick={() => navigate('/')} className="w-full sm:w-auto">
               <ArrowRight className="w-4 h-4 ml-2" />
               חזרה לבית
