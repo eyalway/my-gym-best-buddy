@@ -5,10 +5,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { StatsCard } from '@/components/StatsCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 import { 
   TrendingUp, 
   Calendar, 
@@ -19,7 +30,8 @@ import {
   BarChart3,
   ArrowRight,
   Target,
-  Activity
+  Activity,
+  Trash2
 } from 'lucide-react';
 import {
   ChartContainer,
@@ -64,12 +76,15 @@ const Analytics = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [workouts, setWorkouts] = useState<WorkoutData[]>([]);
   const [exerciseProgress, setExerciseProgress] = useState<ExerciseProgress[]>([]);
   const [availableExercises, setAvailableExercises] = useState<string[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<string>('');
   const [isLoading, setIsLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('30');
+  const [deleteWorkoutId, setDeleteWorkoutId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -247,6 +262,57 @@ const Analytics = () => {
       console.error('Error fetching exercise progress:', error);
       setAvailableExercises([]);
       setExerciseProgress([]);
+    }
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    if (!user) return;
+    
+    setIsDeleting(true);
+    try {
+      // First delete all workout exercises
+      const { error: exercisesError } = await supabase
+        .from('workout_exercises')
+        .delete()
+        .eq('workout_id', workoutId);
+
+      if (exercisesError) {
+        throw exercisesError;
+      }
+
+      // Then delete the workout
+      const { error: workoutError } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('id', workoutId)
+        .eq('user_id', user.id);
+
+      if (workoutError) {
+        throw workoutError;
+      }
+
+      // Update local state
+      setWorkouts(prev => prev.filter(w => w.id !== workoutId));
+      setDeleteWorkoutId(null);
+
+      toast({
+        title: "האימון נמחק בהצלחה! 🗑️",
+        description: "נתוני האימון הוסרו מהמערכת",
+      });
+
+      // Refresh data to update stats
+      fetchWorkoutData();
+      fetchExerciseProgress();
+
+    } catch (error) {
+      console.error('Error deleting workout:', error);
+      toast({
+        title: "שגיאה במחיקת האימון",
+        description: "לא הצלחנו למחוק את נתוני האימון",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -643,15 +709,23 @@ const Analytics = () => {
                       <div key={workout.id} className="p-3 sm:p-4 border border-border/50 rounded-lg bg-card/30">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                           <h3 className="font-medium text-foreground text-sm sm:text-base">{workout.workout_title}</h3>
-                          <div className="flex items-center gap-2">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              workout.completed 
-                                ? 'bg-green-500/20 text-green-700 dark:text-green-300' 
-                                : 'bg-orange-500/20 text-orange-700 dark:text-orange-300'
-                            }`}>
-                              {workout.completed ? 'הושלם' : 'לא הושלם'}
-                            </span>
-                          </div>
+                           <div className="flex items-center gap-2">
+                             <span className={`px-2 py-1 text-xs rounded-full ${
+                               workout.completed 
+                                 ? 'bg-green-500/20 text-green-700 dark:text-green-300' 
+                                 : 'bg-orange-500/20 text-orange-700 dark:text-orange-300'
+                             }`}>
+                               {workout.completed ? 'הושלם' : 'לא הושלם'}
+                             </span>
+                             <Button
+                               variant="ghost"
+                               size="sm"
+                               onClick={() => setDeleteWorkoutId(workout.id)}
+                               className="h-8 w-8 p-0 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-950"
+                             >
+                               <Trash2 className="h-4 w-4" />
+                             </Button>
+                           </div>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                           <div>
@@ -695,6 +769,32 @@ const Analytics = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Delete Workout Confirmation Dialog */}
+        <AlertDialog open={!!deleteWorkoutId} onOpenChange={() => setDeleteWorkoutId(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>מחיקת נתוני אימון</AlertDialogTitle>
+              <AlertDialogDescription>
+                האם אתה בטוח שאתה רוצה למחוק את נתוני האימון? 
+                <br />
+                פעולה זו תמחק את כל הנתונים השמורים עבור האימון הזה ולא ניתן לבטל אותה.
+                <br />
+                <strong>התרגילים עצמם לא יימחקו - רק הנתונים מהאימון הספציפי הזה.</strong>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>ביטול</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => deleteWorkoutId && handleDeleteWorkout(deleteWorkoutId)}
+                disabled={isDeleting}
+                className="bg-red-600 hover:bg-red-700"
+              >
+                {isDeleting ? 'מוחק...' : 'כן, מחק'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
