@@ -30,7 +30,9 @@ const WorkoutSession = () => {
   
   // Timer states
   const [workoutTime, setWorkoutTime] = useState(0);
+  const [workoutStartTime, setWorkoutStartTime] = useState<number | null>(null);
   const [restTime, setRestTime] = useState(0);
+  const [restStartTime, setRestStartTime] = useState<number | null>(null);
   const [restDuration, setRestDuration] = useState(60);
   const [isWorkoutRunning, setIsWorkoutRunning] = useState(false);
   const [isRestRunning, setIsRestRunning] = useState(false);
@@ -80,33 +82,44 @@ const WorkoutSession = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Timer effects
+  // Timer effects - use timestamp-based calculation to work when screen is off
   useEffect(() => {
     const interval = setInterval(() => {
-      if (isWorkoutRunning) {
-        setWorkoutTime(prev => prev + 1);
+      // Update workout time based on start timestamp
+      if (isWorkoutRunning && workoutStartTime) {
+        const currentTime = Date.now();
+        const elapsedSeconds = Math.floor((currentTime - workoutStartTime) / 1000);
+        setWorkoutTime(elapsedSeconds);
       }
       
-      if (isRestRunning && restTime > 0) {
-        setRestTime(prev => prev - 1);
-      } else if (isRestRunning && restTime === 0) {
-        setIsRestRunning(false);
-        playBeep(1000, 500);
-        vibrate([500, 200, 500]);
-        toast({
-          title: 'זמן המנוחה נגמר! 🔔',
-          description: 'זמן להמשיך באימון',
-        });
+      // Update rest time based on start timestamp  
+      if (isRestRunning && restStartTime) {
+        const currentTime = Date.now();
+        const elapsedSeconds = Math.floor((currentTime - restStartTime) / 1000);
+        const remainingTime = Math.max(0, restDuration - elapsedSeconds);
+        setRestTime(remainingTime);
+        
+        if (remainingTime === 0) {
+          setIsRestRunning(false);
+          setRestStartTime(null);
+          playBeep(1000, 500);
+          vibrate([500, 200, 500]);
+          toast({
+            title: 'זמן המנוחה נגמר! 🔔',
+            description: 'זמן להמשיך באימון',
+          });
+        }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isWorkoutRunning, isRestRunning, restTime, playBeep, vibrate, toast]);
+  }, [isWorkoutRunning, workoutStartTime, isRestRunning, restStartTime, restDuration, playBeep, vibrate, toast]);
 
   // Start workout timer when workout begins
   useEffect(() => {
     if (currentWorkoutId && exercises.length > 0 && !isWorkoutRunning) {
       setIsWorkoutRunning(true);
+      setWorkoutStartTime(Date.now());
       playBeep(500, 300);
       toast({
         title: 'האימון התחיל! 🔥',
@@ -233,6 +246,7 @@ const WorkoutSession = () => {
   // Timer functions
   const startRestTimer = () => {
     setRestTime(restDuration);
+    setRestStartTime(Date.now());
     setIsRestRunning(true);
     playBeep(600, 200);
     toast({
@@ -242,11 +256,20 @@ const WorkoutSession = () => {
   };
 
   const toggleRestTimer = () => {
-    setIsRestRunning(!isRestRunning);
+    if (isRestRunning) {
+      // Pausing - stop the timer but keep the current remaining time
+      setIsRestRunning(false);
+    } else {
+      // Resuming - set new start time based on remaining time
+      const elapsedTime = restDuration - restTime;
+      setRestStartTime(Date.now() - (elapsedTime * 1000));
+      setIsRestRunning(true);
+    }
   };
 
   const resetRestTimer = () => {
     setIsRestRunning(false);
+    setRestStartTime(null);
     setRestTime(restDuration);
   };
 
