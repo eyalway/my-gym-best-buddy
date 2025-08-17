@@ -436,13 +436,23 @@ const WorkoutSession = () => {
             <CardTitle className="text-3xl font-bold text-fitness-primary mb-2">
               {currentExercise.name}
             </CardTitle>
-            <div className="flex justify-center items-center gap-4 text-lg">
+            <div className="flex justify-center items-center gap-4 text-lg flex-wrap">
               <Badge variant="outline" className="px-4 py-2">
                 {currentExercise.sets} סטים
               </Badge>
               <Badge variant="outline" className="px-4 py-2">
                 {currentExercise.reps} חזרות
               </Badge>
+              {currentExercise.machineNumber && (
+                <Badge variant="secondary" className="px-4 py-2">
+                  מכשיר {currentExercise.machineNumber}
+                </Badge>
+              )}
+              {currentExercise.seatHeight && (
+                <Badge variant="secondary" className="px-4 py-2">
+                  כיסא {currentExercise.seatHeight}
+                </Badge>
+              )}
               {currentExercise.weight && (
                 <div className="flex items-center gap-2">
                   {isEditingWeight ? (
