@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -98,6 +99,9 @@ const Analytics = () => {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - daysAgo);
 
+      console.log('Fetching workouts for user:', user.id);
+      console.log('Start date:', startDate.toISOString());
+
       const { data: workoutsData, error } = await supabase
         .from('workouts')
         .select(`
@@ -119,8 +123,12 @@ const Analytics = () => {
         .gte('start_time', startDate.toISOString())
         .order('start_time', { ascending: false });
 
+      console.log('Workouts data:', workoutsData);
+      console.log('Workouts error:', error);
+
       if (error) {
         console.error('Error fetching workouts:', error);
+        setWorkouts([]);
         return;
       }
 
@@ -129,9 +137,11 @@ const Analytics = () => {
         exercises: workout.workout_exercises || []
       }));
 
+      console.log('Transformed workouts:', transformedData);
       setWorkouts(transformedData);
     } catch (error) {
       console.error('Error fetching workout data:', error);
+      setWorkouts([]);
     } finally {
       setIsLoading(false);
     }
@@ -145,20 +155,28 @@ const Analytics = () => {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - daysAgo);
 
+      console.log('Fetching exercise progress for user:', user.id);
+
       // First get current exercise templates to filter by
       const { data: currentExercises, error: exerciseError } = await supabase
         .from('exercise_templates')
         .select('exercise_name')
         .eq('user_id', user.id);
 
+      console.log('Current exercises:', currentExercises);
+      console.log('Exercise templates error:', exerciseError);
+
       if (exerciseError) {
         console.error('Error fetching current exercises:', exerciseError);
+        setAvailableExercises([]);
+        setExerciseProgress([]);
         return;
       }
 
       const currentExerciseNames = (currentExercises || []).map(ex => ex.exercise_name);
 
       if (currentExerciseNames.length === 0) {
+        console.log('No exercise templates found');
         setAvailableExercises([]);
         setExerciseProgress([]);
         return;
@@ -184,12 +202,17 @@ const Analytics = () => {
         .not('weight', 'is', null)
         .order('created_at', { ascending: true });
 
+      console.log('Exercise data:', exerciseData);
+      console.log('Exercise data error:', error);
+
       if (error) {
         console.error('Error fetching exercise progress:', error);
+        setAvailableExercises([]);
+        setExerciseProgress([]);
         return;
       }
 
-      if (exerciseData) {
+      if (exerciseData && exerciseData.length > 0) {
         // Get unique exercise names from filtered data
         const exercises = [...new Set(exerciseData.map(item => item.exercise_name))];
         setAvailableExercises(exercises);
@@ -210,9 +233,15 @@ const Analytics = () => {
           }));
 
         setExerciseProgress(progressData);
+      } else {
+        console.log('No exercise data found');
+        setAvailableExercises([]);
+        setExerciseProgress([]);
       }
     } catch (error) {
       console.error('Error fetching exercise progress:', error);
+      setAvailableExercises([]);
+      setExerciseProgress([]);
     }
   };
 
@@ -308,6 +337,13 @@ const Analytics = () => {
       color: "hsl(var(--fitness-secondary))",
     },
   };
+
+  console.log('Current state:', {
+    workouts: workouts.length,
+    exerciseProgress: exerciseProgress.length,
+    availableExercises: availableExercises.length,
+    isLoading
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-2 sm:p-4">
