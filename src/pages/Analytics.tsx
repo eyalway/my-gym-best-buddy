@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { StatsCard } from '@/components/StatsCard';
+import TrashBin from '@/components/TrashBin';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -140,6 +141,7 @@ const Analytics = () => {
           )
         `)
         .eq('user_id', user.id)
+        .is('deleted_at', null) // Only show non-deleted workouts
         .gte('start_time', startDate.toISOString())
         .order('start_time', { ascending: false });
 
@@ -270,20 +272,10 @@ const Analytics = () => {
     
     setIsDeleting(true);
     try {
-      // First delete all workout exercises
-      const { error: exercisesError } = await supabase
-        .from('workout_exercises')
-        .delete()
-        .eq('workout_id', workoutId);
-
-      if (exercisesError) {
-        throw exercisesError;
-      }
-
-      // Then delete the workout
+      // Soft delete - move to trash instead of permanent deletion
       const { error: workoutError } = await supabase
         .from('workouts')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq('id', workoutId)
         .eq('user_id', user.id);
 
@@ -291,13 +283,19 @@ const Analytics = () => {
         throw workoutError;
       }
 
-      // Update local state
+      // Update local state to remove from display
       setWorkouts(prev => prev.filter(w => w.id !== workoutId));
       setDeleteWorkoutId(null);
 
       toast({
-        title: "האימון נמחק בהצלחה! 🗑️",
-        description: "נתוני האימון הוסרו מהמערכת",
+        title: "האימון הועבר לפח 🗑️",
+        description: "תוכל לשחזר אותו מהפח אם נמחק בטעות",
+        action: <button 
+          onClick={() => handleRestoreWorkout(workoutId)}
+          className="text-sm underline hover:no-underline"
+        >
+          שחזר כעת
+        </button>
       });
 
       // Refresh data to update stats
@@ -308,11 +306,40 @@ const Analytics = () => {
       console.error('Error deleting workout:', error);
       toast({
         title: "שגיאה במחיקת האימון",
-        description: "לא הצלחנו למחוק את נתוני האימון",
+        description: "לא הצלחנו להעביר את האימון לפח",
         variant: "destructive",
       });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleRestoreWorkout = async (workoutId: string) => {
+    if (!user) return;
+    
+    try {
+      const { error } = await supabase.rpc('restore_workout', {
+        workout_id: workoutId
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "האימון שוחזר בהצלחה! ✅",
+        description: "האימון חזר לרשימת האימונים שלך",
+      });
+
+      // Refresh data to show restored workout
+      fetchWorkoutData();
+      fetchExerciseProgress();
+
+    } catch (error) {
+      console.error('Error restoring workout:', error);
+      toast({
+        title: "שגיאה בשחזור האימון",
+        description: "לא הצלחנו לשחזר את האימון",
+        variant: "destructive",
+      });
     }
   };
 
@@ -460,11 +487,12 @@ const Analytics = () => {
 
         {/* Charts and Data */}
         <Tabs defaultValue="progress" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 h-auto">
             <TabsTrigger value="progress" className="text-xs sm:text-sm">התקדמות</TabsTrigger>
             <TabsTrigger value="exercises" className="text-xs sm:text-sm">תרגילים</TabsTrigger>
             <TabsTrigger value="workouts" className="text-xs sm:text-sm">סוגי אימונים</TabsTrigger>
             <TabsTrigger value="history" className="text-xs sm:text-sm">היסטוריה</TabsTrigger>
+            <TabsTrigger value="trash" className="text-xs sm:text-sm">פח</TabsTrigger>
           </TabsList>
           
           <TabsContent value="progress" className="space-y-6">
@@ -768,20 +796,24 @@ const Analytics = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="trash">
+            <TrashBin />
+          </TabsContent>
         </Tabs>
 
         {/* Delete Workout Confirmation Dialog */}
         <AlertDialog open={!!deleteWorkoutId} onOpenChange={() => setDeleteWorkoutId(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>מחיקת נתוני אימון</AlertDialogTitle>
-              <AlertDialogDescription>
-                האם אתה בטוח שאתה רוצה למחוק את נתוני האימון? 
-                <br />
-                פעולה זו תמחק את כל הנתונים השמורים עבור האימון הזה ולא ניתן לבטל אותה.
-                <br />
-                <strong>התרגילים עצמם לא יימחקו - רק הנתונים מהאימון הספציפי הזה.</strong>
-              </AlertDialogDescription>
+              <AlertDialogTitle>העברה לפח</AlertDialogTitle>
+            <AlertDialogDescription>
+              האם אתה בטוח שאתה רוצה להעביר את האימון לפח? 
+              <br />
+              האימון יועבר לפח ויהיה ניתן לשחזור מהטאב "פח".
+              <br />
+              <strong>התרגילים עצמם לא יימחקו - רק הנתונים מהאימון הספציפי הזה.</strong>
+            </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>ביטול</AlertDialogCancel>
@@ -790,7 +822,7 @@ const Analytics = () => {
                 disabled={isDeleting}
                 className="bg-red-600 hover:bg-red-700"
               >
-                {isDeleting ? 'מוחק...' : 'כן, מחק'}
+                {isDeleting ? 'מעביר...' : 'העבר לפח'}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

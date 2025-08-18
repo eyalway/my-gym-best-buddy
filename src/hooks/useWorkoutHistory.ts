@@ -22,6 +22,7 @@ export const useWorkoutHistory = () => {
         .select('id, workout_type, workout_title, start_time, end_time, completed')
         .eq('completed', true)
         .not('end_time', 'is', null)
+        .is('deleted_at', null) // Only show non-deleted workouts
         .order('start_time', { ascending: false })
         .limit(50); // נביא 50 אימונים אחרונים
 
