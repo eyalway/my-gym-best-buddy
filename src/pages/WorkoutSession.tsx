@@ -187,7 +187,7 @@ const WorkoutSession = () => {
 
   // Start workout session when component mounts
   useEffect(() => {
-    if (workoutType && exercises.length > 0 && !currentWorkoutId) {
+    if (workoutType && exercises.length > 0 && !currentWorkoutId && !workoutLoading) {
       const workoutTitles = {
         A: "אימון A: חזה, כתפיים, יד אחורית ובטן",
         B: "אימון B: גב, יد קידמית ובטן", 
@@ -195,7 +195,7 @@ const WorkoutSession = () => {
       };
       startWorkout(workoutType, workoutTitles[workoutType], exercises);
     }
-  }, [workoutType, exercises, currentWorkoutId, startWorkout]);
+  }, [workoutType, exercises.length, currentWorkoutId, workoutLoading]);
 
   // Cleanup wake lock when leaving the component
   useEffect(() => {
