@@ -568,39 +568,43 @@ const WorkoutSession = () => {
           
           <CardContent className="space-y-6">
             {/* Action Buttons */}
-            <div className="flex gap-2 pt-4">
-              <Button
-                variant="outline"
-                onClick={handlePreviousExercise}
-                disabled={currentExerciseIndex === 0}
-                className="flex-1"
-              >
-                <ArrowLeft className="w-4 h-4 ml-2" />
-                תרגיל קודם
-              </Button>
+            <div className="space-y-3 pt-4">
+              {/* Top row - Skip and Previous */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handlePreviousExercise}
+                  disabled={currentExerciseIndex === 0}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 ml-2" />
+                  תרגיל קודם
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={handleSkipExercise}
+                  disabled={workoutExercises.length <= 1}
+                  className="flex-1"
+                >
+                  <SkipForward className="w-4 h-4 ml-2" />
+                  דלג
+                </Button>
+              </div>
               
-              <Button
-                variant="outline"
-                onClick={handleSkipExercise}
-                disabled={workoutExercises.length <= 1}
-                className="flex-1"
-              >
-                <SkipForward className="w-4 h-4 ml-2" />
-                דלג
-              </Button>
-              
+              {/* Bottom row - Main Next Button */}
               <Button
                 onClick={handleNextExercise}
-                className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
+                className="w-full bg-fitness-primary hover:bg-fitness-primary/90 h-12 text-lg font-semibold"
               >
                 {currentExerciseIndex === workoutExercises.length - 1 ? (
                   <>
-                    <CheckCircle className="w-4 h-4 ml-2" />
+                    <CheckCircle className="w-5 h-5 ml-2" />
                     סיים אימון
                   </>
                 ) : (
                   <>
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-5 h-5 ml-2" />
                     תרגיל הבא
                   </>
                 )}
