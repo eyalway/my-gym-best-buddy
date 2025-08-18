@@ -173,20 +173,23 @@ export default function TrashBin() {
         {deletedWorkouts.map((workout) => (
           <Card key={workout.id} className="relative">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-lg">{workout.workout_title}</CardTitle>
-                  <Badge className={getWorkoutTypeColor(workout.workout_type)}>
-                    אימון {workout.workout_type}
-                  </Badge>
+              <div className="flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+                    <CardTitle className="text-lg truncate">{workout.workout_title}</CardTitle>
+                    <Badge className={getWorkoutTypeColor(workout.workout_type)} variant="secondary">
+                      אימון {workout.workout_type}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
+                
+                <div className="flex flex-col sm:flex-row gap-2 w-full">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleRestoreWorkout(workout.id)}
                     disabled={isRestoring === workout.id}
-                    className="text-green-600 hover:text-green-700"
+                    className="text-green-600 hover:text-green-700 flex-1 sm:flex-none"
                   >
                     <Undo2 className="w-4 h-4 ml-2" />
                     {isRestoring === workout.id ? 'משחזר...' : 'שחזר'}
@@ -198,7 +201,7 @@ export default function TrashBin() {
                         variant="outline"
                         size="sm"
                         disabled={isPermanentlyDeleting === workout.id}
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 flex-1 sm:flex-none"
                       >
                         <Trash2 className="w-4 h-4 ml-2" />
                         מחק לצמיתות
