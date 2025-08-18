@@ -158,6 +158,7 @@ export type Database = {
         Row: {
           completed: boolean
           created_at: string
+          deleted_at: string | null
           end_time: string | null
           id: string
           start_time: string
@@ -169,6 +170,7 @@ export type Database = {
         Insert: {
           completed?: boolean
           created_at?: string
+          deleted_at?: string | null
           end_time?: string | null
           id?: string
           start_time?: string
@@ -180,6 +182,7 @@ export type Database = {
         Update: {
           completed?: boolean
           created_at?: string
+          deleted_at?: string | null
           end_time?: string | null
           id?: string
           start_time?: string
@@ -195,7 +198,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      restore_workout: {
+        Args: { workout_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
