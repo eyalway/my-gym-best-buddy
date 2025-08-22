@@ -19,7 +19,7 @@ const WorkoutSession = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { getExercisesByWorkout, updateExercise } = useSupabaseExercises();
-  const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, updateExerciseWeight } = useWorkoutSession();
+  const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, pauseWorkout, updateExerciseWeight } = useWorkoutSession();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
   
@@ -299,6 +299,18 @@ const WorkoutSession = () => {
     });
   };
 
+  const handlePauseWorkout = async () => {
+    setIsWorkoutRunning(false);
+    setIsRestRunning(false);
+    releaseWakeLock(); // Allow screen to turn off when pausing workout
+    
+    if (currentWorkoutId) {
+      await pauseWorkout(currentWorkoutId);
+    }
+    
+    navigate('/');
+  };
+
   const handleEndWorkout = async () => {
     setIsWorkoutRunning(false);
     setIsRestRunning(false);
@@ -400,10 +412,16 @@ const WorkoutSession = () => {
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" onClick={handleEndWorkout}>
-              <Home className="w-4 h-4 ml-2" />
-              חזרה לבית
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" onClick={handleEndWorkout} size="sm">
+                <Home className="w-4 h-4 ml-2" />
+                חזרה לבית
+              </Button>
+              <Button variant="outline" onClick={handlePauseWorkout} size="sm">
+                <Pause className="w-4 h-4 ml-2" />
+                השהה
+              </Button>
+            </div>
             <Badge variant="secondary" className="text-lg px-4 py-2">
               תרגיל {currentExerciseIndex + 1} מתוך {workoutExercises.length}
             </Badge>

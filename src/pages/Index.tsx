@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsCard } from "@/components/StatsCard";
 import { ExerciseItem } from "@/components/ExerciseItem";
@@ -10,6 +11,7 @@ import { UserButton } from "@/components/UserButton";
 import { useSupabaseExercises, Exercise } from "@/hooks/useSupabaseExercises";
 import { useWorkoutStats } from "@/hooks/useWorkoutStats";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
+import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +25,8 @@ import {
   Play,
   Trophy,
   Settings,
-  Sparkles
+  Sparkles,
+  Pause
 } from "lucide-react";
 import fitnessHero from "@/assets/fitness-hero.jpg";
 import { calculateWorkoutDurationWithHistory, calculateCalories, calculateDifficulty } from "@/utils/workoutCalculations";
@@ -34,10 +37,21 @@ const Index = () => {
   const { profile } = useAuth();
   const { stats, loading: statsLoading } = useWorkoutStats();
   const { getAverageWorkoutDuration } = useWorkoutHistory();
+  const { resumeWorkout, checkForPausedWorkout } = useWorkoutSession();
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [selectedWorkout, setSelectedWorkout] = useState<"A" | "B" | "C">("A");
   const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [isManagingExercises, setIsManagingExercises] = useState(false);
+  const [pausedWorkout, setPausedWorkout] = useState<any>(null);
+
+  // Check for paused workouts on mount
+  useEffect(() => {
+    const checkPausedWorkout = async () => {
+      const paused = await checkForPausedWorkout();
+      setPausedWorkout(paused);
+    };
+    checkPausedWorkout();
+  }, [checkForPausedWorkout]);
 
   // Default exercises to add for new users
   const DEFAULT_EXERCISES = [
@@ -145,6 +159,16 @@ const Index = () => {
     },
   ];
 
+  const handleResumeWorkout = async () => {
+    if (!pausedWorkout) return;
+    
+    const workoutId = await resumeWorkout(pausedWorkout.id);
+    if (workoutId) {
+      setPausedWorkout(null);
+      navigate(`/workout/${pausedWorkout.workout_type}`);
+    }
+  };
+
   const handleStartWorkout = (workoutTitle: string, workoutType: 'A' | 'B' | 'C') => {
     console.log('handleStartWorkout called with:', workoutTitle, workoutType);
     setCurrentWorkout(workoutTitle);
@@ -230,8 +254,39 @@ const Index = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
-        {/* Today's Stats */}
+        <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+          {/* Paused Workout Alert */}
+          {pausedWorkout && (
+            <section>
+              <Card className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-300/50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-orange-700 dark:text-orange-300">
+                    <Pause className="w-5 h-5" />
+                    אימון מושהה
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="font-semibold text-lg">{pausedWorkout.workout_title}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        הושהה ב{new Date(pausedWorkout.paused_at).toLocaleString('he-IL')}
+                      </p>
+                    </div>
+                    <Button 
+                      onClick={handleResumeWorkout}
+                      className="bg-orange-500 hover:bg-orange-600 text-white"
+                    >
+                      <Play className="w-4 h-4 ml-2" />
+                      המשך אימון
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+          )}
+
+          {/* Today's Stats */}
         <section>
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <Sparkles className="w-6 h-6 text-fitness-primary" />

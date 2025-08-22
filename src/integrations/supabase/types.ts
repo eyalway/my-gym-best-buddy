@@ -161,7 +161,9 @@ export type Database = {
           deleted_at: string | null
           end_time: string | null
           id: string
+          paused_at: string | null
           start_time: string
+          status: string | null
           updated_at: string
           user_id: string | null
           workout_title: string
@@ -173,7 +175,9 @@ export type Database = {
           deleted_at?: string | null
           end_time?: string | null
           id?: string
+          paused_at?: string | null
           start_time?: string
+          status?: string | null
           updated_at?: string
           user_id?: string | null
           workout_title: string
@@ -185,7 +189,9 @@ export type Database = {
           deleted_at?: string | null
           end_time?: string | null
           id?: string
+          paused_at?: string | null
           start_time?: string
+          status?: string | null
           updated_at?: string
           user_id?: string | null
           workout_title?: string

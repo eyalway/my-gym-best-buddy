@@ -57,6 +57,7 @@ interface WorkoutData {
   start_time: string;
   end_time: string | null;
   completed: boolean;
+  status?: string;
   exercises: Array<{
     exercise_name: string;
     weight: string | null;
@@ -132,6 +133,7 @@ const Analytics = () => {
           start_time,
           end_time,
           completed,
+          status,
           workout_exercises (
             exercise_name,
             weight,
@@ -344,7 +346,7 @@ const Analytics = () => {
   };
 
   // Calculate stats
-  const completedWorkouts = workouts.filter(w => w.completed);
+  const completedWorkouts = workouts.filter(w => w.status === 'completed');
   const totalWorkouts = workouts.length;
   const totalExercises = workouts.reduce((sum, w) => sum + w.exercises.length, 0);
   const completedExercises = workouts.reduce((sum, w) => 
@@ -363,7 +365,7 @@ const Analytics = () => {
 
   // Prepare chart data
   const chartData = workouts
-    .filter(w => w.completed)
+    .filter(w => w.status === 'completed')
     .slice(0, 10)
     .reverse()
     .map((workout, index) => {
@@ -738,13 +740,16 @@ const Analytics = () => {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
                           <h3 className="font-medium text-foreground text-sm sm:text-base">{workout.workout_title}</h3>
                            <div className="flex items-center gap-2">
-                             <span className={`px-2 py-1 text-xs rounded-full ${
-                               workout.completed 
-                                 ? 'bg-green-500/20 text-green-700 dark:text-green-300' 
-                                 : 'bg-orange-500/20 text-orange-700 dark:text-orange-300'
-                             }`}>
-                               {workout.completed ? 'הושלם' : 'לא הושלם'}
-                             </span>
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                workout.status === 'completed' 
+                                  ? 'bg-green-500/20 text-green-700 dark:text-green-300' 
+                                  : workout.status === 'paused'
+                                  ? 'bg-orange-500/20 text-orange-700 dark:text-orange-300'
+                                  : 'bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                              }`}>
+                                {workout.status === 'completed' ? 'הושלם' : 
+                                 workout.status === 'paused' ? 'מושהה' : 'פעיל'}
+                              </span>
                              <Button
                                variant="ghost"
                                size="sm"

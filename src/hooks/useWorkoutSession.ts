@@ -29,6 +29,30 @@ export const useWorkoutSession = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Check for paused workouts on mount
+  const checkForPausedWorkout = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'paused')
+        .eq('completed', false)
+        .is('deleted_at', null)
+        .order('paused_at', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+      return data?.[0] || null;
+    } catch (error) {
+      console.error('Error checking for paused workout:', error);
+      return null;
+    }
+  };
+
   const startWorkout = async (
     workoutType: 'A' | 'B' | 'C',
     workoutTitle: string,
@@ -172,11 +196,83 @@ export const useWorkoutSession = () => {
     }
   };
 
+  const pauseWorkout = async (workoutId: string) => {
+    try {
+      setIsLoading(true);
+
+      const { error } = await supabase
+        .from('workouts')
+        .update({
+          status: 'paused',
+          paused_at: new Date().toISOString(),
+        })
+        .eq('id', workoutId);
+
+      if (error) throw error;
+
+      setCurrentWorkoutId(null);
+
+      toast({
+        title: "האימון הושהה ⏸️",
+        description: "תוכל להמשיך מאוחר יותר מהדף הבית",
+      });
+
+    } catch (error) {
+      console.error('Error pausing workout:', error);
+      toast({
+        title: "שגיאה בהשהיית האימון",
+        description: "לא הצלחנו להשהות את האימון",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resumeWorkout = async (workoutId: string) => {
+    try {
+      setIsLoading(true);
+
+      const { error } = await supabase
+        .from('workouts')
+        .update({
+          status: 'active',
+          paused_at: null,
+        })
+        .eq('id', workoutId);
+
+      if (error) throw error;
+
+      setCurrentWorkoutId(workoutId);
+
+      toast({
+        title: "האימון התחדש! ▶️",
+        description: "המשך משם שעצרת",
+      });
+
+      return workoutId;
+
+    } catch (error) {
+      console.error('Error resuming workout:', error);
+      toast({
+        title: "שגיאה בהמשכת האימון",
+        description: "לא הצלחנו להמשיך את האימון",
+        variant: "destructive",
+      });
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     currentWorkoutId,
     isLoading,
     startWorkout,
     completeWorkout,
+    pauseWorkout,
+    resumeWorkout,
+    checkForPausedWorkout,
     updateExerciseWeight,
   };
 };
