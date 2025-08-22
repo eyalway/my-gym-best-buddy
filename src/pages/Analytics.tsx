@@ -764,7 +764,10 @@ const Analytics = () => {
                           <div>
                             <span className="font-medium">שעה:</span>
                             <br />
-                            {new Date(workout.start_time).toISOString().substr(11, 5)}
+                            {new Date(workout.start_time).toLocaleTimeString('he-IL', { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
                           </div>
                           <div>
                             <span className="font-medium">תרגילים:</span>
