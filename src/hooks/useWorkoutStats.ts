@@ -45,6 +45,14 @@ export const useWorkoutStats = () => {
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 7);
 
+      console.log('Week calculation:', {
+        today: today.toISOString(),
+        startOfWeek: startOfWeek.toISOString(),
+        endOfWeek: endOfWeek.toISOString(),
+        dayOfWeek,
+        daysToMonday
+      });
+
       // Fetch today's completed workouts
       const { data: todayWorkouts } = await supabase
         .from('workouts')
@@ -62,6 +70,8 @@ export const useWorkoutStats = () => {
         .eq('completed', true)
         .gte('start_time', startOfWeek.toISOString())
         .lt('start_time', endOfWeek.toISOString());
+
+      console.log('Week workouts found:', weekWorkouts?.length, weekWorkouts?.map(w => w.start_time));
 
       // Calculate today's workout time and calories
       let totalMinutesToday = 0;
