@@ -35,6 +35,7 @@ export const useWorkoutSession = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
+      // First check for specifically paused workouts
       const { data, error } = await supabase
         .from('workouts')
         .select('*')
@@ -46,7 +47,46 @@ export const useWorkoutSession = () => {
         .limit(1);
 
       if (error) throw error;
-      return data?.[0] || null;
+      
+      // If found a paused workout, return it
+      if (data && data.length > 0) {
+        return data[0];
+      }
+
+      // If no paused workout found, check for any active uncompleted workouts
+      // These might be orphaned active workouts that should be paused
+      const { data: activeData, error: activeError } = await supabase
+        .from('workouts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .eq('completed', false)
+        .is('deleted_at', null)
+        .is('end_time', null)
+        .order('start_time', { ascending: false })
+        .limit(1);
+
+      if (activeError) throw activeError;
+
+      // If there's an active workout, auto-pause it and return it as paused
+      if (activeData && activeData.length > 0) {
+        const activeWorkout = activeData[0];
+        await supabase
+          .from('workouts')
+          .update({
+            status: 'paused',
+            paused_at: new Date().toISOString()
+          })
+          .eq('id', activeWorkout.id);
+
+        return {
+          ...activeWorkout,
+          status: 'paused',
+          paused_at: new Date().toISOString()
+        };
+      }
+
+      return null;
     } catch (error) {
       console.error('Error checking for paused workout:', error);
       return null;
@@ -72,6 +112,18 @@ export const useWorkoutSession = () => {
         return null;
       }
 
+      // First, pause any existing active workouts to prevent duplicates
+      await supabase
+        .from('workouts')
+        .update({
+          status: 'paused',
+          paused_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .eq('completed', false)
+        .is('deleted_at', null);
+
       // Create workout session
       const { data: workout, error: workoutError } = await supabase
         .from('workouts')
@@ -81,6 +133,7 @@ export const useWorkoutSession = () => {
           workout_title: workoutTitle,
           start_time: new Date().toISOString(),
           completed: false,
+          status: 'active'
         })
         .select()
         .single();

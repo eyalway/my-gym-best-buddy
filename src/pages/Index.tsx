@@ -165,9 +165,32 @@ const Index = () => {
     const workoutId = await resumeWorkout(pausedWorkout.id);
     if (workoutId) {
       setPausedWorkout(null);
+      // Re-check for any other paused workouts after resuming
+      const nextPaused = await checkForPausedWorkout();
+      setPausedWorkout(nextPaused);
       navigate(`/workout/${pausedWorkout.workout_type}`);
     }
   };
+
+  // Re-check for paused workouts when user returns to the page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkPausedWorkout();
+      }
+    };
+
+    const checkPausedWorkout = async () => {
+      const paused = await checkForPausedWorkout();
+      setPausedWorkout(paused);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [checkForPausedWorkout]);
 
   const handleStartWorkout = (workoutTitle: string, workoutType: 'A' | 'B' | 'C') => {
     console.log('handleStartWorkout called with:', workoutTitle, workoutType);
