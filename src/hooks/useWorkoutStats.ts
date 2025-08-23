@@ -34,11 +34,16 @@ export const useWorkoutStats = () => {
       const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
 
-      // Get start of week (Sunday)
+      // Get start of week (Monday - Israeli standard)
       const startOfWeek = new Date(today);
       const dayOfWeek = today.getDay();
-      startOfWeek.setDate(today.getDate() - dayOfWeek);
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // If Sunday, go back 6 days, otherwise go back to Monday
+      startOfWeek.setDate(today.getDate() - daysToMonday);
       startOfWeek.setHours(0, 0, 0, 0);
+
+      // Get end of week
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 7);
 
       // Fetch today's completed workouts
       const { data: todayWorkouts } = await supabase
@@ -52,10 +57,11 @@ export const useWorkoutStats = () => {
       // Fetch this week's completed workouts
       const { data: weekWorkouts } = await supabase
         .from('workouts')
-        .select('id')
+        .select('id, start_time')
         .eq('user_id', user.id)
         .eq('completed', true)
-        .gte('start_time', startOfWeek.toISOString());
+        .gte('start_time', startOfWeek.toISOString())
+        .lt('start_time', endOfWeek.toISOString());
 
       // Calculate today's workout time and calories
       let totalMinutesToday = 0;
