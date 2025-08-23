@@ -34,11 +34,11 @@ export const useWorkoutStats = () => {
       const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
 
-      // Get start of week (Monday - Israeli standard)
+      // Get start of week (Sunday - Israeli standard)
       const startOfWeek = new Date(today);
       const dayOfWeek = today.getDay();
-      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // If Sunday, go back 6 days, otherwise go back to Monday
-      startOfWeek.setDate(today.getDate() - daysToMonday);
+      const daysToSunday = dayOfWeek; // Sunday is 0, so go back by the current day number
+      startOfWeek.setDate(today.getDate() - daysToSunday);
       startOfWeek.setHours(0, 0, 0, 0);
 
       // Get end of week
@@ -50,7 +50,7 @@ export const useWorkoutStats = () => {
         startOfWeek: startOfWeek.toISOString(),
         endOfWeek: endOfWeek.toISOString(),
         dayOfWeek,
-        daysToMonday
+        daysToSunday
       });
 
       // Fetch today's completed workouts
