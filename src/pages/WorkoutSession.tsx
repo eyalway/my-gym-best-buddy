@@ -47,9 +47,23 @@ const WorkoutSession = () => {
 
   console.log('Exercises found:', exercises.length);
 
+  // Utility function to detect iOS Safari
+  const isIOSSafari = useCallback(() => {
+    const userAgent = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(userAgent);
+    return isIOS && isSafari;
+  }, []);
+
   // Audio and vibration functions
   const playBeep = useCallback((frequency = 800, duration = 200) => {
     if (!isSoundEnabled) return;
+    
+    // Skip audio on iOS Safari to prevent "Done" button
+    if (isIOSSafari()) {
+      console.log('Skipping audio on iOS Safari to prevent Done button');
+      return;
+    }
     
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -70,7 +84,7 @@ const WorkoutSession = () => {
     } catch (error) {
       console.log('Audio not supported:', error);
     }
-  }, [isSoundEnabled]);
+  }, [isSoundEnabled, isIOSSafari]);
 
   const vibrate = useCallback((pattern: number[] = [200]) => {
     if ('vibrate' in navigator) {
@@ -79,13 +93,6 @@ const WorkoutSession = () => {
   }, []);
 
   // Wake Lock functions to prevent screen from turning off
-  const isIOSSafari = useCallback(() => {
-    const userAgent = navigator.userAgent;
-    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
-    const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(userAgent);
-    return isIOS && isSafari;
-  }, []);
-
   const requestWakeLock = useCallback(async () => {
     // Skip Wake Lock on iOS Safari to prevent "Done" button
     if (isIOSSafari()) {
