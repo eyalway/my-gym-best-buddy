@@ -53,21 +53,21 @@ export const useWorkoutStats = () => {
         daysToSunday
       });
 
-      // Fetch today's completed workouts
+      // Fetch today's workouts (including partial ones, excluding deleted)
       const { data: todayWorkouts } = await supabase
         .from('workouts')
         .select('start_time, end_time, workout_type')
         .eq('user_id', user.id)
-        .eq('completed', true)
+        .is('deleted_at', null)
         .gte('start_time', startOfToday.toISOString())
         .lt('start_time', endOfToday.toISOString());
 
-      // Fetch this week's completed workouts
+      // Fetch this week's workouts (including partial ones, excluding deleted)
       const { data: weekWorkouts } = await supabase
         .from('workouts')
         .select('id, start_time')
         .eq('user_id', user.id)
-        .eq('completed', true)
+        .is('deleted_at', null)
         .gte('start_time', startOfWeek.toISOString())
         .lt('start_time', endOfWeek.toISOString());
 
@@ -93,7 +93,7 @@ export const useWorkoutStats = () => {
         });
       }
 
-      // Get all exercises with weights for personal best (random selection)
+      // Get all exercises with weights for personal best (including from partial workouts, excluding deleted)
       const { data: exercises } = await supabase
         .from('workout_exercises')
         .select('exercise_name, weight')
@@ -102,7 +102,7 @@ export const useWorkoutStats = () => {
             .from('workouts')
             .select('id')
             .eq('user_id', user.id)
-            .eq('completed', true)
+            .is('deleted_at', null)
           ).data?.map(w => w.id) || []
         )
         .not('weight', 'is', null)
