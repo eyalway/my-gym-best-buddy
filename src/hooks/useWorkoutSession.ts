@@ -190,6 +190,7 @@ export const useWorkoutSession = () => {
         .update({
           end_time: new Date().toISOString(),
           completed: true,
+          status: 'completed',
         })
         .eq('id', workoutId);
 
