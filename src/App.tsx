@@ -12,47 +12,70 @@ import WeeklyPlanner from "./pages/WeeklyPlanner";
 import WorkoutSession from "./pages/WorkoutSession";
 import NotFound from "./pages/NotFound";
 
+// ייבוא ההוק החדש
+import { useKeepFullScreen } from "./useKeepFullScreen";
+
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/profile" element={
-            <AuthGuard>
-              <Profile />
-            </AuthGuard>
-          } />
-          <Route path="/analytics" element={
-            <AuthGuard>
-              <Analytics />
-            </AuthGuard>
-          } />
-          <Route path="/weekly-planner" element={
-            <AuthGuard>
-              <WeeklyPlanner />
-            </AuthGuard>
-          } />
-          <Route path="/" element={
-            <AuthGuard>
-              <Index />
-            </AuthGuard>
-          } />
-          <Route path="/workout/:workoutType" element={
-            <AuthGuard>
-              <WorkoutSession />
-            </AuthGuard>
-          } />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // שמירה על מצב מסך מלא בניווטים
+  useKeepFullScreen();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route
+              path="/profile"
+              element={
+                <AuthGuard>
+                  <Profile />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <AuthGuard>
+                  <Analytics />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/weekly-planner"
+              element={
+                <AuthGuard>
+                  <WeeklyPlanner />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/"
+              element={
+                <AuthGuard>
+                  <Index />
+                </AuthGuard>
+              }
+            />
+            <Route
+              path="/workout/:workoutType"
+              element={
+                <AuthGuard>
+                  <WorkoutSession />
+                </AuthGuard>
+              }
+            />
+            {/* מסלול ברירת מחדל */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
