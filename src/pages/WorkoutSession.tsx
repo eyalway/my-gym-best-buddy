@@ -79,7 +79,20 @@ const WorkoutSession = () => {
   }, []);
 
   // Wake Lock functions to prevent screen from turning off
+  const isIOSSafari = useCallback(() => {
+    const userAgent = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+    const isSafari = /Safari/.test(userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(userAgent);
+    return isIOS && isSafari;
+  }, []);
+
   const requestWakeLock = useCallback(async () => {
+    // Skip Wake Lock on iOS Safari to prevent "Done" button
+    if (isIOSSafari()) {
+      console.log('Skipping Wake Lock on iOS Safari to prevent Done button');
+      return;
+    }
+    
     try {
       if ('wakeLock' in navigator) {
         const wakeLockSentinel = await navigator.wakeLock.request('screen');
@@ -94,7 +107,7 @@ const WorkoutSession = () => {
     } catch (error) {
       console.error('Wake lock failed:', error);
     }
-  }, []);
+  }, [isIOSSafari]);
 
   const releaseWakeLock = useCallback(async () => {
     if (wakeLock) {
