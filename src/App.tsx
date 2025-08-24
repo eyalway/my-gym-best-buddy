@@ -12,70 +12,73 @@ import WeeklyPlanner from "./pages/WeeklyPlanner";
 import WorkoutSession from "./pages/WorkoutSession";
 import NotFound from "./pages/NotFound";
 
-// ייבוא ההוק החדש
 import { useKeepFullScreen } from "./useKeepFullScreen";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  // שמירה על מצב מסך מלא בניווטים
+function AppContent() {
+  // עכשיו זה בתוך ה-<Router>
   useKeepFullScreen();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/auth" element={<Auth />} />
-            <Route
-              path="/profile"
-              element={
-                <AuthGuard>
-                  <Profile />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/analytics"
-              element={
-                <AuthGuard>
-                  <Analytics />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/weekly-planner"
-              element={
-                <AuthGuard>
-                  <WeeklyPlanner />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <AuthGuard>
-                  <Index />
-                </AuthGuard>
-              }
-            />
-            <Route
-              path="/workout/:workoutType"
-              element={
-                <AuthGuard>
-                  <WorkoutSession />
-                </AuthGuard>
-              }
-            />
-            {/* מסלול ברירת מחדל */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      <Route
+        path="/profile"
+        element={
+          <AuthGuard>
+            <Profile />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <AuthGuard>
+            <Analytics />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/weekly-planner"
+        element={
+          <AuthGuard>
+            <WeeklyPlanner />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <AuthGuard>
+            <Index />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/workout/:workoutType"
+        element={
+          <AuthGuard>
+            <WorkoutSession />
+          </AuthGuard>
+        }
+      />
+      {/* Catch-all route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
-};
+}
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
