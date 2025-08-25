@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSupabaseExercises } from "@/hooks/useSupabaseExercises";
 import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
-import { useKeepFullScreen } from "@/useKeepFullScreen";
 import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX, SkipForward } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
@@ -21,9 +20,6 @@ const WorkoutSession = () => {
   const { toast } = useToast();
   const { getExercisesByWorkout, updateExercise } = useSupabaseExercises();
   const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, pauseWorkout, updateExerciseWeight } = useWorkoutSession();
-  
-  // Keep full screen mode during workout
-  useKeepFullScreen();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
   
@@ -63,6 +59,12 @@ const WorkoutSession = () => {
   const playBeep = useCallback((frequency = 800, duration = 200) => {
     if (!isSoundEnabled) return;
     
+    // Skip audio on iOS Safari to prevent "Done" button
+    if (isIOSSafari()) {
+      console.log('Skipping audio on iOS Safari to prevent Done button');
+      return;
+    }
+    
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
@@ -92,6 +94,11 @@ const WorkoutSession = () => {
 
   // Wake Lock functions to prevent screen from turning off
   const requestWakeLock = useCallback(async () => {
+    // Skip Wake Lock on iOS Safari to prevent "Done" button
+    if (isIOSSafari()) {
+      console.log('Skipping Wake Lock on iOS Safari to prevent Done button');
+      return;
+    }
     
     try {
       if ('wakeLock' in navigator) {
