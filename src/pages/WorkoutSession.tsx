@@ -217,6 +217,30 @@ const WorkoutSession = () => {
     }
   }, [workoutType, exercises.length, currentWorkoutId, workoutLoading]);
 
+  
+  // Prevent Safari address bar from showing by preventing scroll to top
+  useEffect(() => {
+    const preventScrollToTop = (e: TouchEvent) => {
+      const element = e.target as HTMLElement;
+      const isScrollable = element.scrollHeight > element.clientHeight;
+      
+      if (!isScrollable || element.scrollTop <= 0) {
+        e.preventDefault();
+      }
+    };
+
+    // Add touch event listeners to prevent Safari address bar
+    document.addEventListener('touchmove', preventScrollToTop, { passive: false });
+    
+    // Also prevent overscroll behavior
+    document.body.style.overscrollBehavior = 'none';
+    
+    return () => {
+      document.removeEventListener('touchmove', preventScrollToTop);
+      document.body.style.overscrollBehavior = 'auto';
+    };
+  }, []);
+
   // Cleanup wake lock when leaving the component
   useEffect(() => {
     return () => {
@@ -427,8 +451,8 @@ const WorkoutSession = () => {
   const currentDate = format(today, 'dd/MM/yyyy');
 
   return (
-    <div className="h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4 overflow-hidden">
-      <div className="max-w-2xl mx-auto h-full flex flex-col space-y-4">
+    <div className="h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4" style={{ height: '100vh', maxHeight: '100vh', overflowY: 'auto' }}>
+      <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-between">
