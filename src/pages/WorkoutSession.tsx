@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useSupabaseExercises } from "@/hooks/useSupabaseExercises";
 import { useWorkoutSession } from "@/hooks/useWorkoutSession";
 import { useToast } from "@/hooks/use-toast";
+import { useKeepFullScreen } from "@/useKeepFullScreen";
 import { ArrowRight, ArrowLeft, CheckCircle, Home, Edit3, Calendar, Timer, Play, Pause, RotateCcw, Volume2, VolumeX, SkipForward } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
@@ -20,6 +21,9 @@ const WorkoutSession = () => {
   const { toast } = useToast();
   const { getExercisesByWorkout, updateExercise } = useSupabaseExercises();
   const { currentWorkoutId, isLoading: workoutLoading, startWorkout, completeWorkout, pauseWorkout, updateExerciseWeight } = useWorkoutSession();
+  
+  // Keep full screen mode during workout
+  useKeepFullScreen();
   
   console.log('WorkoutSession loaded with workoutType:', workoutType);
   
