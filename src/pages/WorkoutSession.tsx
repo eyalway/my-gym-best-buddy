@@ -427,8 +427,8 @@ const WorkoutSession = () => {
   const currentDate = format(today, 'dd/MM/yyyy');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4">
-      <div className="max-w-2xl mx-auto space-y-6">
+    <div className="h-screen bg-gradient-to-br from-fitness-primary/5 via-background to-fitness-secondary/5 p-4 overflow-hidden">
+      <div className="max-w-2xl mx-auto h-full flex flex-col space-y-4">
         {/* Header */}
         <div className="text-center space-y-4">
           <div className="flex items-center justify-between">
