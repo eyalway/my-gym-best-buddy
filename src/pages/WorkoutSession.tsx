@@ -59,12 +59,6 @@ const WorkoutSession = () => {
   const playBeep = useCallback((frequency = 800, duration = 200) => {
     if (!isSoundEnabled) return;
     
-    // Skip audio on iOS Safari to prevent "Done" button
-    if (isIOSSafari()) {
-      console.log('Skipping audio on iOS Safari to prevent Done button');
-      return;
-    }
-    
     try {
       const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
       const oscillator = audioContext.createOscillator();
@@ -94,11 +88,6 @@ const WorkoutSession = () => {
 
   // Wake Lock functions to prevent screen from turning off
   const requestWakeLock = useCallback(async () => {
-    // Skip Wake Lock on iOS Safari to prevent "Done" button
-    if (isIOSSafari()) {
-      console.log('Skipping Wake Lock on iOS Safari to prevent Done button');
-      return;
-    }
     
     try {
       if ('wakeLock' in navigator) {
