@@ -15,8 +15,15 @@ export function useKeepFullScreen() {
       
       // Prevent scrolling past top to avoid showing browser UI
       const preventOverscroll = (e: TouchEvent) => {
-        if (window.scrollY === 0 && e.touches[0].clientY > 0) {
-          e.preventDefault();
+        // Only prevent overscroll when at the very top and trying to scroll up
+        if (window.scrollY <= 0 && e.touches[0] && e.touches.length === 1) {
+          const touch = e.touches[0];
+          const startY = touch.clientY;
+          
+          // Only prevent if it's a clear upward swipe from the top
+          if (startY > 50) { // Give some margin to allow normal scrolling
+            e.preventDefault();
+          }
         }
       };
       
