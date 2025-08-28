@@ -124,6 +124,8 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     direction: rtl !important;
     text-align: right !important;
+    /* Add safe area padding for iOS devices */
+    padding-top: env(safe-area-inset-top);
   }
   
   #root {
