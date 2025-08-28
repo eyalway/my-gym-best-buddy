@@ -287,6 +287,31 @@ export const useWorkoutSession = () => {
     try {
       setIsLoading(true);
 
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "נדרש להתחבר",
+          description: "יש להתחבר כדי להמשיך את האימון",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      // First, pause any other active workouts to prevent duplicates
+      await supabase
+        .from('workouts')
+        .update({
+          status: 'paused',
+          paused_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .eq('completed', false)
+        .is('deleted_at', null)
+        .neq('id', workoutId); // Don't pause the workout we're about to resume
+
+      // Now resume the specific workout
       const { error } = await supabase
         .from('workouts')
         .update({
