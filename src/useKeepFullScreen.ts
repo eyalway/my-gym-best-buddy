@@ -13,23 +13,28 @@ export function useKeepFullScreen() {
       // Force scroll to top to hide any residual browser UI
       window.scrollTo(0, 0);
       
-      // Prevent scrolling past top to avoid showing browser UI
+      // Only prevent rubber band effect when already at top
+      let isAtTop = true;
+      
+      const handleScroll = () => {
+        isAtTop = window.scrollY <= 0;
+      };
+      
       const preventOverscroll = (e: TouchEvent) => {
-        // Only prevent overscroll when at the very top and trying to scroll up
-        if (window.scrollY <= 0 && e.touches[0] && e.touches.length === 1) {
+        // Only prevent if we're at the very top and pulling down
+        if (isAtTop && window.scrollY <= 0) {
           const touch = e.touches[0];
-          const startY = touch.clientY;
-          
-          // Only prevent if it's a clear upward swipe from the top
-          if (startY > 50) { // Give some margin to allow normal scrolling
+          if (touch && touch.clientY > touch.screenY) {
             e.preventDefault();
           }
         }
       };
       
+      window.addEventListener('scroll', handleScroll);
       document.addEventListener('touchmove', preventOverscroll, { passive: false });
       
       return () => {
+        window.removeEventListener('scroll', handleScroll);
         document.removeEventListener('touchmove', preventOverscroll);
       };
     }
