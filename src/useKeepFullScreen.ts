@@ -12,31 +12,7 @@ export function useKeepFullScreen() {
     if (isStandalone) {
       // Force scroll to top to hide any residual browser UI
       window.scrollTo(0, 0);
-      
-      // Only prevent rubber band effect when already at top
-      let isAtTop = true;
-      
-      const handleScroll = () => {
-        isAtTop = window.scrollY <= 0;
-      };
-      
-      const preventOverscroll = (e: TouchEvent) => {
-        // Only prevent if we're at the very top and pulling down
-        if (isAtTop && window.scrollY <= 0) {
-          const touch = e.touches[0];
-          if (touch && touch.clientY > touch.screenY) {
-            e.preventDefault();
-          }
-        }
-      };
-      
-      window.addEventListener('scroll', handleScroll);
-      document.addEventListener('touchmove', preventOverscroll, { passive: false });
-      
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        document.removeEventListener('touchmove', preventOverscroll);
-      };
+      return;
     }
     
     // For regular Safari (not standalone), try to hide address bar
