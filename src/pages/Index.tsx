@@ -165,9 +165,6 @@ const Index = () => {
     const workoutId = await resumeWorkout(pausedWorkout.id);
     if (workoutId) {
       setPausedWorkout(null);
-      // Re-check for any other paused workouts after resuming
-      const nextPaused = await checkForPausedWorkout();
-      setPausedWorkout(nextPaused);
       navigate(`/workout/${pausedWorkout.workout_type}`);
     }
   };
