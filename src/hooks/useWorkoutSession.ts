@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import type { Exercise } from './useExercises';
@@ -28,6 +28,35 @@ export const useWorkoutSession = () => {
   const [currentWorkoutId, setCurrentWorkoutId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Check for any active workout on mount
+  useEffect(() => {
+    const checkActiveWorkout = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('workouts')
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .eq('completed', false)
+          .is('deleted_at', null)
+          .limit(1);
+
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          setCurrentWorkoutId(data[0].id);
+        }
+      } catch (error) {
+        console.error('Error checking for active workout:', error);
+      }
+    };
+
+    checkActiveWorkout();
+  }, []);
 
   // Check for paused workouts on mount
   const checkForPausedWorkout = async () => {
