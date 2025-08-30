@@ -165,7 +165,7 @@ const Index = () => {
     const workoutId = await resumeWorkout(pausedWorkout.id);
     if (workoutId) {
       setPausedWorkout(null);
-      navigate(`/workout/${pausedWorkout.workout_type}`);
+      navigate(`/workout/${pausedWorkout.workout_type}?resume=true`);
     }
   };
 
