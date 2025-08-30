@@ -68,22 +68,24 @@ export const useWorkoutSession = () => {
 
       if (activeError) throw activeError;
 
-      // If there's an active workout, auto-pause it and return it as paused
+      // If there's an active workout, auto-pause it and return the UPDATED workout
       if (activeData && activeData.length > 0) {
         const activeWorkout = activeData[0];
-        await supabase
+        
+        // Update the existing workout to paused status
+        const { data: updatedWorkout, error: updateError } = await supabase
           .from('workouts')
           .update({
             status: 'paused',
             paused_at: new Date().toISOString()
           })
-          .eq('id', activeWorkout.id);
+          .eq('id', activeWorkout.id)
+          .select()
+          .single();
 
-        return {
-          ...activeWorkout,
-          status: 'paused',
-          paused_at: new Date().toISOString()
-        };
+        if (updateError) throw updateError;
+
+        return updatedWorkout;
       }
 
       return null;
