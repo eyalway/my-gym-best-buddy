@@ -143,19 +143,27 @@ export const useWorkoutSession = () => {
         return null;
       }
 
-      // First, pause any existing active OR uncompleted workouts to prevent duplicates
-      // This is critical to ensure we don't create multiple workout entries
-      await supabase
+      // First, check if there are ANY uncompleted workouts for this user
+      const { data: existingWorkouts, error: checkError } = await supabase
         .from('workouts')
-        .update({
-          status: 'paused',
-          paused_at: new Date().toISOString()
-        })
+        .select('id, status')
         .eq('user_id', user.id)
         .eq('completed', false)
         .is('deleted_at', null);
 
-      // Create workout session
+      if (checkError) throw checkError;
+
+      // If there are any uncompleted workouts, don't create a new one
+      if (existingWorkouts && existingWorkouts.length > 0) {
+        toast({
+          title: "יש אימון פעיל",
+          description: "חזור לדף הבית להמשיך את האימון הקיים",
+          variant: "destructive",
+        });
+        return null;
+      }
+
+      // Create workout session only if no uncompleted workouts exist
       const { data: workout, error: workoutError } = await supabase
         .from('workouts')
         .insert({
@@ -356,6 +364,9 @@ export const useWorkoutSession = () => {
       if (error) throw error;
 
       setCurrentWorkoutId(workoutId);
+
+      // Also store in localStorage for immediate access
+      localStorage.setItem('currentWorkoutId', workoutId);
 
       toast({
         title: "האימון התחדש! ▶️",
