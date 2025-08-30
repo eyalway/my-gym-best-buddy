@@ -112,7 +112,8 @@ export const useWorkoutSession = () => {
         return null;
       }
 
-      // First, pause any existing active workouts to prevent duplicates
+      // First, pause any existing active OR uncompleted workouts to prevent duplicates
+      // This is critical to ensure we don't create multiple workout entries
       await supabase
         .from('workouts')
         .update({
@@ -120,7 +121,6 @@ export const useWorkoutSession = () => {
           paused_at: new Date().toISOString()
         })
         .eq('user_id', user.id)
-        .eq('status', 'active')
         .eq('completed', false)
         .is('deleted_at', null);
 
