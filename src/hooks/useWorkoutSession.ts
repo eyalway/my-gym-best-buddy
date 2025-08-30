@@ -298,8 +298,8 @@ export const useWorkoutSession = () => {
         return null;
       }
 
-      // First, ensure NO other workouts are active or paused (except the one we're resuming)
-      // This prevents any chance of duplicates
+      // First, pause ALL other workouts (active, paused, or any uncompleted workouts)
+      // except the one we're resuming to ensure no duplicates
       await supabase
         .from('workouts')
         .update({
@@ -307,12 +307,11 @@ export const useWorkoutSession = () => {
           paused_at: new Date().toISOString()
         })
         .eq('user_id', user.id)
-        .in('status', ['active', 'paused'])
         .eq('completed', false)
         .is('deleted_at', null)
         .neq('id', workoutId);
 
-      // Now resume the specific workout - ensure it's the ONLY active one
+      // Now resume ONLY the specific workout we want
       const { error } = await supabase
         .from('workouts')
         .update({
@@ -320,7 +319,8 @@ export const useWorkoutSession = () => {
           paused_at: null,
         })
         .eq('id', workoutId)
-        .eq('user_id', user.id); // Extra safety check
+        .eq('user_id', user.id)
+        .eq('completed', false);
 
       if (error) throw error;
 
