@@ -3,18 +3,20 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { ArrowRight, Clock, Calendar, Dumbbell, Trash2 } from "lucide-react";
+import { ArrowRight, Clock, Calendar, Dumbbell, Trash2, Home, ArrowLeft } from "lucide-react";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const History = () => {
   const { workoutHistory, loading, refetch } = useWorkoutHistory();
   const { toast } = useToast();
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const getWorkoutTypeColor = (workoutType: string) => {
     switch (workoutType) {
@@ -105,6 +107,17 @@ const History = () => {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              חזרה לבית
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
             היסטוריית אימונים
           </h1>
