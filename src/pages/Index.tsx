@@ -325,16 +325,27 @@ const Index = () => {
             <TrendingUp className="w-6 h-6 text-fitness-primary" />
             דוח התקדמות
           </h2>
-          <div className="text-center">
-            <Button 
-              onClick={() => navigate('/analytics')}
-              size="lg"
-              className="py-4 px-6 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-            >
-              צפה בדוח מלא
-            </Button>
-            <p className="text-sm text-muted-foreground mt-3">
-              עקוב אחר ההתקדמות שלך וראה את הנתונים והגרפים
+          <div className="text-center space-y-4">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <Button 
+                onClick={() => navigate('/analytics')}
+                size="lg"
+                className="py-4 px-6 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                צפה בדוח מלא
+              </Button>
+              <Button 
+                onClick={() => navigate('/history')}
+                variant="outline"
+                size="lg"
+                className="py-4 px-6 gap-2 font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                <Clock className="w-5 h-5" />
+                היסטוריית אימונים
+              </Button>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              עקוב אחר ההתקדמות שלך וראה את הנתונים והגרפים, או צפה בהיסטוריית האימונים
             </p>
           </div>
         </section>
