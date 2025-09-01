@@ -336,9 +336,8 @@ const Index = () => {
               </Button>
               <Button 
                 onClick={() => navigate('/history')}
-                variant="outline"
                 size="lg"
-                className="py-4 px-6 gap-2 font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="py-4 px-6 gap-2 font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white"
               >
                 <Clock className="w-5 h-5" />
                 היסטוריית אימונים
