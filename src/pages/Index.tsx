@@ -517,6 +517,14 @@ const Index = () => {
             <Button 
               variant="outline" 
               className="gap-2"
+              onClick={() => navigate('/history')}
+            >
+              <Clock className="w-4 h-4" />
+              היסטוריית אימונים
+            </Button>
+            <Button 
+              variant="outline" 
+              className="gap-2"
               onClick={async () => {
                 await cleanupOrphanedExercises();
                 toast({

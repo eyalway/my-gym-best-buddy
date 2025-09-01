@@ -10,6 +10,7 @@ import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
 import WeeklyPlanner from "./pages/WeeklyPlanner";
 import WorkoutSession from "./pages/WorkoutSession";
+import History from "./pages/History";
 import NotFound from "./pages/NotFound";
 
 import { useKeepFullScreen } from "./useKeepFullScreen";
@@ -44,6 +45,14 @@ function AppContent() {
         element={
           <AuthGuard>
             <WeeklyPlanner />
+          </AuthGuard>
+        }
+      />
+      <Route
+        path="/history"
+        element={
+          <AuthGuard>
+            <History />
           </AuthGuard>
         }
       />
