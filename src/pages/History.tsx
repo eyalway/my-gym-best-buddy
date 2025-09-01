@@ -1,13 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowRight, Clock, Calendar, Dumbbell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowRight, Clock, Calendar, Dumbbell, Trash2 } from "lucide-react";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
+import { useState } from "react";
 
 const History = () => {
-  const { workoutHistory, loading } = useWorkoutHistory();
+  const { workoutHistory, loading, refetch } = useWorkoutHistory();
+  const { toast } = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const getWorkoutTypeColor = (workoutType: string) => {
     switch (workoutType) {
@@ -24,6 +31,37 @@ const History = () => {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return `${hours}:${remainingMinutes.toString().padStart(2, '0')} שעות`;
+  };
+
+  const handleDeleteWorkout = async (workoutId: string) => {
+    setDeletingId(workoutId);
+    try {
+      const { error } = await supabase
+        .from('workouts')
+        .update({ 
+          deleted_at: new Date().toISOString() 
+        })
+        .eq('id', workoutId);
+
+      if (error) throw error;
+
+      toast({
+        title: "האימון הועבר לפח 🗑️",
+        description: "האימון הועבר לפח ואפשר לשחזר אותו מהפרופיל",
+      });
+
+      // Refresh the history list
+      await refetch();
+    } catch (error) {
+      console.error('Error deleting workout:', error);
+      toast({
+        title: "שגיאה",
+        description: "לא ניתן היה למחוק את האימון",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   if (loading) {
@@ -101,12 +139,44 @@ const History = () => {
                         {format(new Date(workout.start_time), 'EEEE, d MMMM yyyy', { locale: he })}
                       </CardDescription>
                     </div>
-                    <Badge 
-                      variant="outline" 
-                      className={`${getWorkoutTypeColor(workout.workout_type)} border`}
-                    >
-                      אימון {workout.workout_type}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge 
+                        variant="outline" 
+                        className={`${getWorkoutTypeColor(workout.workout_type)} border`}
+                      >
+                        אימון {workout.workout_type}
+                      </Badge>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                            disabled={deletingId === workout.id}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>העבר אימון לפח</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              האם אתה בטוח שברצונך להעביר את האימון "{workout.workout_title}" לפח?
+                              תוכל לשחזר אותו מדף הפרופיל מאוחר יותר.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>ביטול</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleDeleteWorkout(workout.id)}
+                              className="bg-destructive hover:bg-destructive/90"
+                            >
+                              העבר לפח
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
