@@ -542,20 +542,20 @@ const WorkoutSession = () => {
             <CardTitle className="text-3xl font-bold text-fitness-primary mb-2">
               {currentExercise.name}
             </CardTitle>
-            <div className="flex justify-center items-center gap-4 text-lg flex-wrap">
-              <Badge variant="outline" className="px-4 py-2">
+            <div className="flex justify-center items-center gap-4 text-xl flex-wrap">
+              <Badge variant="outline" className="px-6 py-3 text-lg font-semibold">
                 {currentExercise.sets} סטים
               </Badge>
-              <Badge variant="outline" className="px-4 py-2">
+              <Badge variant="outline" className="px-6 py-3 text-lg font-semibold">
                 {currentExercise.reps} חזרות
               </Badge>
               {currentExercise.machineNumber && (
-                <Badge variant="secondary" className="px-4 py-2">
+                <Badge variant="secondary" className="px-6 py-3 text-lg font-semibold">
                   מכשיר {currentExercise.machineNumber}
                 </Badge>
               )}
               {currentExercise.seatHeight && (
-                <Badge variant="secondary" className="px-4 py-2">
+                <Badge variant="secondary" className="px-6 py-3 text-lg font-semibold">
                   כיסא {currentExercise.seatHeight}
                 </Badge>
               )}
@@ -567,28 +567,28 @@ const WorkoutSession = () => {
                         type="number"
                         value={tempWeight}
                         onChange={(e) => setTempWeight(e.target.value)}
-                        className="w-16 h-8 text-center"
+                        className="w-20 h-10 text-center text-lg"
                         placeholder="ק״ג"
                       />
-                      <Button size="sm" onClick={handleWeightSave} className="h-8 px-2">
+                      <Button size="sm" onClick={handleWeightSave} className="h-10 px-3">
                         ✓
                       </Button>
-                      <Button size="sm" variant="outline" onClick={handleWeightCancel} className="h-8 px-2">
+                      <Button size="sm" variant="outline" onClick={handleWeightCancel} className="h-10 px-3">
                         ✕
                       </Button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-1">
-                      <Badge variant="outline" className="px-4 py-2">
+                      <Badge variant="outline" className="px-6 py-3 text-lg font-semibold">
                         {currentExercise.weight} ק״ג
                       </Badge>
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={handleWeightEdit}
-                        className="h-8 w-8 p-0"
+                        className="h-10 w-10 p-0"
                       >
-                        <Edit3 className="w-3 h-3" />
+                        <Edit3 className="w-4 h-4" />
                       </Button>
                     </div>
                   )}
