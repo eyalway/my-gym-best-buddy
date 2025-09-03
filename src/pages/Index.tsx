@@ -330,8 +330,9 @@ const Index = () => {
               <Button 
                 onClick={() => navigate('/analytics')}
                 size="lg"
-                className="py-4 px-6 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                className="py-4 px-6 gap-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:from-fitness-primary/90 hover:to-fitness-secondary/90 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300"
               >
+                <TrendingUp className="w-5 h-5" />
                 צפה בדוח מלא
               </Button>
               <Button 
